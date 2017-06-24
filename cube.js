@@ -1,5 +1,4 @@
 function Cube() {
-
     function Face(n) {
         this.Center = n;
         this.Rotation = 0;
@@ -32,11 +31,20 @@ function Cube() {
         f[1].Replace(i, f[2].Replace(i, f[3].Replace(i, f[4].Replace(i, f[1].Get(i)))));
     }
 
+    function triple(fn) {
+        for (i = 0; i < 3; i++)
+            fn();
+    }
+
     this.U = function () {
         this.Faces[0].Rotate(3);
         shift(0, this.Faces);
         shift(1, this.Faces);
         shift(2, this.Faces);
+    }
+    
+    this.Ui = function () {
+        triple( () => this.U() );
     }
 
     this.X = function () {
@@ -52,9 +60,7 @@ function Cube() {
         tmp.FlipVertical();
     }
 
-    this.Ui = function () {
-        this.U();
-        this.U();
-        this.U();
+    this.Xi = function () {
+        triple( () => this.X() );
     }
 }

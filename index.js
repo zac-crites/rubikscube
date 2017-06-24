@@ -2,17 +2,25 @@ window.onload = function()
 {
     var renderer = new CubeRenderer2d();
     var cube = new Cube();
+
     renderer.Initialize(cube);
 
-    var xButton = document.getElementById("button-x");
-    xButton.onclick = function () {
-        cube.X();
-        renderer.UpdateCubelets();
-    };
+    var buttons = document.getElementById("buttons");
 
-    var uButton = document.getElementById("button-u");
-    uButton.onclick = function () {
-        cube.U();
-        renderer.UpdateCubelets();
-    };
+    function addButton ( text, cubecommand )
+    {
+        var button = document.createElement("button");
+        button.innerHTML = text;
+        button.onclick = function()
+        {
+            cubecommand();
+            renderer.UpdateCubelets();
+        }
+        buttons.appendChild( button );
+    }
+
+    addButton("X", () => cube.X() );
+    addButton("X'", () => cube.Xi() );
+    addButton("U", () => cube.U() );
+    addButton("U`", () => cube.Ui() ); 
 };
