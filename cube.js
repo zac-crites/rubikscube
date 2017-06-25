@@ -19,9 +19,17 @@ function Cube() {
             this.Cubelets[(i + (this.Rotation * 2)) % 8] = value;
             return tmp;
         }
+
+        this.IsSolved = function() {
+            return !this.Cubelets.some( ( n ) => n != this.Center );
+        }
     }
 
     this.Faces = [new Face(0), new Face(1), new Face(2), new Face(3), new Face(4), new Face(5)];
+
+    this.IsSolved = function() {
+        return !this.Faces.some( ( f ) => !f.IsSolved() );
+    }
 
     //Utils
     function shift(i, f) {
