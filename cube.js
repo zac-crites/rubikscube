@@ -27,11 +27,11 @@ function Cube() {
 
     this.Faces = [new Face(0), new Face(1), new Face(2), new Face(3), new Face(4), new Face(5)];
 
+    //Utils
     this.IsSolved = function () {
         return !this.Faces.some((f) => !f.IsSolved());
     }
 
-    //Utils
     function shift(i, f) {
         f[1].Replace(i, f[2].Replace(i, f[3].Replace(i, f[4].Replace(i, f[1].Get(i)))));
     }
@@ -41,18 +41,7 @@ function Cube() {
             fn();
     }
 
-    //Moves
-    this.U = function () {
-        this.Faces[0].Rotate(3);
-        shift(0, this.Faces);
-        shift(1, this.Faces);
-        shift(2, this.Faces);
-    }
-
-    this.Ui = function () {
-        triple(() => this.U());
-    }
-
+    //Moves - Full cube rotations
     this.X = function () {
         this.Faces[1].Rotate(1);
         this.Faces[3].Rotate(3);
@@ -102,6 +91,18 @@ function Cube() {
 
     this.Yi = function () {
         triple(() => this.Y());
+    }
+    
+    //Moves - Single face rotations
+    this.U = function () {
+        this.Faces[0].Rotate(3);
+        shift(0, this.Faces);
+        shift(1, this.Faces);
+        shift(2, this.Faces);
+    }
+
+    this.Ui = function () {
+        triple(() => this.U());
     }
 
     this.F = function () {
