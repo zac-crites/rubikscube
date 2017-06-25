@@ -22,5 +22,9 @@ window.onload = function()
     addButton("X", () => cube.X() );
     addButton("X'", () => cube.Xi() );
     addButton("U", () => cube.U() );
-    addButton("U`", () => cube.Ui() ); 
+    addButton("U'", () => cube.Ui() ); 
+    addButton("Z", () => cube.Z() ); 
+    addButton("Z'", () => cube.Zi() ); 
+    addButton("F", () => cube.F() ); 
+    addButton("F'", () => cube.Fi() ); 
 };

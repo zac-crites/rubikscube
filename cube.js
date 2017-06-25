@@ -1,5 +1,5 @@
 function Cube() {
-    
+
     //State
     function Face(n) {
         this.Center = n;
@@ -42,7 +42,7 @@ function Cube() {
     }
 
     this.Ui = function () {
-        triple( () => this.U() );
+        triple(() => this.U());
     }
 
     this.X = function () {
@@ -59,6 +59,35 @@ function Cube() {
     }
 
     this.Xi = function () {
-        triple( () => this.X() );
+        triple(() => this.X());
+    }
+
+    this.Z = function () {
+        this.Faces[2].Rotate(3);
+        this.Faces[4].Rotate(1);
+
+        var tmp = this.Faces[0];
+        this.Faces[0] = this.Faces[1];
+        this.Faces[0].Rotate(3);
+        this.Faces[1] = this.Faces[5];
+        this.Faces[1].Rotate(3);
+        this.Faces[5] = this.Faces[3];
+        this.Faces[5].Rotate(3);
+        this.Faces[3] = tmp;
+        this.Faces[3].Rotate(3);
+    }
+
+    this.Zi = function () {
+        triple(() => this.Z());
+    }
+
+    this.F = function () {
+        this.X();
+        this.U();
+        this.Xi();
+    }
+
+    this.Fi = function () {
+        triple(() => this.F());
     }
 }
