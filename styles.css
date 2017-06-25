@@ -64,17 +64,14 @@ div.td {
     color: #444444;
 }
 
-/* visited link */
 .footer a:visited {
     color: #444444;
 }
 
-/* mouse over link */
 .footer a:hover {
     color: #444444;
 }
 
-/* selected link */
 .footer a:active {
     color: #444444;
 }
