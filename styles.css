@@ -1,0 +1,55 @@
+body {
+    background: #000000
+}
+
+.movebutton {
+    width: 3em;
+    height: 3em;
+    background: #323232;
+    border: 1px solid black;
+    align-content: center;
+    float: left;
+    position: relative;
+    text-align: center;
+    color: #b2b2b2;
+    -webkit-user-select: none;  
+    -moz-user-select: none;    
+    -ms-user-select: none;      
+    user-select: none;
+}
+
+.movebutton:hover {
+    background: #525252;
+}
+
+.movebutton .keybind {
+    position: absolute;
+    left: .1em;
+    top: .1em;
+    font-size: 12px;
+}
+
+.movebutton .buttontext {
+    margin: auto;
+    margin-top: .5em;
+    width: auto;
+    display: inline-block;
+    vertical-align: center;
+    font-weight: bold;
+    font-size: 22px;
+}
+
+div.table {
+    border: 1px solid black;
+    display: table;
+}
+
+div.tr {
+    border: 1px solid black; 
+    display: table-row; 
+}
+
+div.td {
+    border: 1px solid black; 
+    display: table-cell; 
+}
