@@ -7,11 +7,14 @@ function CubeRenderer3d() {
 
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(55, rendererWidth / rendererHeight, 0.1, 1000);
+    camera.position.y = 5;
+    camera.position.z = 8;
 
     var controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.addEventListener('change', function () { renderer.render(scene, camera); });
-    camera.position.z = controls.minDistance = controls.maxDistance = 8;
+    controls.minDistance = controls.maxDistance = camera.position.z;
     controls.enablePan = false;
+    controls.addEventListener('change', function () { renderer.render(scene, camera); });
+    controls.reset();
 
     var container = document.getElementById("cube3d");
     container.appendChild(renderer.domElement);
