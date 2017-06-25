@@ -154,4 +154,25 @@ function Cube() {
     this.Di = function () {
         triple(() => this.D())
     }
+
+    //Moves - Double layer turns
+    this.I = function () {
+        this.R();
+        this.Xi();
+    }
+
+    this.Ii = function () {
+        this.Ri();
+        this.X();
+    }
+
+    this.r = function () {
+        this.L();
+        this.X();
+    }
+    
+    this.ri = function () {
+        this.Li();
+        this.Xi();
+    }
 }
