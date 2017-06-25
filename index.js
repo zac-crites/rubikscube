@@ -4,6 +4,7 @@ function ButtonGrid(buttonPressed) {
     var keybinds = new Map();
 
     function KeyPress(event) {
+        console.log(event.keyCode);
         if (keybinds.has(event.keyCode))
             keybinds.get(event.keyCode)();
     }
@@ -82,7 +83,7 @@ window.onload = function () {
 
     buttonGrid.NewRow();
 
-    buttonGrid.AddButton("", () => { }, -1, "Z");
+    buttonGrid.AddButton("📹", () => renderer3d.ResetCamera(), 90, "Z");
     buttonGrid.AddButton("", () => { }, -1, "X");
     buttonGrid.AddButton("", () => { }, -1, "C");
     buttonGrid.AddButton("I", () => cube.I(), 86, "V");

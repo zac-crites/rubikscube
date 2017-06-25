@@ -112,4 +112,8 @@ function CubeRenderer3d() {
         updateCubeletMats.forEach(fn => fn());
         renderer.render(scene, camera);
     }
+
+    this.ResetCamera = function () {
+        controls.reset();
+    }
 }
