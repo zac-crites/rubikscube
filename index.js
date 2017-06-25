@@ -94,7 +94,30 @@ window.onload = function () {
     buttonGrid.AddButton("", () => { }, -1, ".");
 
     function Scramble() {
-        //TODO;
+        var moves = []
+        moves.push( () => cube.B() );
+        moves.push( () => cube.Bi() );
+        moves.push( () => cube.U() );
+        moves.push( () => cube.Ui() );
+        moves.push( () => cube.R() );
+        moves.push( () => cube.Ri() );
+        moves.push( () => cube.L() );
+        moves.push( () => cube.Li() );
+        moves.push( () => cube.D() );
+        moves.push( () => cube.Di() );
+        moves.push( () => cube.F() );
+        moves.push( () => cube.Fi() );
+
+        var count = 40;
+        function PickMove()
+        {
+            moves[Math.floor(Math.random() * moves.length)]();
+            renderer2d.UpdateCubelets();
+            renderer3d.UpdateCubelets();
+            if( --count >= 0 )
+                setTimeout( PickMove, 50 );
+        }
+        PickMove();
     }
-    buttonGrid.AddButton("", () => Scramble(), 191, "/");
+    buttonGrid.AddButton("🎲", () => Scramble(), 191, "/");
 };
