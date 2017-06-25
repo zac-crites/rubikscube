@@ -1,3 +1,48 @@
+function ButtonGrid(buttonPressed) {
+    var buttonContainer = document.getElementById("buttons");
+    var currentRow = null;
+    var keybinds = new Map();
+
+    function KeyPress(event) {
+        if (keybinds.has(event.keyCode))
+            keybinds.get(event.keyCode)();
+    }
+    window.onkeydown = KeyPress;
+
+    this.NewRow = function () {
+        currentRow = document.createElement("div");
+        currentRow.classList.add("tr");
+        buttons.appendChild(currentRow);
+    }
+
+    this.AddButton = function (text, cubecommand, keycode, keytext) {
+        var button = document.createElement("div");
+        button.classList.add("movebutton");
+        button.classList.add("td");
+
+        var keyDiv = document.createElement("div");
+        keyDiv.classList.add("keybind");
+        keyDiv.textContent = keytext;
+
+        var textDiv = document.createElement("div");
+        textDiv.classList.add("buttontext");
+        textDiv.textContent = text;
+
+        button.appendChild(keyDiv);
+        button.appendChild(textDiv);
+
+        button.onclick = function () {
+            cubecommand();
+            buttonPressed();
+        }
+        if (keycode > 0)
+            keybinds.set(keycode, button.onclick);
+        currentRow.appendChild(button);
+    }
+
+    this.NewRow();
+}
+
 window.onload = function () {
 
     var renderer2d = new CubeRenderer2d();
@@ -7,48 +52,49 @@ window.onload = function () {
     renderer2d.Initialize(cube);
     renderer3d.Initialize(cube);
 
-    var buttons = document.getElementById("buttons");
+    var buttonGrid = new ButtonGrid(() => {
+        renderer2d.UpdateCubelets();
+        renderer3d.UpdateCubelets();
+    });
 
-    function addButton(text, cubecommand) {
-        var button = document.createElement("button");
-        button.innerHTML = text;
-        button.onclick = function () {
-            cubecommand();
-            renderer2d.UpdateCubelets();
-            renderer3d.UpdateCubelets();
-        }
-        buttons.appendChild(button);
+    buttonGrid.AddButton("Z'", () => cube.Zi(), 81, "Q");
+    buttonGrid.AddButton("B", () => cube.B(), 87, "W");
+    buttonGrid.AddButton("L'", () => cube.Li(), 69, "E");
+    buttonGrid.AddButton("I'", () => cube.Ii(), 82, "R");
+    buttonGrid.AddButton("", () => { }, 84, "T");
+    buttonGrid.AddButton("X", () => cube.X(), 89, "Y");
+    buttonGrid.AddButton("r", () => cube.r(), 85, "U");
+    buttonGrid.AddButton("R", () => cube.R(), 73, "I");
+    buttonGrid.AddButton("B'", () => cube.Bi(), 79, "O");
+    buttonGrid.AddButton("Z", () => cube.Z(), 80, "P");
+
+    buttonGrid.NewRow();
+
+    buttonGrid.AddButton("Y", () => cube.Y(), 65, "A");
+    buttonGrid.AddButton("D", () => cube.D(), 83, "S");
+    buttonGrid.AddButton("L", () => cube.L(), 68, "D");
+    buttonGrid.AddButton("U'", () => cube.Ui(), 70, "F");
+    buttonGrid.AddButton("F'", () => cube.Fi(), 71, "G");
+    buttonGrid.AddButton("F", () => cube.F(), 72, "H");
+    buttonGrid.AddButton("U", () => cube.U(), 74, "J");
+    buttonGrid.AddButton("R'", () => cube.Ri(), 75, "K");
+    buttonGrid.AddButton("D'", () => cube.Di(), 76, "L");
+    buttonGrid.AddButton("Y'", () => cube.Yi(), 186, ";");
+
+    buttonGrid.NewRow();
+
+    buttonGrid.AddButton("", () => { }, -1, "Z");
+    buttonGrid.AddButton("", () => { }, -1, "X");
+    buttonGrid.AddButton("", () => { }, -1, "C");
+    buttonGrid.AddButton("I", () => cube.I(), 86, "V");
+    buttonGrid.AddButton("", () => { }, -1, "B");
+    buttonGrid.AddButton("X'", () => cube.Xi(), 78, "N");
+    buttonGrid.AddButton("r'", () => cube.ri(), 77, "M");
+    buttonGrid.AddButton("", () => { }, -1, ",");
+    buttonGrid.AddButton("", () => { }, -1, ".");
+
+    function Scramble() {
+        //TODO;
     }
-
-    function addHeader(text) {
-        var e = document.createElement("div");
-        e.style.cssFloat = "clear";
-        var header = document.createElement("h3");
-        header.innerHTML = text;
-        buttons.appendChild(e);
-        buttons.appendChild(header);
-        buttons.appendChild(e);
-    }
-
-    addHeader("Single Edge Rotations");
-    addButton("U", () => cube.U());
-    addButton("U'", () => cube.Ui());
-    addButton("L", () => cube.L());
-    addButton("L'", () => cube.Li());
-    addButton("F", () => cube.F());
-    addButton("F'", () => cube.Fi());
-    addButton("R", () => cube.R());
-    addButton("R'", () => cube.Ri());
-    addButton("B", () => cube.B());
-    addButton("B'", () => cube.Bi());
-    addButton("D", () => cube.D());
-    addButton("D'", () => cube.Di());
-
-    addHeader("Full Cube Rotations");
-    addButton("X", () => cube.X());
-    addButton("X'", () => cube.Xi());
-    addButton("Y", () => cube.Y());
-    addButton("Y'", () => cube.Yi());
-    addButton("Z", () => cube.Z());
-    addButton("Z'", () => cube.Zi());
+    buttonGrid.AddButton("", () => Scramble(), 191, "/");
 };
