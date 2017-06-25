@@ -37,6 +37,9 @@ function CubeRenderer2d() {
         createFace(215, 110, 3);
         createFace(320, 110, 4);
         createFace(110, 215, 5);
+
+        //Solved indicator
+        cubelets.push( new Cubelet( 5, 5, () => cube.IsSolved() ? "#00FF00" : "#FF0000" ))
     }
 
     this.UpdateCubelets = function () {
