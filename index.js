@@ -49,7 +49,6 @@ window.onload = function () {
     var renderer3d = new CubeRenderer3d();
     var cube = new Cube();
 
-    renderer2d.Initialize(cube);
     renderer3d.Initialize(cube);
 
     var buttonGrid = new ButtonGrid(() => {
@@ -91,33 +90,42 @@ window.onload = function () {
     buttonGrid.AddButton("X'", () => cube.Xi(), 78, "N");
     buttonGrid.AddButton("r'", () => cube.ri(), 77, "M");
     buttonGrid.AddButton("", () => { }, -1, ",");
-    buttonGrid.AddButton("", () => { }, -1, ".");
+
+    function Toggle2d() {
+        if (renderer2d.IsInitialized()) {
+            renderer2d.Reset();
+        }
+        else {
+            renderer2d.Initialize(cube);
+        }
+    }
 
     function Scramble() {
         var moves = []
-        moves.push( () => cube.B() );
-        moves.push( () => cube.Bi() );
-        moves.push( () => cube.U() );
-        moves.push( () => cube.Ui() );
-        moves.push( () => cube.R() );
-        moves.push( () => cube.Ri() );
-        moves.push( () => cube.L() );
-        moves.push( () => cube.Li() );
-        moves.push( () => cube.D() );
-        moves.push( () => cube.Di() );
-        moves.push( () => cube.F() );
-        moves.push( () => cube.Fi() );
+        moves.push(() => cube.B());
+        moves.push(() => cube.Bi());
+        moves.push(() => cube.U());
+        moves.push(() => cube.Ui());
+        moves.push(() => cube.R());
+        moves.push(() => cube.Ri());
+        moves.push(() => cube.L());
+        moves.push(() => cube.Li());
+        moves.push(() => cube.D());
+        moves.push(() => cube.Di());
+        moves.push(() => cube.F());
+        moves.push(() => cube.Fi());
 
         var count = 40;
-        function PickMove()
-        {
+        function PickMove() {
             moves[Math.floor(Math.random() * moves.length)]();
             renderer2d.UpdateCubelets();
             renderer3d.UpdateCubelets();
-            if( --count >= 0 )
-                setTimeout( PickMove, 50 );
+            if (--count >= 0)
+                setTimeout(PickMove, 50);
         }
         PickMove();
     }
+
+    buttonGrid.AddButton("🔧", () => Toggle2d(), 190, ".");
     buttonGrid.AddButton("🎲", () => Scramble(), 191, "/");
 };
