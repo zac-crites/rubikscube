@@ -14,12 +14,6 @@ function Cube() {
             this.Rotation = this.Rotation + i % 4;
         }
 
-        this.FlipVertical = function () {
-            this.Replace(0, this.Replace(6, this.Get(0)));
-            this.Replace(1, this.Replace(5, this.Get(1)));
-            this.Replace(2, this.Replace(4, this.Get(2)));
-        }
-
         this.Replace = function (i, value) {
             var tmp = this.Get(i);
             this.Cubelets[(i + (this.Rotation * 2)) % 8] = value;
@@ -59,9 +53,9 @@ function Cube() {
         this.Faces[0] = this.Faces[2];
         this.Faces[2] = this.Faces[5];
         this.Faces[5] = this.Faces[4];
-        this.Faces[5].FlipVertical();
+        this.Faces[5].Rotate(2);
         this.Faces[4] = tmp;
-        tmp.FlipVertical();
+        this.Faces[4].Rotate(2);
     }
 
     this.Xi = function () {
