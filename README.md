@@ -1,1 +1,1 @@
-rubikscube
+ [Rubik's Cube Simulator](https://zac-crites.github.io/rubikscube/)
