@@ -1,8 +1,11 @@
 window.onload = function () {
-    var renderer = new CubeRenderer2d();
+
+    var renderer2d = new CubeRenderer2d();
+    var renderer3d = new CubeRenderer3d();
     var cube = new Cube();
 
-    renderer.Initialize(cube);
+    renderer2d.Initialize(cube);
+    renderer3d.Initialize(cube);
 
     var buttons = document.getElementById("buttons");
 
@@ -11,18 +14,19 @@ window.onload = function () {
         button.innerHTML = text;
         button.onclick = function () {
             cubecommand();
-            renderer.UpdateCubelets();
+            renderer2d.UpdateCubelets();
+            renderer3d.UpdateCubelets();
         }
         buttons.appendChild(button);
     }
 
-    function addHeader( text ) {
+    function addHeader(text) {
         var e = document.createElement("div");
         e.style.cssFloat = "clear";
         var header = document.createElement("h3");
         header.innerHTML = text;
         buttons.appendChild(e);
-        buttons.appendChild( header );
+        buttons.appendChild(header);
         buttons.appendChild(e);
     }
 
