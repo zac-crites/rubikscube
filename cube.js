@@ -92,7 +92,7 @@ function Cube() {
     this.Yi = function () {
         triple(() => this.Y());
     }
-    
+
     //Moves - Single face rotations
     this.U = function () {
         this.Faces[0].Rotate(3);
@@ -113,5 +113,45 @@ function Cube() {
 
     this.Fi = function () {
         triple(() => this.F());
+    }
+
+    this.L = function () {
+        this.Z();
+        this.U();
+        this.Zi();
+    }
+
+    this.Li = function () {
+        triple(() => this.L());
+    }
+
+    this.R = function () {
+        this.Zi();
+        this.U();
+        this.Z();
+    }
+
+    this.Ri = function () {
+        triple(() => this.R());
+    }
+
+    this.B = function () {
+        this.Xi();
+        this.U();
+        this.X();
+    }
+
+    this.Bi = function () {
+        triple(() => this.B());
+    }
+
+    this.D = function () {
+        this.X();
+        this.F();
+        this.Xi();
+    }
+
+    this.Di = function () {
+        triple(() => this.D())
     }
 }

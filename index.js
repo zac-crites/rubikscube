@@ -29,8 +29,16 @@ window.onload = function () {
     addHeader("Single Edge Rotations");
     addButton("U", () => cube.U());
     addButton("U'", () => cube.Ui());
+    addButton("L", () => cube.L());
+    addButton("L'", () => cube.Li());
     addButton("F", () => cube.F());
     addButton("F'", () => cube.Fi());
+    addButton("R", () => cube.R());
+    addButton("R'", () => cube.Ri());
+    addButton("B", () => cube.B());
+    addButton("B'", () => cube.Bi());
+    addButton("D", () => cube.D());
+    addButton("D'", () => cube.Di());
 
     addHeader("Full Cube Rotations");
     addButton("X", () => cube.X());
