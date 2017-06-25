@@ -20,15 +20,15 @@ function Cube() {
             return tmp;
         }
 
-        this.IsSolved = function() {
-            return !this.Cubelets.some( ( n ) => n != this.Center );
+        this.IsSolved = function () {
+            return !this.Cubelets.some((n) => n != this.Center);
         }
     }
 
     this.Faces = [new Face(0), new Face(1), new Face(2), new Face(3), new Face(4), new Face(5)];
 
-    this.IsSolved = function() {
-        return !this.Faces.some( ( f ) => !f.IsSolved() );
+    this.IsSolved = function () {
+        return !this.Faces.some((f) => !f.IsSolved());
     }
 
     //Utils
@@ -37,7 +37,7 @@ function Cube() {
     }
 
     function triple(fn) {
-        for ( var i = 0; i < 3; i++)
+        for (var i = 0; i < 3; i++)
             fn();
     }
 
@@ -87,6 +87,21 @@ function Cube() {
 
     this.Zi = function () {
         triple(() => this.Z());
+    }
+
+    this.Y = function () {
+        this.Faces[0].Rotate(3);
+        this.Faces[5].Rotate(1);
+
+        var tmp = this.Faces[1];
+        this.Faces[1] = this.Faces[2];
+        this.Faces[2] = this.Faces[3];
+        this.Faces[3] = this.Faces[4];
+        this.Faces[4] = tmp;
+    }
+
+    this.Yi = function () {
+        triple(() => this.Y());
     }
 
     this.F = function () {
