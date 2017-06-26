@@ -129,4 +129,28 @@ window.onload = function () {
 
     buttonGrid.AddButton("🔧", () => Toggle2d(), 190, ".");
     buttonGrid.AddButton("🎲", () => Scramble(), 191, "/");
+
+    buttonGrid.NewRow();
+
+    buttonGrid.AddButton("aZ", () => renderer3d.Z(), -1, "");
+    buttonGrid.AddButton("aZi", () => renderer3d.Zi(), -1, "");
+    buttonGrid.AddButton("aY", () => renderer3d.Y(), -1, "");
+    buttonGrid.AddButton("aYi", () => renderer3d.Yi(), -1, "");
+    buttonGrid.AddButton("aX", () => renderer3d.X(), -1, "");
+    buttonGrid.AddButton("aXi", () => renderer3d.Xi(), -1, "");
+    buttonGrid.AddButton("aU", () => renderer3d.U(), -1, "");
+    buttonGrid.AddButton("aUi", () => renderer3d.Ui(), -1, "");
+    buttonGrid.AddButton("aR", () => renderer3d.R(), -1, "");
+    buttonGrid.AddButton("aRi", () => renderer3d.Ri(), -1, "");
+
+    buttonGrid.NewRow();
+
+    buttonGrid.AddButton("aF", () => renderer3d.F(), -1, "");
+    buttonGrid.AddButton("aFi", () => renderer3d.Fi(), -1, "");
+    buttonGrid.AddButton("aL", () => renderer3d.L(), -1, "");
+    buttonGrid.AddButton("aLi", () => renderer3d.Li(), -1, "");
+    buttonGrid.AddButton("aB", () => renderer3d.B(), -1, "");
+    buttonGrid.AddButton("aBi", () => renderer3d.Bi(), -1, "");
+    buttonGrid.AddButton("aD", () => renderer3d.D(), -1, "");
+    buttonGrid.AddButton("aDi", () => renderer3d.Di(), -1, "");
 };
