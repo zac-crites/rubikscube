@@ -11,7 +11,7 @@ function Cube() {
         }
 
         this.Rotate = function (i) {
-            this.Rotation = this.Rotation + i % 4;
+            this.Rotation = (this.Rotation + i) % 4;
         }
 
         this.Replace = function (i, value) {
