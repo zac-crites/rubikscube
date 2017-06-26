@@ -187,6 +187,10 @@ function CubeRenderer3d() {
         controls.reset();
     }
 
+    this.IsAnimating = function () {
+        return animationQueue.length > 0;
+    }
+
     // Move animations
     function QueueRotationAnimation(move, rotationAxis) {
         var counter = animationSpeed;

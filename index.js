@@ -102,29 +102,25 @@ window.onload = function () {
     }
 
     function Scramble() {
-        var moves = []
-        moves.push(() => cube.B());
-        moves.push(() => cube.Bi());
-        moves.push(() => cube.U());
-        moves.push(() => cube.Ui());
-        moves.push(() => cube.R());
-        moves.push(() => cube.Ri());
-        moves.push(() => cube.L());
-        moves.push(() => cube.Li());
-        moves.push(() => cube.D());
-        moves.push(() => cube.Di());
-        moves.push(() => cube.F());
-        moves.push(() => cube.Fi());
+        if( renderer3d.IsAnimating() )
+            return;
 
-        var count = 40;
-        function PickMove() {
+        var moves = []
+        moves.push(() => renderer3d.B());
+        moves.push(() => renderer3d.Bi());
+        moves.push(() => renderer3d.U());
+        moves.push(() => renderer3d.Ui());
+        moves.push(() => renderer3d.R());
+        moves.push(() => renderer3d.Ri());
+        moves.push(() => renderer3d.L());
+        moves.push(() => renderer3d.Li());
+        moves.push(() => renderer3d.D());
+        moves.push(() => renderer3d.Di());
+        moves.push(() => renderer3d.F());
+        moves.push(() => renderer3d.Fi());
+
+        for( var i = 0; i < 40; i ++ )
             moves[Math.floor(Math.random() * moves.length)]();
-            renderer2d.UpdateCubelets();
-            renderer3d.UpdateCubelets();
-            if (--count >= 0)
-                setTimeout(PickMove, 50);
-        }
-        PickMove();
     }
 
     buttonGrid.AddButton("🔧", () => Toggle2d(), 190, ".");
