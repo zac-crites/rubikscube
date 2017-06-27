@@ -1,6 +1,6 @@
 function CubeRenderer3d() {
-    var rendererWidth = 800;
-    var rendererHeight = 600;
+    var rendererWidth = 400;
+    var rendererHeight = 400;
 
     var animationSpeed = 10;
     var animationQueue = [];
@@ -11,12 +11,12 @@ function CubeRenderer3d() {
     renderer.setSize(rendererWidth, rendererHeight);
 
     var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera(55, rendererWidth / rendererHeight, 0.1, 1000);
-    camera.position.y = 5;
+    var camera = new THREE.PerspectiveCamera(45, rendererWidth / rendererHeight, 0.1, 1000);
+    camera.position.y = 7.5;
     camera.position.z = 8;
 
     var controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.minDistance = controls.maxDistance = camera.position.z;
+    controls.minDistance = controls.maxDistance = 7;
     controls.enablePan = false;
     controls.reset();
 

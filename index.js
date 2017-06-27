@@ -46,14 +46,12 @@ function ButtonGrid(buttonPressed) {
 
 window.onload = function () {
 
-    var renderer2d = new CubeRenderer2d();
     var renderer3d = new CubeRenderer3d();
     var cube = new Cube();
 
     renderer3d.Initialize(cube);
 
     var buttonGrid = new ButtonGrid(() => {
-        renderer2d.UpdateCubelets();
         renderer3d.UpdateCubelets();
     });
 
@@ -92,15 +90,6 @@ window.onload = function () {
     buttonGrid.AddButton("r'", () => cube.ri(), 77, "M");
     buttonGrid.AddButton("", () => { }, -1, ",");
 
-    function Toggle2d() {
-        if (renderer2d.IsInitialized()) {
-            renderer2d.Reset();
-        }
-        else {
-            renderer2d.Initialize(cube);
-        }
-    }
-
     function Scramble() {
         if( renderer3d.IsAnimating() )
             return;
@@ -123,7 +112,7 @@ window.onload = function () {
             moves[Math.floor(Math.random() * moves.length)]();
     }
 
-    buttonGrid.AddButton("🔧", () => Toggle2d(), 190, ".");
+    buttonGrid.AddButton("", () => {}, 190, ".");
     buttonGrid.AddButton("🎲", () => Scramble(), 191, "/");
 
     buttonGrid.NewRow();
