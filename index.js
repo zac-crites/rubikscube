@@ -61,17 +61,17 @@ window.onload = function () {
     buttonGrid.AddButton("Z'", () => renderer3d.Zi(), 81, "Q");
     buttonGrid.AddButton("B", () => renderer3d.B(), 87, "W");
     buttonGrid.AddButton("L'", () => renderer3d.Li(), 69, "E");
-    buttonGrid.AddButton("I'", () => cube.Ii(), 82, "R");
+    buttonGrid.AddButton("I'", () => renderer3d.Ii(), 82, "R");
     buttonGrid.AddButton("", () => { }, 84, "T");
     buttonGrid.AddButton("X", () => renderer3d.X(), 89, "Y");
-    buttonGrid.AddButton("r", () => cube.r(), 85, "U");
+    buttonGrid.AddButton("r", () => renderer3d.r(), 85, "U");
     buttonGrid.AddButton("R", () => renderer3d.R(), 73, "I");
     buttonGrid.AddButton("B'", () => renderer3d.Bi(), 79, "O");
     buttonGrid.AddButton("Z", () => renderer3d.Z(), 80, "P");
 
     buttonGrid.NewRow();
 
-    buttonGrid.AddButton("Y", () => renderer3d.Y(), 65, "A");
+    buttonGrid.AddButton("Y'", () => renderer3d.Yi(), 65, "A");
     buttonGrid.AddButton("D", () => renderer3d.D(), 83, "S");
     buttonGrid.AddButton("L", () => renderer3d.L(), 68, "D");
     buttonGrid.AddButton("U'", () => renderer3d.Ui(), 70, "F");
@@ -80,17 +80,17 @@ window.onload = function () {
     buttonGrid.AddButton("U", () => renderer3d.U(), 74, "J");
     buttonGrid.AddButton("R'", () => renderer3d.Ri(), 75, "K");
     buttonGrid.AddButton("D'", () => renderer3d.Di(), 76, "L");
-    buttonGrid.AddButton("Y'", () => renderer3d.Yi(), 186, ";");
+    buttonGrid.AddButton("Y", () => renderer3d.Y(), 186, ";");
 
     buttonGrid.NewRow();
 
     buttonGrid.AddButton("📹", () => renderer3d.ResetCamera(), 90, "Z", "Reset camera");
     buttonGrid.AddButton("", () => { }, -1, "X");
     buttonGrid.AddButton("", () => { }, -1, "C");
-    buttonGrid.AddButton("I", () => cube.I(), 86, "V");
+    buttonGrid.AddButton("I", () => renderer3d.I(), 86, "V");
     buttonGrid.AddButton("", () => { }, -1, "B");
-    buttonGrid.AddButton("X'", () => cube.Xi(), 78, "N");
-    buttonGrid.AddButton("r'", () => cube.ri(), 77, "M");
+    buttonGrid.AddButton("X'", () => renderer3d.Xi(), 78, "N");
+    buttonGrid.AddButton("r'", () => renderer3d.ri(), 77, "M");
     buttonGrid.AddButton("", () => { }, -1, ",");
 
     function Scramble() {

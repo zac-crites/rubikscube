@@ -2,7 +2,7 @@ function CubeRenderer3d() {
     var rendererWidth = 400;
     var rendererHeight = 400;
 
-    var animationSpeed = 10;
+    var animationSpeed = 11;
     var animationQueue = [];
 
     var cube;
@@ -47,7 +47,7 @@ function CubeRenderer3d() {
 
         var marginRight = right.clone().normalize().multiplyScalar(margin);
         var marginDown = down.clone().normalize().multiplyScalar(margin);
-        
+
         var outlineRight = marginRight.clone().normalize().multiplyScalar(outline);
         var outlineDown = marginDown.clone().normalize().multiplyScalar(outline);
 
@@ -122,7 +122,6 @@ function CubeRenderer3d() {
         CreateFace(cube, 4, new THREE.Vector3(1.5, 1.5, -1.5), new THREE.Vector3(-3, 0, 0), new THREE.Vector3(0, -3, 0), margin, outline, false);
         CreateFace(cube, 5, new THREE.Vector3(-1.5, -1.5, 1.5), new THREE.Vector3(3, 0, 0), new THREE.Vector3(0, 0, -3), margin, outline);
 
-
         function animate() {
             requestAnimationFrame(animate);
 
@@ -153,7 +152,7 @@ function CubeRenderer3d() {
 
         animationQueue.push(function () {
 
-            if (counter === animationSpeed) {
+            if (counter-- === animationSpeed) {
                 move();
                 updateCubeletMats.forEach(fn => fn());
             }
@@ -166,7 +165,7 @@ function CubeRenderer3d() {
                 mesh.rotation.setFromRotationMatrix(mesh.matrix);
             });
 
-            if (counter-- <= 1) {
+            if (counter <= 0) {
                 allMeshes.forEach(function (mesh) {
                     mesh.matrix = new THREE.Matrix4();
                     mesh.rotation.setFromRotationMatrix(mesh.matrix);
@@ -180,12 +179,11 @@ function CubeRenderer3d() {
         var counter = animationSpeed;
 
         animationQueue.push(function () {
-            if (counter === animationSpeed) {
+            if (counter-- === animationSpeed) {
                 allMeshes.forEach(function (mesh) {
                     mesh.matrix = baseRotation;
                     mesh.rotation.setFromRotationMatrix(mesh.matrix);
                 });
-
                 startMoves();
                 updateCubeletMats.forEach(fn => fn());
             }
@@ -198,7 +196,7 @@ function CubeRenderer3d() {
                 mesh.rotation.setFromRotationMatrix(mesh.matrix);
             });
 
-            if (counter-- <= 1) {
+            if (counter <= 0) {
                 allMeshes.forEach(function (mesh) {
                     mesh.matrix = new THREE.Matrix4();
                     mesh.rotation.setFromRotationMatrix(mesh.matrix);
@@ -206,6 +204,49 @@ function CubeRenderer3d() {
                 animationQueue.shift();
                 endMoves();
                 updateCubeletMats.forEach(fn => fn());
+            }
+        });
+    }
+
+    function QueueDoubleLayerTurn(baseRotation, rotationAxis, startMoves, endMoves) {
+        var counter = animationSpeed;
+
+        function resetTop() {
+            topMeshes.forEach(function (mesh) {
+                mesh.matrix = baseRotation;
+                mesh.rotation.setFromRotationMatrix(mesh.matrix);
+            });
+        }
+
+        animationQueue.push(function () {
+
+            if (counter-- === animationSpeed) {
+                allMeshes.forEach(function (mesh) {
+                    mesh.matrix = baseRotation;
+                    mesh.rotation.setFromRotationMatrix(mesh.matrix);
+                });
+
+                startMoves();
+                updateCubeletMats.forEach(fn => fn());
+            }
+
+            allMeshes.forEach(function (mesh) {
+                var rotMatrix = new THREE.Matrix4();
+                rotMatrix.makeRotationAxis(rotationAxis.normalize(), (counter / animationSpeed) * Math.PI / 2);
+                rotMatrix.multiply(baseRotation);
+                mesh.matrix = rotMatrix;
+                mesh.rotation.setFromRotationMatrix(mesh.matrix);
+            });
+            resetTop();
+
+            if (counter <= 0) {
+                allMeshes.forEach(function (mesh) {
+                    mesh.matrix = new THREE.Matrix4();
+                    mesh.rotation.setFromRotationMatrix(mesh.matrix);
+                });
+                endMoves();
+                updateCubeletMats.forEach(fn => fn());
+                animationQueue.shift();
             }
         });
     }
@@ -235,6 +276,7 @@ function CubeRenderer3d() {
         QueueRotationAnimation(() => cube.Xi(), new THREE.Vector3(-1, 0, 0));
     }
 
+    // Moves - Single face turns
     this.U = function () {
         var baseRotation = new THREE.Matrix4();
         QueueFaceAnimation(baseRotation, new THREE.Vector3(0, 1, 0), () => cube.U(), () => { });
@@ -303,5 +345,40 @@ function CubeRenderer3d() {
         var baseRotation = new THREE.Matrix4();
         baseRotation.makeRotationX(Math.PI);
         QueueFaceAnimation(baseRotation, new THREE.Vector3(0, 1, 0), () => { cube.Xi(); cube.Xi(); cube.Ui(); }, () => { cube.X(); cube.X(); });
+    }
+
+    //Moves - Double layer turns
+    this.d = function () {
+        var baseRotation = new THREE.Matrix4();
+        QueueDoubleLayerTurn(baseRotation, new THREE.Vector3(0, -1, 0), () => { cube.U(); cube.Yi(); }, () => { });
+    }
+
+    this.di = function () {
+        var baseRotation = new THREE.Matrix4();
+        QueueDoubleLayerTurn(baseRotation, new THREE.Vector3(0, 1, 0), () => { cube.Ui(); cube.Y(); }, () => { });
+    }
+
+    this.r = function () {
+        var baseRotation = new THREE.Matrix4();
+        baseRotation.makeRotationZ(Math.PI / 2);
+        QueueDoubleLayerTurn(baseRotation, new THREE.Vector3(1, 0, 0), () => { cube.Z(); cube.U(); cube.Yi(); }, () => { cube.Zi(); });
+    }
+
+    this.ri = function () {
+        var baseRotation = new THREE.Matrix4();
+        baseRotation.makeRotationZ(Math.PI / 2);
+        QueueDoubleLayerTurn(baseRotation, new THREE.Vector3(-1, 0, 0), () => { cube.Z(); cube.Ui(); cube.Y(); }, () => { cube.Zi(); });
+    }
+
+    this.I = function () {
+        var baseRotation = new THREE.Matrix4();
+        baseRotation.makeRotationZ(- Math.PI / 2);
+        QueueDoubleLayerTurn(baseRotation, new THREE.Vector3(-1, 0, 0), () => { cube.Zi(); cube.U(); cube.Yi(); }, () => { cube.Z(); });
+    }
+
+    this.Ii = function () {
+        var baseRotation = new THREE.Matrix4();
+        baseRotation.makeRotationZ(- Math.PI / 2);
+        QueueDoubleLayerTurn(baseRotation, new THREE.Vector3(1, 0, 0), () => { cube.Zi(); cube.Ui(); cube.Y(); }, () => { cube.Z(); });
     }
 }
