@@ -1,21 +1,21 @@
-function CubeRenderer3d() {
+function CubeRenderer3d(cube) {
 
-    var animationSpeed = 11;
-    var animationQueue = [];
+    var _updateCubeletMats = [];
+    var _meshes = [];
+    var _topLayerMeshes = [];
+    var _cube = cube;
+    var _animationSpeed = 11;
+    var _animationQueue = [];
 
-    var cube;
-
-    var _scene;
-
-    var CreateScene = () => {
+    // Create the scene
+    var _scene = (() => {
         var rendererWidth = 400;
         var rendererHeight = 400;
-
         var renderer = new THREE.WebGLRenderer();
-        renderer.setSize(rendererWidth, rendererHeight);
-
         var scene = new THREE.Scene();
         var camera = new THREE.PerspectiveCamera(45, rendererWidth / rendererHeight, 0.1, 1000);
+
+        renderer.setSize(rendererWidth, rendererHeight);
         camera.position.y = 7.5;
         camera.position.z = 8;
 
@@ -24,13 +24,12 @@ function CubeRenderer3d() {
         controls.enablePan = false;
         controls.reset();
 
-        var container = document.getElementById("cube3d");
-        container.appendChild(renderer.domElement);
+        document.getElementById("cube3d").appendChild(renderer.domElement);
 
         function DrawFrame() {
             requestAnimationFrame(DrawFrame);
-            if (animationQueue.length > 0)
-                animationQueue[0]();
+            if (_animationQueue.length > 0)
+                _animationQueue[0]();
             renderer.render(scene, camera);
         }
         DrawFrame();
@@ -38,199 +37,187 @@ function CubeRenderer3d() {
         this.ResetCamera = () => controls.reset();
 
         return scene;
-    }
+    })();
 
-    var outlineMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.BackSide });
+    // Build the cube mesh
+    (() => {
+        var outlineMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.BackSide });
 
-    var materials = []
-    materials.push(new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide }));
-    materials.push(new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide }));
-    materials.push(new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide }));
-    materials.push(new THREE.MeshBasicMaterial({ color: 0xffff00, side: THREE.DoubleSide }));
-    materials.push(new THREE.MeshBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide }));
-    materials.push(new THREE.MeshBasicMaterial({ color: 0xffaa00, side: THREE.DoubleSide }));
+        var materials = []
+        materials.push(new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide }));
+        materials.push(new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide }));
+        materials.push(new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide }));
+        materials.push(new THREE.MeshBasicMaterial({ color: 0xffff00, side: THREE.DoubleSide }));
+        materials.push(new THREE.MeshBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide }));
+        materials.push(new THREE.MeshBasicMaterial({ color: 0xffaa00, side: THREE.DoubleSide }));
 
-    var updateCubeletMats = [];
-
-    var allMeshes = [];
-    var topMeshes = [];
-
-    function CreateFace(cube, faceIndex, facetopleft, right, down, margin, outline, addTop) {
-
-        right.divideScalar(3);
-        down.divideScalar(3);
-
-        var back = right.clone().cross(down).normalize().multiplyScalar(.001);
-
-        var marginRight = right.clone().normalize().multiplyScalar(margin);
-        var marginDown = down.clone().normalize().multiplyScalar(margin);
-
-        var outlineRight = marginRight.clone().normalize().multiplyScalar(outline);
-        var outlineDown = marginDown.clone().normalize().multiplyScalar(outline);
-
-        var width = right.clone().sub(marginRight).sub(marginRight);
-        var height = down.clone().sub(marginDown).sub(marginDown);
-
-        function CreateCubelet(topleft, x, y, getMaterial) {
-
-            topleft.add(right.clone().multiplyScalar(x)).add(down.clone().multiplyScalar(y)).add(marginRight).add(marginDown);
-            var topright = topleft.clone().add(width);
-            var bottomleft = topleft.clone().add(height);
-            var bottomright = topleft.clone().add(width).add(height);
-
-            var stickerGeometry = new THREE.Geometry();
-            stickerGeometry.vertices.push(topleft);
-            stickerGeometry.vertices.push(topright);
-            stickerGeometry.vertices.push(bottomright);
-            stickerGeometry.vertices.push(bottomleft);
-            stickerGeometry.faces.push(new THREE.Face3(0, 1, 2));
-            stickerGeometry.faces.push(new THREE.Face3(0, 2, 3));
-
-            var outlineGeometry = new THREE.Geometry();
-            outlineGeometry.vertices.push(topleft.clone().sub(outlineDown).sub(outlineRight).add(back));
-            outlineGeometry.vertices.push(topright.clone().sub(outlineDown).add(outlineRight).add(back));
-            outlineGeometry.vertices.push(bottomright.clone().add(outlineDown).add(outlineRight).add(back));
-            outlineGeometry.vertices.push(bottomleft.clone().add(outlineDown).sub(outlineRight).add(back));
-            outlineGeometry.faces.push(new THREE.Face3(0, 1, 2));
-            outlineGeometry.faces.push(new THREE.Face3(0, 2, 3));
-
-            var stickerMesh = new THREE.Mesh(stickerGeometry, getMaterial());
-            var outlineMesh = new THREE.Mesh(outlineGeometry, outlineMaterial);
-            _scene.add(stickerMesh);
-            _scene.add(outlineMesh);
-
-            allMeshes.push(stickerMesh);
-            allMeshes.push(outlineMesh);
-            if (faceIndex === 0 || (faceIndex < 5 && y === 0)) {
-                topMeshes.push(stickerMesh);
-                topMeshes.push(outlineMesh);
-            }
-
-            updateCubeletMats.push(() => stickerMesh.material = getMaterial());
-        }
-
-        CreateCubelet(facetopleft.clone(), 0, 0, () => materials[cube.Faces[faceIndex].Get(0)]);
-        CreateCubelet(facetopleft.clone(), 1, 0, () => materials[cube.Faces[faceIndex].Get(1)]);
-        CreateCubelet(facetopleft.clone(), 2, 0, () => materials[cube.Faces[faceIndex].Get(2)]);
-        CreateCubelet(facetopleft.clone(), 0, 1, () => materials[cube.Faces[faceIndex].Get(7)]);
-        CreateCubelet(facetopleft.clone(), 1, 1, () => materials[cube.Faces[faceIndex].Center]);
-        CreateCubelet(facetopleft.clone(), 2, 1, () => materials[cube.Faces[faceIndex].Get(3)]);
-        CreateCubelet(facetopleft.clone(), 0, 2, () => materials[cube.Faces[faceIndex].Get(6)]);
-        CreateCubelet(facetopleft.clone(), 1, 2, () => materials[cube.Faces[faceIndex].Get(5)]);
-        CreateCubelet(facetopleft.clone(), 2, 2, () => materials[cube.Faces[faceIndex].Get(4)]);
-    }
-
-    this.Initialize = function (c) {
-        cube = c;
         var margin = .08;
         var outline = .02;
 
+        CreateFace(0, new THREE.Vector3(-1.5, 1.5, -1.5), new THREE.Vector3(3, 0, 0), new THREE.Vector3(0, 0, 3), margin, outline);
+        CreateFace(1, new THREE.Vector3(-1.5, 1.5, -1.5), new THREE.Vector3(0, 0, 3), new THREE.Vector3(0, -3, 0), margin, outline);
+        CreateFace(2, new THREE.Vector3(-1.5, 1.5, 1.5), new THREE.Vector3(3, 0, 0), new THREE.Vector3(0, -3, 0), margin, outline);
+        CreateFace(3, new THREE.Vector3(1.5, 1.5, 1.5), new THREE.Vector3(0, 0, -3), new THREE.Vector3(0, -3, 0), margin, outline);
+        CreateFace(4, new THREE.Vector3(1.5, 1.5, -1.5), new THREE.Vector3(-3, 0, 0), new THREE.Vector3(0, -3, 0), margin, outline);
+        CreateFace(5, new THREE.Vector3(-1.5, -1.5, 1.5), new THREE.Vector3(3, 0, 0), new THREE.Vector3(0, 0, -3), margin, outline);
 
-        _scene = CreateScene();
+        function CreateFace(faceIndex, facetopleft, right, down, margin, outline, addTop) {
 
-        CreateFace(cube, 0, new THREE.Vector3(-1.5, 1.5, -1.5), new THREE.Vector3(3, 0, 0), new THREE.Vector3(0, 0, 3), margin, outline);
-        CreateFace(cube, 1, new THREE.Vector3(-1.5, 1.5, -1.5), new THREE.Vector3(0, 0, 3), new THREE.Vector3(0, -3, 0), margin, outline);
-        CreateFace(cube, 2, new THREE.Vector3(-1.5, 1.5, 1.5), new THREE.Vector3(3, 0, 0), new THREE.Vector3(0, -3, 0), margin, outline);
-        CreateFace(cube, 3, new THREE.Vector3(1.5, 1.5, 1.5), new THREE.Vector3(0, 0, -3), new THREE.Vector3(0, -3, 0), margin, outline);
-        CreateFace(cube, 4, new THREE.Vector3(1.5, 1.5, -1.5), new THREE.Vector3(-3, 0, 0), new THREE.Vector3(0, -3, 0), margin, outline);
-        CreateFace(cube, 5, new THREE.Vector3(-1.5, -1.5, 1.5), new THREE.Vector3(3, 0, 0), new THREE.Vector3(0, 0, -3), margin, outline);
-    }
+            right.divideScalar(3);
+            down.divideScalar(3);
 
-    this.UpdateCubelets = function () {
-        updateCubeletMats.forEach(fn => fn());
-    }
-    
+            var back = right.clone().cross(down).normalize().multiplyScalar(.001);
+
+            var marginRight = right.clone().normalize().multiplyScalar(margin);
+            var marginDown = down.clone().normalize().multiplyScalar(margin);
+
+            var outlineRight = marginRight.clone().normalize().multiplyScalar(outline);
+            var outlineDown = marginDown.clone().normalize().multiplyScalar(outline);
+
+            var width = right.clone().sub(marginRight).sub(marginRight);
+            var height = down.clone().sub(marginDown).sub(marginDown);
+
+            CreateCubelet(facetopleft.clone(), 0, 0, () => materials[_cube.Faces[faceIndex].Get(0)]);
+            CreateCubelet(facetopleft.clone(), 1, 0, () => materials[_cube.Faces[faceIndex].Get(1)]);
+            CreateCubelet(facetopleft.clone(), 2, 0, () => materials[_cube.Faces[faceIndex].Get(2)]);
+            CreateCubelet(facetopleft.clone(), 0, 1, () => materials[_cube.Faces[faceIndex].Get(7)]);
+            CreateCubelet(facetopleft.clone(), 1, 1, () => materials[_cube.Faces[faceIndex].Center]);
+            CreateCubelet(facetopleft.clone(), 2, 1, () => materials[_cube.Faces[faceIndex].Get(3)]);
+            CreateCubelet(facetopleft.clone(), 0, 2, () => materials[_cube.Faces[faceIndex].Get(6)]);
+            CreateCubelet(facetopleft.clone(), 1, 2, () => materials[_cube.Faces[faceIndex].Get(5)]);
+            CreateCubelet(facetopleft.clone(), 2, 2, () => materials[_cube.Faces[faceIndex].Get(4)]);
+
+            function CreateCubelet(topleft, x, y, getMaterial) {
+
+                topleft.add(right.clone().multiplyScalar(x)).add(down.clone().multiplyScalar(y)).add(marginRight).add(marginDown);
+                var topright = topleft.clone().add(width);
+                var bottomleft = topleft.clone().add(height);
+                var bottomright = topleft.clone().add(width).add(height);
+
+                var stickerGeometry = new THREE.Geometry();
+                stickerGeometry.vertices.push(topleft);
+                stickerGeometry.vertices.push(topright);
+                stickerGeometry.vertices.push(bottomright);
+                stickerGeometry.vertices.push(bottomleft);
+                stickerGeometry.faces.push(new THREE.Face3(0, 1, 2));
+                stickerGeometry.faces.push(new THREE.Face3(0, 2, 3));
+
+                var outlineGeometry = new THREE.Geometry();
+                outlineGeometry.vertices.push(topleft.clone().sub(outlineDown).sub(outlineRight).add(back));
+                outlineGeometry.vertices.push(topright.clone().sub(outlineDown).add(outlineRight).add(back));
+                outlineGeometry.vertices.push(bottomright.clone().add(outlineDown).add(outlineRight).add(back));
+                outlineGeometry.vertices.push(bottomleft.clone().add(outlineDown).sub(outlineRight).add(back));
+                outlineGeometry.faces.push(new THREE.Face3(0, 1, 2));
+                outlineGeometry.faces.push(new THREE.Face3(0, 2, 3));
+
+                var stickerMesh = new THREE.Mesh(stickerGeometry, getMaterial());
+                var outlineMesh = new THREE.Mesh(outlineGeometry, outlineMaterial);
+                _scene.add(stickerMesh);
+                _scene.add(outlineMesh);
+
+                _meshes.push(stickerMesh);
+                _meshes.push(outlineMesh);
+                if (faceIndex === 0 || (faceIndex < 5 && y === 0)) {
+                    _topLayerMeshes.push(stickerMesh);
+                    _topLayerMeshes.push(outlineMesh);
+                }
+
+                _updateCubeletMats.push(() => stickerMesh.material = getMaterial());
+            }
+        }
+    })();
+
     this.IsAnimating = function () {
-        return animationQueue.length > 0;
+        return _animationQueue.length > 0;
     }
 
     // Move animations
     function QueueRotationAnimation(move, rotationAxis) {
-        var counter = animationSpeed;
+        var counter = _animationSpeed;
 
-        animationQueue.push(function () {
+        _animationQueue.push(function () {
 
-            if (counter-- === animationSpeed) {
+            if (counter-- === _animationSpeed) {
                 move();
-                updateCubeletMats.forEach(fn => fn());
+                _updateCubeletMats.forEach(fn => fn());
             }
 
-            allMeshes.forEach(function (mesh) {
+            _meshes.forEach(function (mesh) {
                 var rotMatrix = new THREE.Matrix4();
 
-                rotMatrix.makeRotationAxis(rotationAxis.normalize(), (counter / animationSpeed) * Math.PI / 2);
+                rotMatrix.makeRotationAxis(rotationAxis.normalize(), (counter / _animationSpeed) * Math.PI / 2);
                 mesh.matrix = rotMatrix;
                 mesh.rotation.setFromRotationMatrix(mesh.matrix);
             });
 
             if (counter <= 0) {
-                allMeshes.forEach(function (mesh) {
+                _meshes.forEach(function (mesh) {
                     mesh.matrix = new THREE.Matrix4();
                     mesh.rotation.setFromRotationMatrix(mesh.matrix);
                 });
-                animationQueue.shift();
+                _animationQueue.shift();
             }
         });
     }
 
     function QueueFaceAnimation(baseRotation, rotationAxis, startMoves, endMoves) {
-        var counter = animationSpeed;
+        var counter = _animationSpeed;
 
-        animationQueue.push(function () {
-            if (counter-- === animationSpeed) {
-                allMeshes.forEach(function (mesh) {
+        _animationQueue.push(function () {
+            if (counter-- === _animationSpeed) {
+                _meshes.forEach(function (mesh) {
                     mesh.matrix = baseRotation;
                     mesh.rotation.setFromRotationMatrix(mesh.matrix);
                 });
                 startMoves();
-                updateCubeletMats.forEach(fn => fn());
+                _updateCubeletMats.forEach(fn => fn());
             }
 
-            topMeshes.forEach(function (mesh) {
+            _topLayerMeshes.forEach(function (mesh) {
                 var rotMatrix = new THREE.Matrix4();
-                rotMatrix.makeRotationAxis(rotationAxis.normalize(), (counter / animationSpeed) * Math.PI / 2);
+                rotMatrix.makeRotationAxis(rotationAxis.normalize(), (counter / _animationSpeed) * Math.PI / 2);
                 rotMatrix.multiply(baseRotation);
                 mesh.matrix = rotMatrix;
                 mesh.rotation.setFromRotationMatrix(mesh.matrix);
             });
 
             if (counter <= 0) {
-                allMeshes.forEach(function (mesh) {
+                _meshes.forEach(function (mesh) {
                     mesh.matrix = new THREE.Matrix4();
                     mesh.rotation.setFromRotationMatrix(mesh.matrix);
                 });
-                animationQueue.shift();
+                _animationQueue.shift();
                 endMoves();
-                updateCubeletMats.forEach(fn => fn());
+                _updateCubeletMats.forEach(fn => fn());
             }
         });
     }
 
     function QueueDoubleLayerTurn(baseRotation, rotationAxis, startMoves, endMoves) {
-        var counter = animationSpeed;
+        var counter = _animationSpeed;
 
         function resetTop() {
-            topMeshes.forEach(function (mesh) {
+            _topLayerMeshes.forEach(function (mesh) {
                 mesh.matrix = baseRotation;
                 mesh.rotation.setFromRotationMatrix(mesh.matrix);
             });
         }
 
-        animationQueue.push(function () {
+        _animationQueue.push(function () {
 
-            if (counter-- === animationSpeed) {
-                allMeshes.forEach(function (mesh) {
+            if (counter-- === _animationSpeed) {
+                _meshes.forEach(function (mesh) {
                     mesh.matrix = baseRotation;
                     mesh.rotation.setFromRotationMatrix(mesh.matrix);
                 });
 
                 startMoves();
-                updateCubeletMats.forEach(fn => fn());
+                _updateCubeletMats.forEach(fn => fn());
             }
 
-            allMeshes.forEach(function (mesh) {
+            _meshes.forEach(function (mesh) {
                 var rotMatrix = new THREE.Matrix4();
-                rotMatrix.makeRotationAxis(rotationAxis.normalize(), (counter / animationSpeed) * Math.PI / 2);
+                rotMatrix.makeRotationAxis(rotationAxis.normalize(), (counter / _animationSpeed) * Math.PI / 2);
                 rotMatrix.multiply(baseRotation);
                 mesh.matrix = rotMatrix;
                 mesh.rotation.setFromRotationMatrix(mesh.matrix);
@@ -238,113 +225,113 @@ function CubeRenderer3d() {
             resetTop();
 
             if (counter <= 0) {
-                allMeshes.forEach(function (mesh) {
+                _meshes.forEach(function (mesh) {
                     mesh.matrix = new THREE.Matrix4();
                     mesh.rotation.setFromRotationMatrix(mesh.matrix);
                 });
                 endMoves();
-                updateCubeletMats.forEach(fn => fn());
-                animationQueue.shift();
+                _updateCubeletMats.forEach(fn => fn());
+                _animationQueue.shift();
             }
         });
     }
 
     // Moves - Full cube rotations
     this.Z = function () {
-        QueueRotationAnimation(() => cube.Z(), new THREE.Vector3(0, 0, 1));
+        QueueRotationAnimation(() => _cube.Z(), new THREE.Vector3(0, 0, 1));
     }
 
     this.Zi = function () {
-        QueueRotationAnimation(() => cube.Zi(), new THREE.Vector3(0, 0, -1));
+        QueueRotationAnimation(() => _cube.Zi(), new THREE.Vector3(0, 0, -1));
     }
 
     this.Y = function () {
-        QueueRotationAnimation(() => cube.Y(), new THREE.Vector3(0, 1, 0));
+        QueueRotationAnimation(() => _cube.Y(), new THREE.Vector3(0, 1, 0));
     }
 
     this.Yi = function () {
-        QueueRotationAnimation(() => cube.Yi(), new THREE.Vector3(0, -1, 0));
+        QueueRotationAnimation(() => _cube.Yi(), new THREE.Vector3(0, -1, 0));
     }
 
     this.X = function () {
-        QueueRotationAnimation(() => cube.X(), new THREE.Vector3(1, 0, 0));
+        QueueRotationAnimation(() => _cube.X(), new THREE.Vector3(1, 0, 0));
     }
 
     this.Xi = function () {
-        QueueRotationAnimation(() => cube.Xi(), new THREE.Vector3(-1, 0, 0));
+        QueueRotationAnimation(() => _cube.Xi(), new THREE.Vector3(-1, 0, 0));
     }
 
     // Moves - Single face turns
     this.U = function () {
-        QueueFaceAnimation(new THREE.Matrix4(), new THREE.Vector3(0, 1, 0), () => cube.U(), () => { });
+        QueueFaceAnimation(new THREE.Matrix4(), new THREE.Vector3(0, 1, 0), () => _cube.U(), () => { });
     }
 
     this.Ui = function () {
-        QueueFaceAnimation(new THREE.Matrix4(), new THREE.Vector3(0, -1, 0), () => cube.Ui(), () => { });
+        QueueFaceAnimation(new THREE.Matrix4(), new THREE.Vector3(0, -1, 0), () => _cube.Ui(), () => { });
     }
 
     this.R = function () {
-        QueueFaceAnimation(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), new THREE.Vector3(1, 0, 0), () => { cube.Zi(); cube.U(); }, () => { cube.Z(); });
+        QueueFaceAnimation(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), new THREE.Vector3(1, 0, 0), () => { _cube.Zi(); _cube.U(); }, () => { _cube.Z(); });
     }
 
     this.Ri = function () {
-        QueueFaceAnimation(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), new THREE.Vector3(-1, 0, 0), () => { cube.Zi(); cube.Ui(); }, () => { cube.Z(); });
+        QueueFaceAnimation(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), new THREE.Vector3(-1, 0, 0), () => { _cube.Zi(); _cube.Ui(); }, () => { _cube.Z(); });
     }
 
     this.L = function () {
-        QueueFaceAnimation(new THREE.Matrix4().makeRotationZ(Math.PI / 2), new THREE.Vector3(-1, 0, 0), () => { cube.Z(); cube.U(); }, () => { cube.Zi(); });
+        QueueFaceAnimation(new THREE.Matrix4().makeRotationZ(Math.PI / 2), new THREE.Vector3(-1, 0, 0), () => { _cube.Z(); _cube.U(); }, () => { _cube.Zi(); });
     }
 
     this.Li = function () {
-        QueueFaceAnimation(new THREE.Matrix4().makeRotationZ(Math.PI / 2), new THREE.Vector3(1, 0, 0), () => { cube.Z(); cube.Ui(); }, () => { cube.Zi(); });
+        QueueFaceAnimation(new THREE.Matrix4().makeRotationZ(Math.PI / 2), new THREE.Vector3(1, 0, 0), () => { _cube.Z(); _cube.Ui(); }, () => { _cube.Zi(); });
     }
 
     this.F = function () {
-        QueueFaceAnimation(new THREE.Matrix4().makeRotationX(Math.PI / 2), new THREE.Vector3(0, 0, 1), () => { cube.X(); cube.U(); }, () => { cube.Xi(); });
+        QueueFaceAnimation(new THREE.Matrix4().makeRotationX(Math.PI / 2), new THREE.Vector3(0, 0, 1), () => { _cube.X(); _cube.U(); }, () => { _cube.Xi(); });
     }
 
     this.Fi = function () {
-        QueueFaceAnimation(new THREE.Matrix4().makeRotationX(Math.PI / 2), new THREE.Vector3(0, 0, -1), () => { cube.X(); cube.Ui(); }, () => { cube.Xi(); });
+        QueueFaceAnimation(new THREE.Matrix4().makeRotationX(Math.PI / 2), new THREE.Vector3(0, 0, -1), () => { _cube.X(); _cube.Ui(); }, () => { _cube.Xi(); });
     }
 
     this.B = function () {
-        QueueFaceAnimation(new THREE.Matrix4().makeRotationX(-Math.PI / 2), new THREE.Vector3(0, 0, -1), () => { cube.Xi(); cube.U(); }, () => { cube.X(); });
+        QueueFaceAnimation(new THREE.Matrix4().makeRotationX(-Math.PI / 2), new THREE.Vector3(0, 0, -1), () => { _cube.Xi(); _cube.U(); }, () => { _cube.X(); });
     }
 
     this.Bi = function () {
-        QueueFaceAnimation(new THREE.Matrix4().makeRotationX(-Math.PI / 2), new THREE.Vector3(0, 0, 1), () => { cube.Xi(); cube.Ui(); }, () => { cube.X(); });
+        QueueFaceAnimation(new THREE.Matrix4().makeRotationX(-Math.PI / 2), new THREE.Vector3(0, 0, 1), () => { _cube.Xi(); _cube.Ui(); }, () => { _cube.X(); });
     }
 
     this.D = function () {
-        QueueFaceAnimation(new THREE.Matrix4().makeRotationX(Math.PI), new THREE.Vector3(0, -1, 0), () => { cube.Xi(); cube.Xi(); cube.U(); }, () => { cube.X(); cube.X(); });
+        QueueFaceAnimation(new THREE.Matrix4().makeRotationX(Math.PI), new THREE.Vector3(0, -1, 0), () => { _cube.Xi(); _cube.Xi(); _cube.U(); }, () => { _cube.X(); _cube.X(); });
     }
 
     this.Di = function () {
-        QueueFaceAnimation(new THREE.Matrix4().makeRotationX(Math.PI), new THREE.Vector3(0, 1, 0), () => { cube.Xi(); cube.Xi(); cube.Ui(); }, () => { cube.X(); cube.X(); });
+        QueueFaceAnimation(new THREE.Matrix4().makeRotationX(Math.PI), new THREE.Vector3(0, 1, 0), () => { _cube.Xi(); _cube.Xi(); _cube.Ui(); }, () => { _cube.X(); _cube.X(); });
     }
 
     //Moves - Double layer turns
     this.d = function () {
-        QueueDoubleLayerTurn(new THREE.Matrix4(), new THREE.Vector3(0, -1, 0), () => { cube.U(); cube.Yi(); }, () => { });
+        QueueDoubleLayerTurn(new THREE.Matrix4(), new THREE.Vector3(0, -1, 0), () => { _cube.U(); _cube.Yi(); }, () => { });
     }
 
     this.di = function () {
-        QueueDoubleLayerTurn(new THREE.Matrix4(), new THREE.Vector3(0, 1, 0), () => { cube.Ui(); cube.Y(); }, () => { });
+        QueueDoubleLayerTurn(new THREE.Matrix4(), new THREE.Vector3(0, 1, 0), () => { _cube.Ui(); _cube.Y(); }, () => { });
     }
 
     this.r = function () {
-        QueueDoubleLayerTurn(new THREE.Matrix4().makeRotationZ(Math.PI / 2), new THREE.Vector3(1, 0, 0), () => { cube.Z(); cube.U(); cube.Yi(); }, () => { cube.Zi(); });
+        QueueDoubleLayerTurn(new THREE.Matrix4().makeRotationZ(Math.PI / 2), new THREE.Vector3(1, 0, 0), () => { _cube.Z(); _cube.U(); _cube.Yi(); }, () => { _cube.Zi(); });
     }
 
     this.ri = function () {
-        QueueDoubleLayerTurn(new THREE.Matrix4().makeRotationZ(Math.PI / 2), new THREE.Vector3(-1, 0, 0), () => { cube.Z(); cube.Ui(); cube.Y(); }, () => { cube.Zi(); });
+        QueueDoubleLayerTurn(new THREE.Matrix4().makeRotationZ(Math.PI / 2), new THREE.Vector3(-1, 0, 0), () => { _cube.Z(); _cube.Ui(); _cube.Y(); }, () => { _cube.Zi(); });
     }
 
     this.I = function () {
-        QueueDoubleLayerTurn(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), new THREE.Vector3(-1, 0, 0), () => { cube.Zi(); cube.U(); cube.Yi(); }, () => { cube.Z(); });
+        QueueDoubleLayerTurn(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), new THREE.Vector3(-1, 0, 0), () => { _cube.Zi(); _cube.U(); _cube.Yi(); }, () => { _cube.Z(); });
     }
 
     this.Ii = function () {
-        QueueDoubleLayerTurn(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), new THREE.Vector3(1, 0, 0), () => { cube.Zi(); cube.Ui(); cube.Y(); }, () => { cube.Z(); });
+        QueueDoubleLayerTurn(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), new THREE.Vector3(1, 0, 0), () => { _cube.Zi(); _cube.Ui(); _cube.Y(); }, () => { _cube.Z(); });
     }
 }

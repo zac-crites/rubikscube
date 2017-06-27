@@ -1,4 +1,4 @@
-function ButtonGrid(buttonPressed) {
+function ButtonGrid() {
     var buttonContainer = document.getElementById("buttons");
     var currentRow = null;
     var keybinds = new Map();
@@ -37,7 +37,6 @@ function ButtonGrid(buttonPressed) {
 
         button.onclick = function () {
             cubecommand();
-            buttonPressed();
         }
         if (keycode > 0)
             keybinds.set(keycode, button.onclick);
@@ -49,14 +48,10 @@ function ButtonGrid(buttonPressed) {
 
 window.onload = function () {
 
-    var renderer3d = new CubeRenderer3d();
     var cube = new Cube();
+    var renderer3d = new CubeRenderer3d( cube );
 
-    renderer3d.Initialize(cube);
-
-    var buttonGrid = new ButtonGrid(() => {
-        renderer3d.UpdateCubelets();
-    });
+    var buttonGrid = new ButtonGrid();
 
     buttonGrid.AddButton("Z'", () => renderer3d.Zi(), 81, "Q");
     buttonGrid.AddButton("B", () => renderer3d.B(), 87, "W");
