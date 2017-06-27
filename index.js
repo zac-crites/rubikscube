@@ -16,10 +16,13 @@ function ButtonGrid(buttonPressed) {
         buttons.appendChild(currentRow);
     }
 
-    this.AddButton = function (text, cubecommand, keycode, keytext) {
+    this.AddButton = function (text, cubecommand, keycode, keytext, tooltip) {
         var button = document.createElement("div");
         button.classList.add("movebutton");
         button.classList.add("td");
+        if (tooltip !== undefined) {
+            button.title = tooltip;
+        }
 
         var keyDiv = document.createElement("div");
         keyDiv.classList.add("keybind");
@@ -81,7 +84,7 @@ window.onload = function () {
 
     buttonGrid.NewRow();
 
-    buttonGrid.AddButton("📹", () => renderer3d.ResetCamera(), 90, "Z");
+    buttonGrid.AddButton("📹", () => renderer3d.ResetCamera(), 90, "Z", "Reset camera");
     buttonGrid.AddButton("", () => { }, -1, "X");
     buttonGrid.AddButton("", () => { }, -1, "C");
     buttonGrid.AddButton("I", () => cube.I(), 86, "V");
@@ -91,7 +94,7 @@ window.onload = function () {
     buttonGrid.AddButton("", () => { }, -1, ",");
 
     function Scramble() {
-        if( renderer3d.IsAnimating() )
+        if (renderer3d.IsAnimating())
             return;
 
         var moves = []
@@ -108,10 +111,10 @@ window.onload = function () {
         moves.push(() => renderer3d.F());
         moves.push(() => renderer3d.Fi());
 
-        for( var i = 0; i < 40; i ++ )
+        for (var i = 0; i < 40; i++)
             moves[Math.floor(Math.random() * moves.length)]();
     }
 
-    buttonGrid.AddButton("", () => {}, 190, ".");
-    buttonGrid.AddButton("🎲", () => Scramble(), 191, "/");
+    buttonGrid.AddButton("", () => { }, 190, ".");
+    buttonGrid.AddButton("🎲", () => Scramble(), 191, "/", "Scramble");
 };
