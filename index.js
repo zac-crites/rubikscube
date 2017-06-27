@@ -97,22 +97,23 @@ window.onload = function () {
         if (renderer3d.IsAnimating())
             return;
 
+        var r = renderer3d;
         var moves = []
-        moves.push(() => renderer3d.B());
-        moves.push(() => renderer3d.Bi());
-        moves.push(() => renderer3d.U());
-        moves.push(() => renderer3d.Ui());
-        moves.push(() => renderer3d.R());
-        moves.push(() => renderer3d.Ri());
-        moves.push(() => renderer3d.L());
-        moves.push(() => renderer3d.Li());
-        moves.push(() => renderer3d.D());
-        moves.push(() => renderer3d.Di());
-        moves.push(() => renderer3d.F());
-        moves.push(() => renderer3d.Fi());
+        moves.push([() => r.U(), () =>r.Ui(), () =>{ r.U(); r.U(); }]);
+        moves.push([() => r.D(), () =>r.Di(), () =>{ r.D(); r.D(); }]);
+        moves.push([() => r.L(), () =>r.Li(), () =>{ r.L(); r.L(); }]);
+        moves.push([() => r.R(), () =>r.Ri(), () =>{ r.R(); r.R(); }]);
+        moves.push([() => r.F(), () =>r.Fi(), () =>{ r.F(); r.F(); }]);
+        moves.push([() => r.B(), () =>r.Bi(), () =>{ r.B(); r.B(); }]);
 
-        for (var i = 0; i < 40; i++)
-            moves[Math.floor(Math.random() * moves.length)]();
+        for (var i = 0; i < 30; i++)
+        {
+            var idx = Math.floor(Math.random() * (moves.length - 1));
+            var move = moves[idx];
+            moves.splice( idx, 1);
+            move[Math.floor(Math.random() * move.length )]();
+            moves.push( move );
+        }
     }
 
     buttonGrid.AddButton("", () => { }, 190, ".");
