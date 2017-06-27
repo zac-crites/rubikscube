@@ -38,120 +38,76 @@ function CubeRenderer3d() {
     var allMeshes = [];
     var topMeshes = [];
 
-    function CreateFace(cube, i, facetopleft, right, down, margin, outline, addTop) {
+    function CreateFace(cube, faceIndex, facetopleft, right, down, margin, outline, addTop) {
 
         right.divideScalar(3);
         down.divideScalar(3);
 
-        var back = right.clone();
-        back.cross(down);
-        back.normalize();
-        back.multiplyScalar(.001);
+        var back = right.clone().cross(down).normalize().multiplyScalar(.001);
 
-        var marginRight = right.clone();
-        marginRight.normalize();
-        var outlineRight = marginRight.clone();
-        marginRight.multiplyScalar(margin);
-        outlineRight.multiplyScalar(outline);
-        var marginDown = down.clone();
-        marginDown.normalize();
-        var outlineDown = marginDown.clone();
-        marginDown.multiplyScalar(margin);
-        outlineDown.multiplyScalar(outline);
+        var marginRight = right.clone().normalize().multiplyScalar(margin);
+        var marginDown = down.clone().normalize().multiplyScalar(margin);
+        
+        var outlineRight = marginRight.clone().normalize().multiplyScalar(outline);
+        var outlineDown = marginDown.clone().normalize().multiplyScalar(outline);
 
-        var width = right.clone();
-        width.sub(marginRight);
-        width.sub(marginRight);
-
-        var height = down.clone();
-        height.sub(marginDown);
-        height.sub(marginDown);
+        var width = right.clone().sub(marginRight).sub(marginRight);
+        var height = down.clone().sub(marginDown).sub(marginDown);
 
         function CreateCubelet(topleft, x, y, getMaterial) {
-            topleft.add(marginRight);
-            topleft.add(marginDown);
 
-            for (var i = 0; i < x; i++)
-                topleft.add(right);
-            for (var i = 0; i < y; i++)
-                topleft.add(down);
+            topleft.add(right.clone().multiplyScalar(x)).add(down.clone().multiplyScalar(y)).add(marginRight).add(marginDown);
+            var topright = topleft.clone().add(width);
+            var bottomleft = topleft.clone().add(height);
+            var bottomright = topleft.clone().add(width).add(height);
 
-            var topright = topleft.clone();
-            topright.add(width);
-            var bottomleft = topleft.clone();
-            bottomleft.add(height);
-            var bottomright = topleft.clone();
-            bottomright.add(width);
-            bottomright.add(height);
-
-            var geometry = new THREE.Geometry();
-            geometry.vertices.push(topleft);
-            geometry.vertices.push(topright);
-            geometry.vertices.push(bottomright);
-            geometry.vertices.push(bottomleft);
-
-            geometry.faces.push(new THREE.Face3(0, 1, 2));
-            geometry.faces.push(new THREE.Face3(0, 2, 3));
-
-            var mesh = new THREE.Mesh(geometry, getMaterial());
-            scene.add(mesh);
-
-            var outlinetopleft = topleft.clone();
-            outlinetopleft.sub(outlineDown);
-            outlinetopleft.sub(outlineRight);
-            outlinetopleft.add(back);
-            var outlinetopright = topright.clone();
-            outlinetopright.sub(outlineDown);
-            outlinetopright.add(outlineRight);
-            outlinetopright.add(back);
-            var outlinebottomright = bottomright.clone();
-            outlinebottomright.add(outlineDown);
-            outlinebottomright.add(outlineRight);
-            outlinebottomright.add(back);
-            var outlinebottomleft = bottomleft.clone();
-            outlinebottomleft.add(outlineDown);
-            outlinebottomleft.sub(outlineRight);
-            outlinebottomleft.add(back);
+            var stickerGeometry = new THREE.Geometry();
+            stickerGeometry.vertices.push(topleft);
+            stickerGeometry.vertices.push(topright);
+            stickerGeometry.vertices.push(bottomright);
+            stickerGeometry.vertices.push(bottomleft);
+            stickerGeometry.faces.push(new THREE.Face3(0, 1, 2));
+            stickerGeometry.faces.push(new THREE.Face3(0, 2, 3));
 
             var outlineGeometry = new THREE.Geometry();
-            outlineGeometry.vertices.push(outlinetopleft);
-            outlineGeometry.vertices.push(outlinetopright);
-            outlineGeometry.vertices.push(outlinebottomright);
-            outlineGeometry.vertices.push(outlinebottomleft);
-
+            outlineGeometry.vertices.push(topleft.clone().sub(outlineDown).sub(outlineRight).add(back));
+            outlineGeometry.vertices.push(topright.clone().sub(outlineDown).add(outlineRight).add(back));
+            outlineGeometry.vertices.push(bottomright.clone().add(outlineDown).add(outlineRight).add(back));
+            outlineGeometry.vertices.push(bottomleft.clone().add(outlineDown).sub(outlineRight).add(back));
             outlineGeometry.faces.push(new THREE.Face3(0, 1, 2));
             outlineGeometry.faces.push(new THREE.Face3(0, 2, 3));
 
-            var outline = new THREE.Mesh(outlineGeometry, outlineMaterial);
-            scene.add(outline);
+            var stickerMesh = new THREE.Mesh(stickerGeometry, getMaterial());
+            var outlineMesh = new THREE.Mesh(outlineGeometry, outlineMaterial);
+            scene.add(stickerMesh);
+            scene.add(outlineMesh);
 
             updateCubeletMats.push(function () {
-                mesh.material = getMaterial();
-                mesh.geometry.uvsNeedUpdate = true;
-                mesh.neesUpdate = true;
+                stickerMesh.material = getMaterial();
+                stickerMesh.neesUpdate = true;
             });
 
-            allMeshes.push(mesh);
-            allMeshes.push(outline);
+            allMeshes.push(stickerMesh);
+            allMeshes.push(outlineMesh);
 
             if (addTop === true) {
-                topMeshes.push(mesh);
-                topMeshes.push(outline);
+                topMeshes.push(stickerMesh);
+                topMeshes.push(outlineMesh);
             } else if (addTop === false && (y === 0)) {
-                topMeshes.push(mesh);
-                topMeshes.push(outline);
+                topMeshes.push(stickerMesh);
+                topMeshes.push(outlineMesh);
             }
         }
 
-        CreateCubelet(facetopleft.clone(), 0, 0, () => materials[cube.Faces[i].Get(0)]);
-        CreateCubelet(facetopleft.clone(), 1, 0, () => materials[cube.Faces[i].Get(1)]);
-        CreateCubelet(facetopleft.clone(), 2, 0, () => materials[cube.Faces[i].Get(2)]);
-        CreateCubelet(facetopleft.clone(), 0, 1, () => materials[cube.Faces[i].Get(7)]);
-        CreateCubelet(facetopleft.clone(), 1, 1, () => materials[cube.Faces[i].Center]);
-        CreateCubelet(facetopleft.clone(), 2, 1, () => materials[cube.Faces[i].Get(3)]);
-        CreateCubelet(facetopleft.clone(), 0, 2, () => materials[cube.Faces[i].Get(6)]);
-        CreateCubelet(facetopleft.clone(), 1, 2, () => materials[cube.Faces[i].Get(5)]);
-        CreateCubelet(facetopleft.clone(), 2, 2, () => materials[cube.Faces[i].Get(4)]);
+        CreateCubelet(facetopleft.clone(), 0, 0, () => materials[cube.Faces[faceIndex].Get(0)]);
+        CreateCubelet(facetopleft.clone(), 1, 0, () => materials[cube.Faces[faceIndex].Get(1)]);
+        CreateCubelet(facetopleft.clone(), 2, 0, () => materials[cube.Faces[faceIndex].Get(2)]);
+        CreateCubelet(facetopleft.clone(), 0, 1, () => materials[cube.Faces[faceIndex].Get(7)]);
+        CreateCubelet(facetopleft.clone(), 1, 1, () => materials[cube.Faces[faceIndex].Center]);
+        CreateCubelet(facetopleft.clone(), 2, 1, () => materials[cube.Faces[faceIndex].Get(3)]);
+        CreateCubelet(facetopleft.clone(), 0, 2, () => materials[cube.Faces[faceIndex].Get(6)]);
+        CreateCubelet(facetopleft.clone(), 1, 2, () => materials[cube.Faces[faceIndex].Get(5)]);
+        CreateCubelet(facetopleft.clone(), 2, 2, () => materials[cube.Faces[faceIndex].Get(4)]);
     }
 
     this.Initialize = function (c) {
