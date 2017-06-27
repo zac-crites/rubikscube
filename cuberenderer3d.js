@@ -1,27 +1,42 @@
 function CubeRenderer3d() {
-    var rendererWidth = 400;
-    var rendererHeight = 400;
 
     var animationSpeed = 11;
     var animationQueue = [];
 
     var cube;
 
-    var renderer = new THREE.WebGLRenderer();
-    renderer.setSize(rendererWidth, rendererHeight);
+    var _scene;
 
-    var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera(45, rendererWidth / rendererHeight, 0.1, 1000);
-    camera.position.y = 7.5;
-    camera.position.z = 8;
+    function CreateScene() {
+        var rendererWidth = 400;
+        var rendererHeight = 400;
 
-    var controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.minDistance = controls.maxDistance = 7;
-    controls.enablePan = false;
-    controls.reset();
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(rendererWidth, rendererHeight);
 
-    var container = document.getElementById("cube3d");
-    container.appendChild(renderer.domElement);
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(45, rendererWidth / rendererHeight, 0.1, 1000);
+        camera.position.y = 7.5;
+        camera.position.z = 8;
+
+        var controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.minDistance = controls.maxDistance = 7;
+        controls.enablePan = false;
+        controls.reset();
+
+        var container = document.getElementById("cube3d");
+        container.appendChild(renderer.domElement);
+
+        function DrawFrame() {
+            requestAnimationFrame(DrawFrame);
+            if (animationQueue.length > 0)
+                animationQueue[0]();
+            renderer.render(scene, camera);
+        }
+        DrawFrame();
+
+        return scene;
+    }
 
     var outlineMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.BackSide });
 
@@ -79,24 +94,17 @@ function CubeRenderer3d() {
 
             var stickerMesh = new THREE.Mesh(stickerGeometry, getMaterial());
             var outlineMesh = new THREE.Mesh(outlineGeometry, outlineMaterial);
-            scene.add(stickerMesh);
-            scene.add(outlineMesh);
-
-            updateCubeletMats.push(function () {
-                stickerMesh.material = getMaterial();
-                stickerMesh.neesUpdate = true;
-            });
+            _scene.add(stickerMesh);
+            _scene.add(outlineMesh);
 
             allMeshes.push(stickerMesh);
             allMeshes.push(outlineMesh);
-
-            if (addTop === true) {
-                topMeshes.push(stickerMesh);
-                topMeshes.push(outlineMesh);
-            } else if (addTop === false && (y === 0)) {
+            if (faceIndex === 0 || (faceIndex < 5 && y === 0)) {
                 topMeshes.push(stickerMesh);
                 topMeshes.push(outlineMesh);
             }
+
+            updateCubeletMats.push(() => stickerMesh.material = getMaterial());
         }
 
         CreateCubelet(facetopleft.clone(), 0, 0, () => materials[cube.Faces[faceIndex].Get(0)]);
@@ -115,23 +123,15 @@ function CubeRenderer3d() {
         var margin = .08;
         var outline = .02;
 
-        CreateFace(cube, 0, new THREE.Vector3(-1.5, 1.5, -1.5), new THREE.Vector3(3, 0, 0), new THREE.Vector3(0, 0, 3), margin, outline, true);
-        CreateFace(cube, 1, new THREE.Vector3(-1.5, 1.5, -1.5), new THREE.Vector3(0, 0, 3), new THREE.Vector3(0, -3, 0), margin, outline, false);
-        CreateFace(cube, 2, new THREE.Vector3(-1.5, 1.5, 1.5), new THREE.Vector3(3, 0, 0), new THREE.Vector3(0, -3, 0), margin, outline, false);
-        CreateFace(cube, 3, new THREE.Vector3(1.5, 1.5, 1.5), new THREE.Vector3(0, 0, -3), new THREE.Vector3(0, -3, 0), margin, outline, false);
-        CreateFace(cube, 4, new THREE.Vector3(1.5, 1.5, -1.5), new THREE.Vector3(-3, 0, 0), new THREE.Vector3(0, -3, 0), margin, outline, false);
+
+        _scene = CreateScene();
+
+        CreateFace(cube, 0, new THREE.Vector3(-1.5, 1.5, -1.5), new THREE.Vector3(3, 0, 0), new THREE.Vector3(0, 0, 3), margin, outline);
+        CreateFace(cube, 1, new THREE.Vector3(-1.5, 1.5, -1.5), new THREE.Vector3(0, 0, 3), new THREE.Vector3(0, -3, 0), margin, outline);
+        CreateFace(cube, 2, new THREE.Vector3(-1.5, 1.5, 1.5), new THREE.Vector3(3, 0, 0), new THREE.Vector3(0, -3, 0), margin, outline);
+        CreateFace(cube, 3, new THREE.Vector3(1.5, 1.5, 1.5), new THREE.Vector3(0, 0, -3), new THREE.Vector3(0, -3, 0), margin, outline);
+        CreateFace(cube, 4, new THREE.Vector3(1.5, 1.5, -1.5), new THREE.Vector3(-3, 0, 0), new THREE.Vector3(0, -3, 0), margin, outline);
         CreateFace(cube, 5, new THREE.Vector3(-1.5, -1.5, 1.5), new THREE.Vector3(3, 0, 0), new THREE.Vector3(0, 0, -3), margin, outline);
-
-        function animate() {
-            requestAnimationFrame(animate);
-
-            if (animationQueue.length > 0) {
-                animationQueue[0]();
-            }
-
-            renderer.render(scene, camera);
-        }
-        animate();
     }
 
     this.UpdateCubelets = function () {
