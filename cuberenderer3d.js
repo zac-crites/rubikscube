@@ -278,107 +278,75 @@ function CubeRenderer3d() {
 
     // Moves - Single face turns
     this.U = function () {
-        var baseRotation = new THREE.Matrix4();
-        QueueFaceAnimation(baseRotation, new THREE.Vector3(0, 1, 0), () => cube.U(), () => { });
+        QueueFaceAnimation(new THREE.Matrix4(), new THREE.Vector3(0, 1, 0), () => cube.U(), () => { });
     }
 
     this.Ui = function () {
-        var baseRotation = new THREE.Matrix4();
-        QueueFaceAnimation(baseRotation, new THREE.Vector3(0, -1, 0), () => cube.Ui(), () => { });
+        QueueFaceAnimation(new THREE.Matrix4(), new THREE.Vector3(0, -1, 0), () => cube.Ui(), () => { });
     }
 
     this.R = function () {
-        var baseRotation = new THREE.Matrix4();
-        baseRotation.makeRotationZ(- Math.PI / 2);
-        QueueFaceAnimation(baseRotation, new THREE.Vector3(1, 0, 0), () => { cube.Zi(); cube.U(); }, () => { cube.Z(); });
+        QueueFaceAnimation(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), new THREE.Vector3(1, 0, 0), () => { cube.Zi(); cube.U(); }, () => { cube.Z(); });
     }
 
     this.Ri = function () {
-        var baseRotation = new THREE.Matrix4();
-        baseRotation.makeRotationZ(- Math.PI / 2);
-        QueueFaceAnimation(baseRotation, new THREE.Vector3(-1, 0, 0), () => { cube.Zi(); cube.Ui(); }, () => { cube.Z(); });
+        QueueFaceAnimation(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), new THREE.Vector3(-1, 0, 0), () => { cube.Zi(); cube.Ui(); }, () => { cube.Z(); });
     }
 
     this.L = function () {
-        var baseRotation = new THREE.Matrix4();
-        baseRotation.makeRotationZ(Math.PI / 2);
-        QueueFaceAnimation(baseRotation, new THREE.Vector3(-1, 0, 0), () => { cube.Z(); cube.U(); }, () => { cube.Zi(); });
+        QueueFaceAnimation(new THREE.Matrix4().makeRotationZ(Math.PI / 2), new THREE.Vector3(-1, 0, 0), () => { cube.Z(); cube.U(); }, () => { cube.Zi(); });
     }
 
     this.Li = function () {
-        var baseRotation = new THREE.Matrix4();
-        baseRotation.makeRotationZ(Math.PI / 2);
-        QueueFaceAnimation(baseRotation, new THREE.Vector3(1, 0, 0), () => { cube.Z(); cube.Ui(); }, () => { cube.Zi(); });
+        QueueFaceAnimation(new THREE.Matrix4().makeRotationZ(Math.PI / 2), new THREE.Vector3(1, 0, 0), () => { cube.Z(); cube.Ui(); }, () => { cube.Zi(); });
     }
 
     this.F = function () {
-        var baseRotation = new THREE.Matrix4();
-        baseRotation.makeRotationX(Math.PI / 2);
-        QueueFaceAnimation(baseRotation, new THREE.Vector3(0, 0, 1), () => { cube.X(); cube.U(); }, () => { cube.Xi(); });
+        QueueFaceAnimation(new THREE.Matrix4().makeRotationX(Math.PI / 2), new THREE.Vector3(0, 0, 1), () => { cube.X(); cube.U(); }, () => { cube.Xi(); });
     }
 
     this.Fi = function () {
-        var baseRotation = new THREE.Matrix4();
-        baseRotation.makeRotationX(Math.PI / 2);
-        QueueFaceAnimation(baseRotation, new THREE.Vector3(0, 0, -1), () => { cube.X(); cube.Ui(); }, () => { cube.Xi(); });
+        QueueFaceAnimation(new THREE.Matrix4().makeRotationX(Math.PI / 2), new THREE.Vector3(0, 0, -1), () => { cube.X(); cube.Ui(); }, () => { cube.Xi(); });
     }
 
     this.B = function () {
-        var baseRotation = new THREE.Matrix4();
-        baseRotation.makeRotationX(-Math.PI / 2);
-        QueueFaceAnimation(baseRotation, new THREE.Vector3(0, 0, -1), () => { cube.Xi(); cube.U(); }, () => { cube.X(); });
+        QueueFaceAnimation(new THREE.Matrix4().makeRotationX(-Math.PI / 2), new THREE.Vector3(0, 0, -1), () => { cube.Xi(); cube.U(); }, () => { cube.X(); });
     }
 
     this.Bi = function () {
-        var baseRotation = new THREE.Matrix4();
-        baseRotation.makeRotationX(-Math.PI / 2);
-        QueueFaceAnimation(baseRotation, new THREE.Vector3(0, 0, 1), () => { cube.Xi(); cube.Ui(); }, () => { cube.X(); });
+        QueueFaceAnimation(new THREE.Matrix4().makeRotationX(-Math.PI / 2), new THREE.Vector3(0, 0, 1), () => { cube.Xi(); cube.Ui(); }, () => { cube.X(); });
     }
 
     this.D = function () {
-        var baseRotation = new THREE.Matrix4();
-        baseRotation.makeRotationX(Math.PI);
-        QueueFaceAnimation(baseRotation, new THREE.Vector3(0, -1, 0), () => { cube.Xi(); cube.Xi(); cube.U(); }, () => { cube.X(); cube.X(); });
+        QueueFaceAnimation(new THREE.Matrix4().makeRotationX(Math.PI), new THREE.Vector3(0, -1, 0), () => { cube.Xi(); cube.Xi(); cube.U(); }, () => { cube.X(); cube.X(); });
     }
 
     this.Di = function () {
-        var baseRotation = new THREE.Matrix4();
-        baseRotation.makeRotationX(Math.PI);
-        QueueFaceAnimation(baseRotation, new THREE.Vector3(0, 1, 0), () => { cube.Xi(); cube.Xi(); cube.Ui(); }, () => { cube.X(); cube.X(); });
+        QueueFaceAnimation(new THREE.Matrix4().makeRotationX(Math.PI), new THREE.Vector3(0, 1, 0), () => { cube.Xi(); cube.Xi(); cube.Ui(); }, () => { cube.X(); cube.X(); });
     }
 
     //Moves - Double layer turns
     this.d = function () {
-        var baseRotation = new THREE.Matrix4();
-        QueueDoubleLayerTurn(baseRotation, new THREE.Vector3(0, -1, 0), () => { cube.U(); cube.Yi(); }, () => { });
+        QueueDoubleLayerTurn(new THREE.Matrix4(), new THREE.Vector3(0, -1, 0), () => { cube.U(); cube.Yi(); }, () => { });
     }
 
     this.di = function () {
-        var baseRotation = new THREE.Matrix4();
-        QueueDoubleLayerTurn(baseRotation, new THREE.Vector3(0, 1, 0), () => { cube.Ui(); cube.Y(); }, () => { });
+        QueueDoubleLayerTurn(new THREE.Matrix4(), new THREE.Vector3(0, 1, 0), () => { cube.Ui(); cube.Y(); }, () => { });
     }
 
     this.r = function () {
-        var baseRotation = new THREE.Matrix4();
-        baseRotation.makeRotationZ(Math.PI / 2);
-        QueueDoubleLayerTurn(baseRotation, new THREE.Vector3(1, 0, 0), () => { cube.Z(); cube.U(); cube.Yi(); }, () => { cube.Zi(); });
+        QueueDoubleLayerTurn(new THREE.Matrix4().makeRotationZ(Math.PI / 2), new THREE.Vector3(1, 0, 0), () => { cube.Z(); cube.U(); cube.Yi(); }, () => { cube.Zi(); });
     }
 
     this.ri = function () {
-        var baseRotation = new THREE.Matrix4();
-        baseRotation.makeRotationZ(Math.PI / 2);
-        QueueDoubleLayerTurn(baseRotation, new THREE.Vector3(-1, 0, 0), () => { cube.Z(); cube.Ui(); cube.Y(); }, () => { cube.Zi(); });
+        QueueDoubleLayerTurn(new THREE.Matrix4().makeRotationZ(Math.PI / 2), new THREE.Vector3(-1, 0, 0), () => { cube.Z(); cube.Ui(); cube.Y(); }, () => { cube.Zi(); });
     }
 
     this.I = function () {
-        var baseRotation = new THREE.Matrix4();
-        baseRotation.makeRotationZ(- Math.PI / 2);
-        QueueDoubleLayerTurn(baseRotation, new THREE.Vector3(-1, 0, 0), () => { cube.Zi(); cube.U(); cube.Yi(); }, () => { cube.Z(); });
+        QueueDoubleLayerTurn(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), new THREE.Vector3(-1, 0, 0), () => { cube.Zi(); cube.U(); cube.Yi(); }, () => { cube.Z(); });
     }
 
     this.Ii = function () {
-        var baseRotation = new THREE.Matrix4();
-        baseRotation.makeRotationZ(- Math.PI / 2);
-        QueueDoubleLayerTurn(baseRotation, new THREE.Vector3(1, 0, 0), () => { cube.Zi(); cube.Ui(); cube.Y(); }, () => { cube.Z(); });
+        QueueDoubleLayerTurn(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), new THREE.Vector3(1, 0, 0), () => { cube.Zi(); cube.Ui(); cube.Y(); }, () => { cube.Z(); });
     }
 }
