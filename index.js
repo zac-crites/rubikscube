@@ -4,7 +4,6 @@ function ButtonGrid() {
     var keybinds = new Map();
 
     function KeyPress(event) {
-        console.log(event.keyCode);
         if (keybinds.has(event.keyCode))
             keybinds.get(event.keyCode)();
     }
