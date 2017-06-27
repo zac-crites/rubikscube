@@ -7,7 +7,7 @@ function CubeRenderer3d() {
 
     var _scene;
 
-    function CreateScene() {
+    var CreateScene = () => {
         var rendererWidth = 400;
         var rendererHeight = 400;
 
@@ -34,6 +34,8 @@ function CubeRenderer3d() {
             renderer.render(scene, camera);
         }
         DrawFrame();
+
+        this.ResetCamera = () => controls.reset();
 
         return scene;
     }
@@ -137,11 +139,7 @@ function CubeRenderer3d() {
     this.UpdateCubelets = function () {
         updateCubeletMats.forEach(fn => fn());
     }
-
-    this.ResetCamera = function () {
-        controls.reset();
-    }
-
+    
     this.IsAnimating = function () {
         return animationQueue.length > 0;
     }
