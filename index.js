@@ -55,29 +55,29 @@ window.onload = function () {
         renderer3d.UpdateCubelets();
     });
 
-    buttonGrid.AddButton("Z'", () => cube.Zi(), 81, "Q");
-    buttonGrid.AddButton("B", () => cube.B(), 87, "W");
-    buttonGrid.AddButton("L'", () => cube.Li(), 69, "E");
+    buttonGrid.AddButton("Z'", () => renderer3d.Zi(), 81, "Q");
+    buttonGrid.AddButton("B", () => renderer3d.B(), 87, "W");
+    buttonGrid.AddButton("L'", () => renderer3d.Li(), 69, "E");
     buttonGrid.AddButton("I'", () => cube.Ii(), 82, "R");
     buttonGrid.AddButton("", () => { }, 84, "T");
-    buttonGrid.AddButton("X", () => cube.X(), 89, "Y");
+    buttonGrid.AddButton("X", () => renderer3d.X(), 89, "Y");
     buttonGrid.AddButton("r", () => cube.r(), 85, "U");
-    buttonGrid.AddButton("R", () => cube.R(), 73, "I");
-    buttonGrid.AddButton("B'", () => cube.Bi(), 79, "O");
-    buttonGrid.AddButton("Z", () => cube.Z(), 80, "P");
+    buttonGrid.AddButton("R", () => renderer3d.R(), 73, "I");
+    buttonGrid.AddButton("B'", () => renderer3d.Bi(), 79, "O");
+    buttonGrid.AddButton("Z", () => renderer3d.Z(), 80, "P");
 
     buttonGrid.NewRow();
 
-    buttonGrid.AddButton("Y", () => cube.Y(), 65, "A");
-    buttonGrid.AddButton("D", () => cube.D(), 83, "S");
-    buttonGrid.AddButton("L", () => cube.L(), 68, "D");
-    buttonGrid.AddButton("U'", () => cube.Ui(), 70, "F");
-    buttonGrid.AddButton("F'", () => cube.Fi(), 71, "G");
-    buttonGrid.AddButton("F", () => cube.F(), 72, "H");
-    buttonGrid.AddButton("U", () => cube.U(), 74, "J");
-    buttonGrid.AddButton("R'", () => cube.Ri(), 75, "K");
-    buttonGrid.AddButton("D'", () => cube.Di(), 76, "L");
-    buttonGrid.AddButton("Y'", () => cube.Yi(), 186, ";");
+    buttonGrid.AddButton("Y", () => renderer3d.Y(), 65, "A");
+    buttonGrid.AddButton("D", () => renderer3d.D(), 83, "S");
+    buttonGrid.AddButton("L", () => renderer3d.L(), 68, "D");
+    buttonGrid.AddButton("U'", () => renderer3d.Ui(), 70, "F");
+    buttonGrid.AddButton("F'", () => renderer3d.Fi(), 71, "G");
+    buttonGrid.AddButton("F", () => renderer3d.F(), 72, "H");
+    buttonGrid.AddButton("U", () => renderer3d.U(), 74, "J");
+    buttonGrid.AddButton("R'", () => renderer3d.Ri(), 75, "K");
+    buttonGrid.AddButton("D'", () => renderer3d.Di(), 76, "L");
+    buttonGrid.AddButton("Y'", () => renderer3d.Yi(), 186, ";");
 
     buttonGrid.NewRow();
 
@@ -114,28 +114,4 @@ window.onload = function () {
 
     buttonGrid.AddButton("", () => {}, 190, ".");
     buttonGrid.AddButton("🎲", () => Scramble(), 191, "/");
-
-    buttonGrid.NewRow();
-
-    buttonGrid.AddButton("aZ", () => renderer3d.Z(), -1, "");
-    buttonGrid.AddButton("aZi", () => renderer3d.Zi(), -1, "");
-    buttonGrid.AddButton("aY", () => renderer3d.Y(), -1, "");
-    buttonGrid.AddButton("aYi", () => renderer3d.Yi(), -1, "");
-    buttonGrid.AddButton("aX", () => renderer3d.X(), -1, "");
-    buttonGrid.AddButton("aXi", () => renderer3d.Xi(), -1, "");
-    buttonGrid.AddButton("aU", () => renderer3d.U(), -1, "");
-    buttonGrid.AddButton("aUi", () => renderer3d.Ui(), -1, "");
-    buttonGrid.AddButton("aR", () => renderer3d.R(), -1, "");
-    buttonGrid.AddButton("aRi", () => renderer3d.Ri(), -1, "");
-
-    buttonGrid.NewRow();
-
-    buttonGrid.AddButton("aF", () => renderer3d.F(), -1, "");
-    buttonGrid.AddButton("aFi", () => renderer3d.Fi(), -1, "");
-    buttonGrid.AddButton("aL", () => renderer3d.L(), -1, "");
-    buttonGrid.AddButton("aLi", () => renderer3d.Li(), -1, "");
-    buttonGrid.AddButton("aB", () => renderer3d.B(), -1, "");
-    buttonGrid.AddButton("aBi", () => renderer3d.Bi(), -1, "");
-    buttonGrid.AddButton("aD", () => renderer3d.D(), -1, "");
-    buttonGrid.AddButton("aDi", () => renderer3d.Di(), -1, "");
 };
