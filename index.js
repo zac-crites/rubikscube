@@ -48,7 +48,7 @@ function ButtonGrid() {
 window.onload = function () {
 
     var cube = new Cube();
-    var renderer3d = new CubeRenderer3d( cube );
+    var renderer3d = new CubeRenderer( cube );
 
     var buttonGrid = new ButtonGrid();
 

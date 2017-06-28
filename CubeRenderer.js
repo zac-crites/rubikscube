@@ -1,4 +1,4 @@
-function CubeRenderer3d(cube) {
+function CubeRenderer(cube) {
 
     var _updateCubeletMats = [];
     var _meshes = [];
