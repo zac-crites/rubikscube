@@ -3,6 +3,7 @@ function CubeRenderer3d(cube) {
     var _updateCubeletMats = [];
     var _meshes = [];
     var _topLayerMeshes = [];
+    var _bottomLayersMeshes = [];
     var _cube = cube;
     var _animationSpeed = 11;
     var _animationQueue = [];
@@ -117,197 +118,123 @@ function CubeRenderer3d(cube) {
 
                 _meshes.push(stickerMesh);
                 _meshes.push(outlineMesh);
-                if (faceIndex === 0 || (faceIndex < 5 && y === 0)) {
-                    _topLayerMeshes.push(stickerMesh);
-                    _topLayerMeshes.push(outlineMesh);
-                }
+
+                layerGroup = (faceIndex === 0 || (faceIndex < 5 && y === 0)) ? _topLayerMeshes : _bottomLayersMeshes;
+                layerGroup.push(stickerMesh);
+                layerGroup.push(outlineMesh);
 
                 _updateCubeletMats.push(() => stickerMesh.material = getMaterial());
             }
         }
     })();
 
+    // Move animations
+    function QueueAnimation(baseRotation, topRotationAxis, bottomRotationAxis, startMoves, endMoves) {
+        var duration = _animationSpeed;
+        var counter = _animationSpeed;
+
+        _animationQueue.push(function () {
+            if (counter-- === duration) {
+                _meshes.forEach((mesh) => mesh.rotation.setFromRotationMatrix(baseRotation));
+                startMoves();
+                _updateCubeletMats.forEach(fn => fn());
+            }
+
+            if (topRotationAxis) {
+                var rotationMatrix = new THREE.Matrix4().makeRotationAxis(topRotationAxis, (counter / duration) * Math.PI / 2).multiply(baseRotation);
+                _topLayerMeshes.forEach((mesh) => mesh.rotation.setFromRotationMatrix(rotationMatrix));
+            }
+
+            if (bottomRotationAxis) {
+                var rotationMatrix = new THREE.Matrix4().makeRotationAxis(bottomRotationAxis, (counter / duration) * Math.PI / 2).multiply(baseRotation);
+                _bottomLayersMeshes.forEach((mesh) => mesh.rotation.setFromRotationMatrix(rotationMatrix));
+            }
+
+            if (counter <= 0) {
+                _meshes.forEach((mesh) => mesh.rotation.setFromRotationMatrix(new THREE.Matrix4()));
+                _animationQueue.shift();
+                endMoves();
+                _updateCubeletMats.forEach(fn => fn());
+            }
+        });
+    }
+
     this.IsAnimating = function () {
         return _animationQueue.length > 0;
     }
 
-    // Move animations
-    function QueueRotationAnimation(move, rotationAxis) {
-        var counter = _animationSpeed;
-
-        _animationQueue.push(function () {
-
-            if (counter-- === _animationSpeed) {
-                move();
-                _updateCubeletMats.forEach(fn => fn());
-            }
-
-            _meshes.forEach(function (mesh) {
-                var rotMatrix = new THREE.Matrix4();
-
-                rotMatrix.makeRotationAxis(rotationAxis.normalize(), (counter / _animationSpeed) * Math.PI / 2);
-                mesh.matrix = rotMatrix;
-                mesh.rotation.setFromRotationMatrix(mesh.matrix);
-            });
-
-            if (counter <= 0) {
-                _meshes.forEach(function (mesh) {
-                    mesh.matrix = new THREE.Matrix4();
-                    mesh.rotation.setFromRotationMatrix(mesh.matrix);
-                });
-                _animationQueue.shift();
-            }
-        });
-    }
-
-    function QueueFaceAnimation(baseRotation, rotationAxis, startMoves, endMoves) {
-        var counter = _animationSpeed;
-
-        _animationQueue.push(function () {
-            if (counter-- === _animationSpeed) {
-                _meshes.forEach(function (mesh) {
-                    mesh.matrix = baseRotation;
-                    mesh.rotation.setFromRotationMatrix(mesh.matrix);
-                });
-                startMoves();
-                _updateCubeletMats.forEach(fn => fn());
-            }
-
-            _topLayerMeshes.forEach(function (mesh) {
-                var rotMatrix = new THREE.Matrix4();
-                rotMatrix.makeRotationAxis(rotationAxis.normalize(), (counter / _animationSpeed) * Math.PI / 2);
-                rotMatrix.multiply(baseRotation);
-                mesh.matrix = rotMatrix;
-                mesh.rotation.setFromRotationMatrix(mesh.matrix);
-            });
-
-            if (counter <= 0) {
-                _meshes.forEach(function (mesh) {
-                    mesh.matrix = new THREE.Matrix4();
-                    mesh.rotation.setFromRotationMatrix(mesh.matrix);
-                });
-                _animationQueue.shift();
-                endMoves();
-                _updateCubeletMats.forEach(fn => fn());
-            }
-        });
-    }
-
-    function QueueDoubleLayerTurn(baseRotation, rotationAxis, startMoves, endMoves) {
-        var counter = _animationSpeed;
-
-        function resetTop() {
-            _topLayerMeshes.forEach(function (mesh) {
-                mesh.matrix = baseRotation;
-                mesh.rotation.setFromRotationMatrix(mesh.matrix);
-            });
-        }
-
-        _animationQueue.push(function () {
-
-            if (counter-- === _animationSpeed) {
-                _meshes.forEach(function (mesh) {
-                    mesh.matrix = baseRotation;
-                    mesh.rotation.setFromRotationMatrix(mesh.matrix);
-                });
-
-                startMoves();
-                _updateCubeletMats.forEach(fn => fn());
-            }
-
-            _meshes.forEach(function (mesh) {
-                var rotMatrix = new THREE.Matrix4();
-                rotMatrix.makeRotationAxis(rotationAxis.normalize(), (counter / _animationSpeed) * Math.PI / 2);
-                rotMatrix.multiply(baseRotation);
-                mesh.matrix = rotMatrix;
-                mesh.rotation.setFromRotationMatrix(mesh.matrix);
-            });
-            resetTop();
-
-            if (counter <= 0) {
-                _meshes.forEach(function (mesh) {
-                    mesh.matrix = new THREE.Matrix4();
-                    mesh.rotation.setFromRotationMatrix(mesh.matrix);
-                });
-                endMoves();
-                _updateCubeletMats.forEach(fn => fn());
-                _animationQueue.shift();
-            }
-        });
-    }
-
     // Moves - Full cube rotations
     this.Z = function () {
-        QueueRotationAnimation(() => _cube.Z(), new THREE.Vector3(0, 0, 1));
+        QueueAnimation(new THREE.Matrix4(), new THREE.Vector3(0, 0, 1), new THREE.Vector3(0, 0, 1), () => _cube.Z(), () => { });
     }
 
     this.Zi = function () {
-        QueueRotationAnimation(() => _cube.Zi(), new THREE.Vector3(0, 0, -1));
+        QueueAnimation(new THREE.Matrix4(), new THREE.Vector3(0, 0, -1), new THREE.Vector3(0, 0, -1), () => _cube.Zi(), () => { });
     }
 
     this.Y = function () {
-        QueueRotationAnimation(() => _cube.Y(), new THREE.Vector3(0, 1, 0));
+        QueueAnimation(new THREE.Matrix4(), new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 1, 0), () => _cube.Y(), () => { });
     }
 
     this.Yi = function () {
-        QueueRotationAnimation(() => _cube.Yi(), new THREE.Vector3(0, -1, 0));
+        QueueAnimation(new THREE.Matrix4(), new THREE.Vector3(0, -1, 0), new THREE.Vector3(0, -1, 0), () => _cube.Yi(), () => { });
     }
 
     this.X = function () {
-        QueueRotationAnimation(() => _cube.X(), new THREE.Vector3(1, 0, 0));
+        QueueAnimation(new THREE.Matrix4(), new THREE.Vector3(1, 0, 0), new THREE.Vector3(1, 0, 0), () => _cube.X(), () => { });
     }
 
     this.Xi = function () {
-        QueueRotationAnimation(() => _cube.Xi(), new THREE.Vector3(-1, 0, 0));
+        QueueAnimation(new THREE.Matrix4(), new THREE.Vector3(-1, 0, 0), new THREE.Vector3(-1, 0, 0), () => _cube.Xi(), () => { });
     }
 
     // Moves - Single face turns
     this.U = function () {
-        QueueFaceAnimation(new THREE.Matrix4(), new THREE.Vector3(0, 1, 0), () => _cube.U(), () => { });
+        QueueAnimation(new THREE.Matrix4(), new THREE.Vector3(0, 1, 0), null, () => _cube.U(), () => { });
     }
 
     this.Ui = function () {
-        QueueFaceAnimation(new THREE.Matrix4(), new THREE.Vector3(0, -1, 0), () => _cube.Ui(), () => { });
+        QueueAnimation(new THREE.Matrix4(), new THREE.Vector3(0, -1, 0), null, () => _cube.Ui(), () => { });
     }
 
     this.R = function () {
-        QueueFaceAnimation(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), new THREE.Vector3(1, 0, 0), () => { _cube.Zi(); _cube.U(); }, () => { _cube.Z(); });
+        QueueAnimation(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), new THREE.Vector3(1, 0, 0), null, () => { _cube.Zi(); _cube.U(); }, () => { _cube.Z(); });
     }
 
     this.Ri = function () {
-        QueueFaceAnimation(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), new THREE.Vector3(-1, 0, 0), () => { _cube.Zi(); _cube.Ui(); }, () => { _cube.Z(); });
+        QueueAnimation(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), new THREE.Vector3(-1, 0, 0), null, () => { _cube.Zi(); _cube.Ui(); }, () => { _cube.Z(); });
     }
 
     this.L = function () {
-        QueueFaceAnimation(new THREE.Matrix4().makeRotationZ(Math.PI / 2), new THREE.Vector3(-1, 0, 0), () => { _cube.Z(); _cube.U(); }, () => { _cube.Zi(); });
+        QueueAnimation(new THREE.Matrix4().makeRotationZ(Math.PI / 2), new THREE.Vector3(-1, 0, 0), null, () => { _cube.Z(); _cube.U(); }, () => { _cube.Zi(); });
     }
 
     this.Li = function () {
-        QueueFaceAnimation(new THREE.Matrix4().makeRotationZ(Math.PI / 2), new THREE.Vector3(1, 0, 0), () => { _cube.Z(); _cube.Ui(); }, () => { _cube.Zi(); });
+        QueueAnimation(new THREE.Matrix4().makeRotationZ(Math.PI / 2), new THREE.Vector3(1, 0, 0), null, () => { _cube.Z(); _cube.Ui(); }, () => { _cube.Zi(); });
     }
 
     this.F = function () {
-        QueueFaceAnimation(new THREE.Matrix4().makeRotationX(Math.PI / 2), new THREE.Vector3(0, 0, 1), () => { _cube.X(); _cube.U(); }, () => { _cube.Xi(); });
+        QueueAnimation(new THREE.Matrix4().makeRotationX(Math.PI / 2), new THREE.Vector3(0, 0, 1), null, () => { _cube.X(); _cube.U(); }, () => { _cube.Xi(); });
     }
 
     this.Fi = function () {
-        QueueFaceAnimation(new THREE.Matrix4().makeRotationX(Math.PI / 2), new THREE.Vector3(0, 0, -1), () => { _cube.X(); _cube.Ui(); }, () => { _cube.Xi(); });
+        QueueAnimation(new THREE.Matrix4().makeRotationX(Math.PI / 2), new THREE.Vector3(0, 0, -1), null, () => { _cube.X(); _cube.Ui(); }, () => { _cube.Xi(); });
     }
 
     this.B = function () {
-        QueueFaceAnimation(new THREE.Matrix4().makeRotationX(-Math.PI / 2), new THREE.Vector3(0, 0, -1), () => { _cube.Xi(); _cube.U(); }, () => { _cube.X(); });
+        QueueAnimation(new THREE.Matrix4().makeRotationX(-Math.PI / 2), new THREE.Vector3(0, 0, -1), null, () => { _cube.Xi(); _cube.U(); }, () => { _cube.X(); });
     }
 
     this.Bi = function () {
-        QueueFaceAnimation(new THREE.Matrix4().makeRotationX(-Math.PI / 2), new THREE.Vector3(0, 0, 1), () => { _cube.Xi(); _cube.Ui(); }, () => { _cube.X(); });
+        QueueAnimation(new THREE.Matrix4().makeRotationX(-Math.PI / 2), new THREE.Vector3(0, 0, 1), null, () => { _cube.Xi(); _cube.Ui(); }, () => { _cube.X(); });
     }
 
     this.D = function () {
-        QueueFaceAnimation(new THREE.Matrix4().makeRotationX(Math.PI), new THREE.Vector3(0, -1, 0), () => { _cube.Xi(); _cube.Xi(); _cube.U(); }, () => { _cube.X(); _cube.X(); });
+        QueueAnimation(new THREE.Matrix4().makeRotationX(Math.PI), new THREE.Vector3(0, -1, 0), null, () => { _cube.Xi(); _cube.Xi(); _cube.U(); }, () => { _cube.X(); _cube.X(); });
     }
 
     this.Di = function () {
-        QueueFaceAnimation(new THREE.Matrix4().makeRotationX(Math.PI), new THREE.Vector3(0, 1, 0), () => { _cube.Xi(); _cube.Xi(); _cube.Ui(); }, () => { _cube.X(); _cube.X(); });
+        QueueAnimation(new THREE.Matrix4().makeRotationX(Math.PI), new THREE.Vector3(0, 1, 0), null, () => { _cube.Xi(); _cube.Xi(); _cube.Ui(); }, () => { _cube.X(); _cube.X(); });
     }
 
     //Moves - Double layer turns
