@@ -18,7 +18,7 @@ function Cube() {
             return tmp;
         }
 
-        this.IsSolved = () => !_cubelets.some((n) => n != this.Center);
+        this.IsSolved = () => !_cubelets.some((n) => n != _color);
     }
 
     this.Faces = [new Face(0), new Face(1), new Face(2), new Face(3), new Face(4), new Face(5)];
