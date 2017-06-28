@@ -5,8 +5,9 @@ function CubeRenderer(cube) {
     var _topLayerMeshes = [];
     var _bottomLayersMeshes = [];
     var _cube = cube;
-    var _animationSpeed = 11;
+    var _animationSpeed = 8;
     var _animationQueue = [];
+    var _animationListeners = [];
 
     // Create the scene
     var _scene = (() => {
@@ -155,13 +156,14 @@ function CubeRenderer(cube) {
                 _animationQueue.shift();
                 endMoves();
                 _updateCubeletMats.forEach(fn => fn());
+                _animationListeners.forEach( fn => fn() );
             }
         });
     }
 
-    this.IsAnimating = function () {
-        return _animationQueue.length > 0;
-    }
+    this.AddAnimationCompletedListener = (listener) => _animationListeners.push( listener );
+
+    this.IsAnimating = () => _animationQueue.length > 0;
 
     // Moves - Full cube rotations
     this.Z = function () {
