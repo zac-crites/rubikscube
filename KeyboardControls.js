@@ -1,27 +1,13 @@
 function KeyboardControls() {
-    var buttonContainer = document.getElementById("buttons");
-    var currentRow = null;
-    var keybinds = new Map();
+    var _buttonContainer = document.getElementById("buttons");
+    var _currentRow = null;
+    var _keybinds = new Map();
+    var _columns = 10;
+    var _currentRow = NewRow();
 
-    function KeyPress(event) {
-        if (keybinds.has(event.keyCode))
-            keybinds.get(event.keyCode)();
-    }
-    window.onkeydown = KeyPress;
+    window.onkeydown = (event) => !_keybinds.has(event.keyCode) || _keybinds.get(event.keyCode)();
 
-    this.NewRow = function () {
-        currentRow = document.createElement("div");
-        currentRow.classList.add("tr");
-        buttons.appendChild(currentRow);
-    }
-
-    this.AddButton = function (text, cubecommand, keycode, keytext, tooltip) {
-        var button = document.createElement("div");
-        button.classList.add("movebutton");
-        button.classList.add("td");
-        if (tooltip !== undefined) {
-            button.title = tooltip;
-        }
+    this.AddButton = function (text, command, keycode, keytext, tooltip) {
 
         var keyDiv = document.createElement("div");
         keyDiv.classList.add("keybind");
@@ -31,16 +17,32 @@ function KeyboardControls() {
         textDiv.classList.add("buttontext");
         textDiv.textContent = text;
 
+        var button = document.createElement("div");
+        button.classList.add("movebutton");
+        button.classList.add("td");
+
+        if (tooltip !== undefined) {
+            button.title = tooltip;
+        }
+
         button.appendChild(keyDiv);
         button.appendChild(textDiv);
 
-        button.onclick = function () {
-            cubecommand();
+        button.onclick = command;
+        if (keycode >= 0) {
+            _keybinds.set(keycode, command);
         }
-        if (keycode > 0)
-            keybinds.set(keycode, button.onclick);
-        currentRow.appendChild(button);
+
+        if (_currentRow.childNodes.length >= _columns) {
+            _currentRow = NewRow();
+        }
+        _currentRow.appendChild(button);
     }
 
-    this.NewRow();
+    function NewRow() {
+        var row = document.createElement("div");
+        row.classList.add("tr");
+        _buttonContainer.appendChild(row);
+        return row;
+    }
 }
