@@ -239,26 +239,26 @@ function CubeRenderer(cube) {
 
     //Moves - Double layer turns
     this.d = function () {
-        QueueDoubleLayerTurn(new THREE.Matrix4(), new THREE.Vector3(0, -1, 0), () => { _cube.U(); _cube.Yi(); }, () => { });
+        QueueAnimation(new THREE.Matrix4(), null, new THREE.Vector3(0, -1, 0), () => { _cube.U(); _cube.Yi(); }, () => { });
     }
 
     this.di = function () {
-        QueueDoubleLayerTurn(new THREE.Matrix4(), new THREE.Vector3(0, 1, 0), () => { _cube.Ui(); _cube.Y(); }, () => { });
+        QueueAnimation(new THREE.Matrix4(), null, new THREE.Vector3(0, 1, 0), () => { _cube.Ui(); _cube.Y(); }, () => { });
     }
 
     this.r = function () {
-        QueueDoubleLayerTurn(new THREE.Matrix4().makeRotationZ(Math.PI / 2), new THREE.Vector3(1, 0, 0), () => { _cube.Z(); _cube.U(); _cube.Yi(); }, () => { _cube.Zi(); });
+        QueueAnimation(new THREE.Matrix4().makeRotationZ(Math.PI / 2), null, new THREE.Vector3(1, 0, 0), () => { _cube.Z(); _cube.U(); _cube.Yi(); }, () => { _cube.Zi(); });
     }
 
     this.ri = function () {
-        QueueDoubleLayerTurn(new THREE.Matrix4().makeRotationZ(Math.PI / 2), new THREE.Vector3(-1, 0, 0), () => { _cube.Z(); _cube.Ui(); _cube.Y(); }, () => { _cube.Zi(); });
+        QueueAnimation(new THREE.Matrix4().makeRotationZ(Math.PI / 2), null, new THREE.Vector3(-1, 0, 0), () => { _cube.Z(); _cube.Ui(); _cube.Y(); }, () => { _cube.Zi(); });
     }
 
     this.I = function () {
-        QueueDoubleLayerTurn(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), new THREE.Vector3(-1, 0, 0), () => { _cube.Zi(); _cube.U(); _cube.Yi(); }, () => { _cube.Z(); });
+        QueueAnimation(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), null, new THREE.Vector3(-1, 0, 0), () => { _cube.Zi(); _cube.U(); _cube.Yi(); }, () => { _cube.Z(); });
     }
 
     this.Ii = function () {
-        QueueDoubleLayerTurn(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), new THREE.Vector3(1, 0, 0), () => { _cube.Zi(); _cube.Ui(); _cube.Y(); }, () => { _cube.Z(); });
+        QueueAnimation(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), null, new THREE.Vector3(1, 0, 0), () => { _cube.Zi(); _cube.Ui(); _cube.Y(); }, () => { _cube.Z(); });
     }
 }
