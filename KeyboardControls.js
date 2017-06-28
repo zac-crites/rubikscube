@@ -5,7 +5,7 @@ function KeyboardControls() {
     var _columns = 10;
     var _currentRow = NewRow();
 
-    window.onkeydown = (event) => !_keybinds.has(event.keyCode) || _keybinds.get(event.keyCode)();
+    window.onkeydown = (event) => !_keybinds.has(event.keyCode) || event.repeat || _keybinds.get(event.keyCode)();
 
     this.AddButton = function (text, command, keycode, keytext, tooltip) {
 
