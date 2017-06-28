@@ -2,6 +2,14 @@ body {
     background: #000000
 }
 
+#timerDisplay {
+    color: red;
+    margin: auto;
+    text-align: right;
+    width: 400px;
+    font-family: monospace;
+}
+
 .movebutton {
     width: 3em;
     height: 3em;
