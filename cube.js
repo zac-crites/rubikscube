@@ -2,36 +2,28 @@ function Cube() {
 
     //State
     function Face(n) {
-        this.Center = n;
-        this.Rotation = 0;
-        this.Cubelets = [n, n, n, n, n, n, n, n];
+        var _color = n;
+        var _rotation = 0;
+        var _cubelets = [n, n, n, n, n, n, n, n];
 
-        this.Get = function (i) {
-            return this.Cubelets[(i + (this.Rotation * 2)) % 8];
-        }
+        this.GetColor = () => _color;
 
-        this.Rotate = function (i) {
-            this.Rotation = (this.Rotation + i) % 4;
-        }
+        this.Get = (i) => _cubelets[(i + (_rotation * 2)) % 8];
 
-        this.Replace = function (i, value) {
+        this.Rotate = (i) => _rotation = (_rotation + i) % 4;
+
+        this.Replace = (i, value) => {
             var tmp = this.Get(i);
-            this.Cubelets[(i + (this.Rotation * 2)) % 8] = value;
+            _cubelets[(i + (_rotation * 2)) % 8] = value;
             return tmp;
         }
 
-        this.IsSolved = function () {
-            return !this.Cubelets.some((n) => n != this.Center);
-        }
+        this.IsSolved = () => !_cubelets.some((n) => n != this.Center);
     }
 
     this.Faces = [new Face(0), new Face(1), new Face(2), new Face(3), new Face(4), new Face(5)];
 
     //Utils
-    this.IsSolved = function () {
-        return !this.Faces.some((f) => !f.IsSolved());
-    }
-
     function shift(i, f) {
         f[1].Replace(i, f[2].Replace(i, f[3].Replace(i, f[4].Replace(i, f[1].Get(i)))));
     }
@@ -41,8 +33,10 @@ function Cube() {
             fn();
     }
 
+    this.IsSolved = () => !this.Faces.some((f) => !f.IsSolved());
+
     //Moves - Full cube rotations
-    this.X = function () {
+    this.X = () => {
         this.Faces[1].Rotate(1);
         this.Faces[3].Rotate(3);
 
@@ -55,11 +49,7 @@ function Cube() {
         this.Faces[4].Rotate(2);
     }
 
-    this.Xi = function () {
-        triple(() => this.X());
-    }
-
-    this.Z = function () {
+    this.Z = () => {
         this.Faces[2].Rotate(3);
         this.Faces[4].Rotate(1);
 
@@ -74,11 +64,7 @@ function Cube() {
         this.Faces[3].Rotate(3);
     }
 
-    this.Zi = function () {
-        triple(() => this.Z());
-    }
-
-    this.Y = function () {
+    this.Y = () => {
         this.Faces[0].Rotate(3);
         this.Faces[5].Rotate(1);
 
@@ -89,30 +75,24 @@ function Cube() {
         this.Faces[4] = tmp;
     }
 
-    this.Yi = function () {
-        triple(() => this.Y());
-    }
+    this.Xi = () => triple(() => this.X());
+
+    this.Zi = () => triple(() => this.Z());
+
+    this.Yi = () => triple(() => this.Y());    
 
     //Moves - Single face rotations
-    this.U = function () {
+    this.U = () => {
         this.Faces[0].Rotate(3);
         shift(0, this.Faces);
         shift(1, this.Faces);
         shift(2, this.Faces);
     }
 
-    this.Ui = function () {
-        triple(() => this.U());
-    }
-
-    this.F = function () {
+    this.F = () => {
         this.X();
         this.U();
         this.Xi();
-    }
-
-    this.Fi = function () {
-        triple(() => this.F());
     }
 
     this.L = function () {
@@ -120,29 +100,17 @@ function Cube() {
         this.U();
         this.Zi();
     }
-
-    this.Li = function () {
-        triple(() => this.L());
-    }
-
+    
     this.R = function () {
         this.Zi();
         this.U();
         this.Z();
     }
-
-    this.Ri = function () {
-        triple(() => this.R());
-    }
-
+    
     this.B = function () {
         this.Xi();
         this.U();
         this.X();
-    }
-
-    this.Bi = function () {
-        triple(() => this.B());
     }
 
     this.D = function () {
@@ -151,28 +119,15 @@ function Cube() {
         this.Xi();
     }
 
-    this.Di = function () {
-        triple(() => this.D())
-    }
+    this.Ui = () => triple(() => this.U());
 
-    //Moves - Double layer turns
-    this.I = function () {
-        this.R();
-        this.Xi();
-    }
+    this.Fi = () => triple(() => this.F());
 
-    this.Ii = function () {
-        this.Ri();
-        this.X();
-    }
+    this.Li = () => triple(() => this.L());
 
-    this.r = function () {
-        this.L();
-        this.X();
-    }
-    
-    this.ri = function () {
-        this.Li();
-        this.Xi();
-    }
+    this.Ri = () => triple(() => this.R());
+
+    this.Bi = () => triple(() => this.B());
+
+    this.Di = () => triple(() => this.D());
 }

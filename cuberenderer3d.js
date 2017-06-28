@@ -82,7 +82,7 @@ function CubeRenderer3d(cube) {
             CreateCubelet(facetopleft.clone(), 1, 0, () => materials[_cube.Faces[faceIndex].Get(1)]);
             CreateCubelet(facetopleft.clone(), 2, 0, () => materials[_cube.Faces[faceIndex].Get(2)]);
             CreateCubelet(facetopleft.clone(), 0, 1, () => materials[_cube.Faces[faceIndex].Get(7)]);
-            CreateCubelet(facetopleft.clone(), 1, 1, () => materials[_cube.Faces[faceIndex].Center]);
+            CreateCubelet(facetopleft.clone(), 1, 1, () => materials[_cube.Faces[faceIndex].GetColor()]);
             CreateCubelet(facetopleft.clone(), 2, 1, () => materials[_cube.Faces[faceIndex].Get(3)]);
             CreateCubelet(facetopleft.clone(), 0, 2, () => materials[_cube.Faces[faceIndex].Get(6)]);
             CreateCubelet(facetopleft.clone(), 1, 2, () => materials[_cube.Faces[faceIndex].Get(5)]);
