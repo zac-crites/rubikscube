@@ -7,30 +7,26 @@ function Cube() {
     function Face(n) {
         var _color = n;
         var _rotation = 0;
-        var _cubelets = [n, n, n, n, n, n, n, n];
+        var _facelets = [n, n, n, n, n, n, n, n];
 
         this.GetColor = () => _color;
 
-        this.Get = (i) => _cubelets[(i + (_rotation * 2)) % 8];
+        this.Get = (i) => _facelets[(i + (_rotation * 2)) % 8];
 
         this.Rotate = (i) => _rotation = (_rotation + i) % 4;
 
         this.Replace = (i, value) => {
             var tmp = this.Get(i);
-            _cubelets[(i + (_rotation * 2)) % 8] = value;
+            _facelets[(i + (_rotation * 2)) % 8] = value;
             return tmp;
         }
 
-        this.IsSolved = () => !_cubelets.some((n) => n != _color);
+        this.IsSolved = () => !_facelets.some((n) => n != _color);
     }
 
     this.IsSolved = () => !_faces.some((f) => !f.IsSolved());
 
-    this.GetFacelet = (face, i) => {
-        if (i === undefined)
-            return _faces[_faceLabels.indexOf(face)].GetColor();
-        return _faces[_faceLabels.indexOf(face)].Get(i);
-    };
+    this.GetFacelet = (label, i) => (i === undefined) ? _faces[_faceLabels.indexOf(label)].GetColor() : _faces[_faceLabels.indexOf(label)].Get(i);
 
     //Utils
     function shift(i, f) {
