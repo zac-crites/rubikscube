@@ -9,9 +9,8 @@ function CubeRenderer(cube) {
     var _animationQueue = [];
     var _animationListeners = [];
 
-
     // Create the scene
-    var _scene = (() => {
+    (() => {
         var rendererWidth = 400;
         var rendererHeight = 400;
         var renderer = new THREE.WebGLRenderer();
@@ -39,95 +38,92 @@ function CubeRenderer(cube) {
 
         this.ResetCamera = () => controls.reset();
 
-        return scene;
-    })();
+        // Build the cube mesh
+        (() => {
+            var margin = .08;
+            var outline = .02;
+            var outlineMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.BackSide });
 
-    // Build the cube mesh
-    (() => {
-        var outlineMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.BackSide });
+            var materials = []
+            materials.push(new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide }));
+            materials.push(new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide }));
+            materials.push(new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide }));
+            materials.push(new THREE.MeshBasicMaterial({ color: 0xffff00, side: THREE.DoubleSide }));
+            materials.push(new THREE.MeshBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide }));
+            materials.push(new THREE.MeshBasicMaterial({ color: 0xffaa00, side: THREE.DoubleSide }));
 
-        var materials = []
-        materials.push(new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide }));
-        materials.push(new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide }));
-        materials.push(new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide }));
-        materials.push(new THREE.MeshBasicMaterial({ color: 0xffff00, side: THREE.DoubleSide }));
-        materials.push(new THREE.MeshBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide }));
-        materials.push(new THREE.MeshBasicMaterial({ color: 0xffaa00, side: THREE.DoubleSide }));
+            CreateFace('U', new THREE.Vector3(-1.5, 1.5, -1.5), new THREE.Vector3(3, 0, 0), new THREE.Vector3(0, 0, 3), margin, outline);
+            CreateFace('L', new THREE.Vector3(-1.5, 1.5, -1.5), new THREE.Vector3(0, 0, 3), new THREE.Vector3(0, -3, 0), margin, outline);
+            CreateFace('F', new THREE.Vector3(-1.5, 1.5, 1.5), new THREE.Vector3(3, 0, 0), new THREE.Vector3(0, -3, 0), margin, outline);
+            CreateFace('R', new THREE.Vector3(1.5, 1.5, 1.5), new THREE.Vector3(0, 0, -3), new THREE.Vector3(0, -3, 0), margin, outline);
+            CreateFace('B', new THREE.Vector3(1.5, 1.5, -1.5), new THREE.Vector3(-3, 0, 0), new THREE.Vector3(0, -3, 0), margin, outline);
+            CreateFace('D', new THREE.Vector3(-1.5, -1.5, 1.5), new THREE.Vector3(3, 0, 0), new THREE.Vector3(0, 0, -3), margin, outline);
 
-        var margin = .08;
-        var outline = .02;
+            function CreateFace(face, facetopleft, right, down, margin, outline, addTop) {
 
-        CreateFace('U', new THREE.Vector3(-1.5, 1.5, -1.5), new THREE.Vector3(3, 0, 0), new THREE.Vector3(0, 0, 3), margin, outline);
-        CreateFace('L', new THREE.Vector3(-1.5, 1.5, -1.5), new THREE.Vector3(0, 0, 3), new THREE.Vector3(0, -3, 0), margin, outline);
-        CreateFace('F', new THREE.Vector3(-1.5, 1.5, 1.5), new THREE.Vector3(3, 0, 0), new THREE.Vector3(0, -3, 0), margin, outline);
-        CreateFace('R', new THREE.Vector3(1.5, 1.5, 1.5), new THREE.Vector3(0, 0, -3), new THREE.Vector3(0, -3, 0), margin, outline);
-        CreateFace('B', new THREE.Vector3(1.5, 1.5, -1.5), new THREE.Vector3(-3, 0, 0), new THREE.Vector3(0, -3, 0), margin, outline);
-        CreateFace('D', new THREE.Vector3(-1.5, -1.5, 1.5), new THREE.Vector3(3, 0, 0), new THREE.Vector3(0, 0, -3), margin, outline);
+                right.divideScalar(3);
+                down.divideScalar(3);
 
-        function CreateFace(face, facetopleft, right, down, margin, outline, addTop) {
+                var back = right.clone().cross(down).normalize().multiplyScalar(.001);
 
-            right.divideScalar(3);
-            down.divideScalar(3);
+                var marginRight = right.clone().normalize().multiplyScalar(margin);
+                var marginDown = down.clone().normalize().multiplyScalar(margin);
 
-            var back = right.clone().cross(down).normalize().multiplyScalar(.001);
+                var outlineRight = marginRight.clone().normalize().multiplyScalar(outline);
+                var outlineDown = marginDown.clone().normalize().multiplyScalar(outline);
 
-            var marginRight = right.clone().normalize().multiplyScalar(margin);
-            var marginDown = down.clone().normalize().multiplyScalar(margin);
+                var width = right.clone().sub(marginRight).sub(marginRight);
+                var height = down.clone().sub(marginDown).sub(marginDown);
 
-            var outlineRight = marginRight.clone().normalize().multiplyScalar(outline);
-            var outlineDown = marginDown.clone().normalize().multiplyScalar(outline);
+                CreateCubelet(facetopleft.clone(), 0, 0, () => materials[_cube.GetFacelet(face, 0)]);
+                CreateCubelet(facetopleft.clone(), 1, 0, () => materials[_cube.GetFacelet(face, 1)]);
+                CreateCubelet(facetopleft.clone(), 2, 0, () => materials[_cube.GetFacelet(face, 2)]);
+                CreateCubelet(facetopleft.clone(), 0, 1, () => materials[_cube.GetFacelet(face, 7)]);
+                CreateCubelet(facetopleft.clone(), 1, 1, () => materials[_cube.GetFacelet(face)]);
+                CreateCubelet(facetopleft.clone(), 2, 1, () => materials[_cube.GetFacelet(face, 3)]);
+                CreateCubelet(facetopleft.clone(), 0, 2, () => materials[_cube.GetFacelet(face, 6)]);
+                CreateCubelet(facetopleft.clone(), 1, 2, () => materials[_cube.GetFacelet(face, 5)]);
+                CreateCubelet(facetopleft.clone(), 2, 2, () => materials[_cube.GetFacelet(face, 4)]);
 
-            var width = right.clone().sub(marginRight).sub(marginRight);
-            var height = down.clone().sub(marginDown).sub(marginDown);
+                function CreateCubelet(topleft, x, y, getMaterial) {
 
-            CreateCubelet(facetopleft.clone(), 0, 0, () => materials[_cube.GetFacelet(face, 0)]);
-            CreateCubelet(facetopleft.clone(), 1, 0, () => materials[_cube.GetFacelet(face, 1)]);
-            CreateCubelet(facetopleft.clone(), 2, 0, () => materials[_cube.GetFacelet(face, 2)]);
-            CreateCubelet(facetopleft.clone(), 0, 1, () => materials[_cube.GetFacelet(face, 7)]);
-            CreateCubelet(facetopleft.clone(), 1, 1, () => materials[_cube.GetFacelet(face)]);
-            CreateCubelet(facetopleft.clone(), 2, 1, () => materials[_cube.GetFacelet(face, 3)]);
-            CreateCubelet(facetopleft.clone(), 0, 2, () => materials[_cube.GetFacelet(face, 6)]);
-            CreateCubelet(facetopleft.clone(), 1, 2, () => materials[_cube.GetFacelet(face, 5)]);
-            CreateCubelet(facetopleft.clone(), 2, 2, () => materials[_cube.GetFacelet(face, 4)]);
+                    topleft.add(right.clone().multiplyScalar(x)).add(down.clone().multiplyScalar(y)).add(marginRight).add(marginDown);
+                    var topright = topleft.clone().add(width);
+                    var bottomleft = topleft.clone().add(height);
+                    var bottomright = topleft.clone().add(width).add(height);
 
-            function CreateCubelet(topleft, x, y, getMaterial) {
+                    var stickerGeometry = new THREE.Geometry();
+                    stickerGeometry.vertices.push(topleft);
+                    stickerGeometry.vertices.push(topright);
+                    stickerGeometry.vertices.push(bottomright);
+                    stickerGeometry.vertices.push(bottomleft);
+                    stickerGeometry.faces.push(new THREE.Face3(0, 1, 2));
+                    stickerGeometry.faces.push(new THREE.Face3(0, 2, 3));
 
-                topleft.add(right.clone().multiplyScalar(x)).add(down.clone().multiplyScalar(y)).add(marginRight).add(marginDown);
-                var topright = topleft.clone().add(width);
-                var bottomleft = topleft.clone().add(height);
-                var bottomright = topleft.clone().add(width).add(height);
+                    var outlineGeometry = new THREE.Geometry();
+                    outlineGeometry.vertices.push(topleft.clone().sub(outlineDown).sub(outlineRight).add(back));
+                    outlineGeometry.vertices.push(topright.clone().sub(outlineDown).add(outlineRight).add(back));
+                    outlineGeometry.vertices.push(bottomright.clone().add(outlineDown).add(outlineRight).add(back));
+                    outlineGeometry.vertices.push(bottomleft.clone().add(outlineDown).sub(outlineRight).add(back));
+                    outlineGeometry.faces.push(new THREE.Face3(0, 1, 2));
+                    outlineGeometry.faces.push(new THREE.Face3(0, 2, 3));
 
-                var stickerGeometry = new THREE.Geometry();
-                stickerGeometry.vertices.push(topleft);
-                stickerGeometry.vertices.push(topright);
-                stickerGeometry.vertices.push(bottomright);
-                stickerGeometry.vertices.push(bottomleft);
-                stickerGeometry.faces.push(new THREE.Face3(0, 1, 2));
-                stickerGeometry.faces.push(new THREE.Face3(0, 2, 3));
+                    var stickerMesh = new THREE.Mesh(stickerGeometry, getMaterial());
+                    var outlineMesh = new THREE.Mesh(outlineGeometry, outlineMaterial);
+                    scene.add(stickerMesh);
+                    scene.add(outlineMesh);
 
-                var outlineGeometry = new THREE.Geometry();
-                outlineGeometry.vertices.push(topleft.clone().sub(outlineDown).sub(outlineRight).add(back));
-                outlineGeometry.vertices.push(topright.clone().sub(outlineDown).add(outlineRight).add(back));
-                outlineGeometry.vertices.push(bottomright.clone().add(outlineDown).add(outlineRight).add(back));
-                outlineGeometry.vertices.push(bottomleft.clone().add(outlineDown).sub(outlineRight).add(back));
-                outlineGeometry.faces.push(new THREE.Face3(0, 1, 2));
-                outlineGeometry.faces.push(new THREE.Face3(0, 2, 3));
+                    _meshes.push(stickerMesh);
+                    _meshes.push(outlineMesh);
 
-                var stickerMesh = new THREE.Mesh(stickerGeometry, getMaterial());
-                var outlineMesh = new THREE.Mesh(outlineGeometry, outlineMaterial);
-                _scene.add(stickerMesh);
-                _scene.add(outlineMesh);
+                    layerGroup = (face === 'U' || (face !== 'D' && y === 0)) ? _topLayerMeshes : _bottomLayersMeshes;
+                    layerGroup.push(stickerMesh);
+                    layerGroup.push(outlineMesh);
 
-                _meshes.push(stickerMesh);
-                _meshes.push(outlineMesh);
-
-                layerGroup = (face === 'U' || (face !== 'D' && y === 0)) ? _topLayerMeshes : _bottomLayersMeshes;
-                layerGroup.push(stickerMesh);
-                layerGroup.push(outlineMesh);
-
-                _updateCubeletMats.push(() => stickerMesh.material = getMaterial());
+                    _updateCubeletMats.push(() => stickerMesh.material = getMaterial());
+                }
             }
-        }
+        })();
     })();
 
     // Move animations
@@ -219,7 +215,7 @@ function CubeRenderer(cube) {
     this.D = () => Animate(new THREE.Matrix4().makeRotationX(Math.PI), new THREE.Vector3(0, -1, 0), null, () => { _cube.Xi(); _cube.Xi(); _cube.U(); }, () => { _cube.X(); _cube.X(); });
 
     this.Di = () => Animate(new THREE.Matrix4().makeRotationX(Math.PI), new THREE.Vector3(0, 1, 0), null, () => { _cube.Xi(); _cube.Xi(); _cube.Ui(); }, () => { _cube.X(); _cube.X(); });
-  
+
     this.D2 = () => { this.D(); this.D(); }
 
     //Moves - Double layer turns
