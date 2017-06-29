@@ -1,6 +1,9 @@
 function Cube() {
 
     //State
+    var _faceLabels = ['U', 'L', 'F', 'R', 'B', 'D'];
+    var _faces = [new Face(0), new Face(1), new Face(2), new Face(3), new Face(4), new Face(5)];
+
     function Face(n) {
         var _color = n;
         var _rotation = 0;
@@ -21,7 +24,13 @@ function Cube() {
         this.IsSolved = () => !_cubelets.some((n) => n != _color);
     }
 
-    this.Faces = [new Face(0), new Face(1), new Face(2), new Face(3), new Face(4), new Face(5)];
+    this.IsSolved = () => !_faces.some((f) => !f.IsSolved());
+
+    this.GetFacelet = (face, i) => {
+        if (i === undefined)
+            return _faces[_faceLabels.indexOf(face)].GetColor();
+        return _faces[_faceLabels.indexOf(face)].Get(i);
+    };
 
     //Utils
     function shift(i, f) {
@@ -33,60 +42,58 @@ function Cube() {
             fn();
     }
 
-    this.IsSolved = () => !this.Faces.some((f) => !f.IsSolved());
-
     //Moves - Full cube rotations
     this.X = () => {
-        this.Faces[1].Rotate(1);
-        this.Faces[3].Rotate(3);
+        _faces[1].Rotate(1);
+        _faces[3].Rotate(3);
 
-        var tmp = this.Faces[0];
-        this.Faces[0] = this.Faces[2];
-        this.Faces[2] = this.Faces[5];
-        this.Faces[5] = this.Faces[4];
-        this.Faces[5].Rotate(2);
-        this.Faces[4] = tmp;
-        this.Faces[4].Rotate(2);
+        var tmp = _faces[0];
+        _faces[0] = _faces[2];
+        _faces[2] = _faces[5];
+        _faces[5] = _faces[4];
+        _faces[5].Rotate(2);
+        _faces[4] = tmp;
+        _faces[4].Rotate(2);
     }
 
     this.Z = () => {
-        this.Faces[2].Rotate(3);
-        this.Faces[4].Rotate(1);
+        _faces[2].Rotate(3);
+        _faces[4].Rotate(1);
 
-        var tmp = this.Faces[0];
-        this.Faces[0] = this.Faces[1];
-        this.Faces[0].Rotate(3);
-        this.Faces[1] = this.Faces[5];
-        this.Faces[1].Rotate(3);
-        this.Faces[5] = this.Faces[3];
-        this.Faces[5].Rotate(3);
-        this.Faces[3] = tmp;
-        this.Faces[3].Rotate(3);
+        var tmp = _faces[0];
+        _faces[0] = _faces[1];
+        _faces[0].Rotate(3);
+        _faces[1] = _faces[5];
+        _faces[1].Rotate(3);
+        _faces[5] = _faces[3];
+        _faces[5].Rotate(3);
+        _faces[3] = tmp;
+        _faces[3].Rotate(3);
     }
 
     this.Y = () => {
-        this.Faces[0].Rotate(3);
-        this.Faces[5].Rotate(1);
+        _faces[0].Rotate(3);
+        _faces[5].Rotate(1);
 
-        var tmp = this.Faces[1];
-        this.Faces[1] = this.Faces[2];
-        this.Faces[2] = this.Faces[3];
-        this.Faces[3] = this.Faces[4];
-        this.Faces[4] = tmp;
+        var tmp = _faces[1];
+        _faces[1] = _faces[2];
+        _faces[2] = _faces[3];
+        _faces[3] = _faces[4];
+        _faces[4] = tmp;
     }
 
     this.Xi = () => triple(() => this.X());
 
     this.Zi = () => triple(() => this.Z());
 
-    this.Yi = () => triple(() => this.Y());    
+    this.Yi = () => triple(() => this.Y());
 
     //Moves - Single face rotations
     this.U = () => {
-        this.Faces[0].Rotate(3);
-        shift(0, this.Faces);
-        shift(1, this.Faces);
-        shift(2, this.Faces);
+        _faces[0].Rotate(3);
+        shift(0, _faces);
+        shift(1, _faces);
+        shift(2, _faces);
     }
 
     this.F = () => {
@@ -100,13 +107,13 @@ function Cube() {
         this.U();
         this.Zi();
     }
-    
+
     this.R = function () {
         this.Zi();
         this.U();
         this.Z();
     }
-    
+
     this.B = function () {
         this.Xi();
         this.U();
