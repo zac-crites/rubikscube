@@ -37,8 +37,8 @@ function Cube() {
         f[1].Replace(i, f[2].Replace(i, f[3].Replace(i, f[4].Replace(i, f[1].Get(i)))));
     }
 
-    function triple(fn) {
-        for (var i = 0; i < 3; i++)
+    function repeat(fn, n) {
+        for (var i = 0; i < n; i++)
             fn();
     }
 
@@ -82,11 +82,17 @@ function Cube() {
         _faces[4] = tmp;
     }
 
-    this.Xi = () => triple(() => this.X());
+    this.X2 = () => repeat(() => this.X(), 2);
 
-    this.Zi = () => triple(() => this.Z());
+    this.Z2 = () => repeat(() => this.Z(), 2);
 
-    this.Yi = () => triple(() => this.Y());
+    this.Y2 = () => repeat(() => this.Y(), 2);
+
+    this.Xi = () => repeat(() => this.X(), 3);
+
+    this.Zi = () => repeat(() => this.Z(), 3);
+
+    this.Yi = () => repeat(() => this.Y(), 3);
 
     //Moves - Single face rotations
     this.U = () => {
@@ -126,15 +132,27 @@ function Cube() {
         this.Xi();
     }
 
-    this.Ui = () => triple(() => this.U());
+    this.U2 = () => repeat(() => this.U(), 2);
 
-    this.Fi = () => triple(() => this.F());
+    this.F2 = () => repeat(() => this.F(), 2);
 
-    this.Li = () => triple(() => this.L());
+    this.L2 = () => repeat(() => this.L(), 2);
 
-    this.Ri = () => triple(() => this.R());
+    this.R2 = () => repeat(() => this.R(), 2);
 
-    this.Bi = () => triple(() => this.B());
+    this.B2 = () => repeat(() => this.B(), 2);
 
-    this.Di = () => triple(() => this.D());
+    this.D2 = () => repeat(() => this.D(), 2);
+
+    this.Ui = () => repeat(() => this.U(), 3);
+
+    this.Fi = () => repeat(() => this.F(), 3);
+
+    this.Li = () => repeat(() => this.L(), 3);
+
+    this.Ri = () => repeat(() => this.R(), 3);
+
+    this.Bi = () => repeat(() => this.B(), 3);
+
+    this.Di = () => repeat(() => this.D(), 3);
 }
