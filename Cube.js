@@ -21,10 +21,10 @@ function Cube() {
             return tmp;
         }
 
-        this.IsSolved = () => !_facelets.some((n) => n != _color);
+        this.IsSolved = () => !_facelets.some((facelet) => facelet != _color);
     }
 
-    this.IsSolved = () => !_faces.some((f) => !f.IsSolved());
+    this.IsSolved = () => !_faces.some((face) => !face.IsSolved());
 
     this.GetFacelet = (label, i) => (i === undefined) ? _faces[_faceLabels.indexOf(label)].GetColor() : _faces[_faceLabels.indexOf(label)].Get(i);
 

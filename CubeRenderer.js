@@ -9,6 +9,7 @@ function CubeRenderer(cube) {
     var _animationQueue = [];
     var _animationListeners = [];
 
+
     // Create the scene
     var _scene = (() => {
         var rendererWidth = 400;
@@ -130,7 +131,7 @@ function CubeRenderer(cube) {
     })();
 
     // Move animations
-    function QueueAnimation(baseRotation, topRotationAxis, bottomRotationAxis, startMoves, endMoves) {
+    function Animate(baseRotation, topRotationAxis, bottomRotationAxis, startMoves, endMoves) {
         var duration = _animationSpeed;
         var counter = _animationSpeed;
 
@@ -166,101 +167,71 @@ function CubeRenderer(cube) {
     this.IsAnimating = () => _animationQueue.length > 0;
 
     // Moves - Full cube rotations
-    this.Z = function () {
-        QueueAnimation(new THREE.Matrix4(), new THREE.Vector3(0, 0, 1), new THREE.Vector3(0, 0, 1), () => _cube.Z(), () => { });
-    }
+    this.Z = () => Animate(new THREE.Matrix4(), new THREE.Vector3(0, 0, 1), new THREE.Vector3(0, 0, 1), () => _cube.Z(), () => { });
 
-    this.Zi = function () {
-        QueueAnimation(new THREE.Matrix4(), new THREE.Vector3(0, 0, -1), new THREE.Vector3(0, 0, -1), () => _cube.Zi(), () => { });
-    }
+    this.Z2 = () => { this.Z(); this.Z(); }
 
-    this.Y = function () {
-        QueueAnimation(new THREE.Matrix4(), new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 1, 0), () => _cube.Y(), () => { });
-    }
+    this.Zi = () => Animate(new THREE.Matrix4(), new THREE.Vector3(0, 0, -1), new THREE.Vector3(0, 0, -1), () => _cube.Zi(), () => { });
 
-    this.Yi = function () {
-        QueueAnimation(new THREE.Matrix4(), new THREE.Vector3(0, -1, 0), new THREE.Vector3(0, -1, 0), () => _cube.Yi(), () => { });
-    }
+    this.Y = () => Animate(new THREE.Matrix4(), new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 1, 0), () => _cube.Y(), () => { });
 
-    this.X = function () {
-        QueueAnimation(new THREE.Matrix4(), new THREE.Vector3(1, 0, 0), new THREE.Vector3(1, 0, 0), () => _cube.X(), () => { });
-    }
+    this.Yi = () => Animate(new THREE.Matrix4(), new THREE.Vector3(0, -1, 0), new THREE.Vector3(0, -1, 0), () => _cube.Yi(), () => { });
 
-    this.Xi = function () {
-        QueueAnimation(new THREE.Matrix4(), new THREE.Vector3(-1, 0, 0), new THREE.Vector3(-1, 0, 0), () => _cube.Xi(), () => { });
-    }
+    this.Y2 = () => { this.Y(); this.Y(); }
+
+    this.X = () => Animate(new THREE.Matrix4(), new THREE.Vector3(1, 0, 0), new THREE.Vector3(1, 0, 0), () => _cube.X(), () => { });
+
+    this.Xi = () => Animate(new THREE.Matrix4(), new THREE.Vector3(-1, 0, 0), new THREE.Vector3(-1, 0, 0), () => _cube.Xi(), () => { });
+
+    this.X2 = () => { this.X(); this.X(); }
 
     // Moves - Single face turns
-    this.U = function () {
-        QueueAnimation(new THREE.Matrix4(), new THREE.Vector3(0, 1, 0), null, () => _cube.U(), () => { });
-    }
+    this.U = () => Animate(new THREE.Matrix4(), new THREE.Vector3(0, 1, 0), null, () => _cube.U(), () => { });
 
-    this.Ui = function () {
-        QueueAnimation(new THREE.Matrix4(), new THREE.Vector3(0, -1, 0), null, () => _cube.Ui(), () => { });
-    }
+    this.Ui = () => Animate(new THREE.Matrix4(), new THREE.Vector3(0, -1, 0), null, () => _cube.Ui(), () => { });
 
-    this.R = function () {
-        QueueAnimation(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), new THREE.Vector3(1, 0, 0), null, () => { _cube.Zi(); _cube.U(); }, () => { _cube.Z(); });
-    }
+    this.U2 = () => { this.U(); this.U(); }
 
-    this.Ri = function () {
-        QueueAnimation(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), new THREE.Vector3(-1, 0, 0), null, () => { _cube.Zi(); _cube.Ui(); }, () => { _cube.Z(); });
-    }
+    this.R = () => Animate(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), new THREE.Vector3(1, 0, 0), null, () => { _cube.Zi(); _cube.U(); }, () => { _cube.Z(); });
 
-    this.L = function () {
-        QueueAnimation(new THREE.Matrix4().makeRotationZ(Math.PI / 2), new THREE.Vector3(-1, 0, 0), null, () => { _cube.Z(); _cube.U(); }, () => { _cube.Zi(); });
-    }
+    this.Ri = () => Animate(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), new THREE.Vector3(-1, 0, 0), null, () => { _cube.Zi(); _cube.Ui(); }, () => { _cube.Z(); });
 
-    this.Li = function () {
-        QueueAnimation(new THREE.Matrix4().makeRotationZ(Math.PI / 2), new THREE.Vector3(1, 0, 0), null, () => { _cube.Z(); _cube.Ui(); }, () => { _cube.Zi(); });
-    }
+    this.R2 = () => { this.R(); this.R(); }
 
-    this.F = function () {
-        QueueAnimation(new THREE.Matrix4().makeRotationX(Math.PI / 2), new THREE.Vector3(0, 0, 1), null, () => { _cube.X(); _cube.U(); }, () => { _cube.Xi(); });
-    }
+    this.L = () => Animate(new THREE.Matrix4().makeRotationZ(Math.PI / 2), new THREE.Vector3(-1, 0, 0), null, () => { _cube.Z(); _cube.U(); }, () => { _cube.Zi(); });
 
-    this.Fi = function () {
-        QueueAnimation(new THREE.Matrix4().makeRotationX(Math.PI / 2), new THREE.Vector3(0, 0, -1), null, () => { _cube.X(); _cube.Ui(); }, () => { _cube.Xi(); });
-    }
+    this.Li = () => Animate(new THREE.Matrix4().makeRotationZ(Math.PI / 2), new THREE.Vector3(1, 0, 0), null, () => { _cube.Z(); _cube.Ui(); }, () => { _cube.Zi(); });
 
-    this.B = function () {
-        QueueAnimation(new THREE.Matrix4().makeRotationX(-Math.PI / 2), new THREE.Vector3(0, 0, -1), null, () => { _cube.Xi(); _cube.U(); }, () => { _cube.X(); });
-    }
+    this.L2 = () => { this.L(); this.L(); }
 
-    this.Bi = function () {
-        QueueAnimation(new THREE.Matrix4().makeRotationX(-Math.PI / 2), new THREE.Vector3(0, 0, 1), null, () => { _cube.Xi(); _cube.Ui(); }, () => { _cube.X(); });
-    }
+    this.F = () => Animate(new THREE.Matrix4().makeRotationX(Math.PI / 2), new THREE.Vector3(0, 0, 1), null, () => { _cube.X(); _cube.U(); }, () => { _cube.Xi(); });
 
-    this.D = function () {
-        QueueAnimation(new THREE.Matrix4().makeRotationX(Math.PI), new THREE.Vector3(0, -1, 0), null, () => { _cube.Xi(); _cube.Xi(); _cube.U(); }, () => { _cube.X(); _cube.X(); });
-    }
+    this.Fi = () => Animate(new THREE.Matrix4().makeRotationX(Math.PI / 2), new THREE.Vector3(0, 0, -1), null, () => { _cube.X(); _cube.Ui(); }, () => { _cube.Xi(); });
 
-    this.Di = function () {
-        QueueAnimation(new THREE.Matrix4().makeRotationX(Math.PI), new THREE.Vector3(0, 1, 0), null, () => { _cube.Xi(); _cube.Xi(); _cube.Ui(); }, () => { _cube.X(); _cube.X(); });
-    }
+    this.F2 = () => { this.F(); this.F(); }
+
+    this.B = () => Animate(new THREE.Matrix4().makeRotationX(-Math.PI / 2), new THREE.Vector3(0, 0, -1), null, () => { _cube.Xi(); _cube.U(); }, () => { _cube.X(); });
+
+    this.Bi = () => Animate(new THREE.Matrix4().makeRotationX(-Math.PI / 2), new THREE.Vector3(0, 0, 1), null, () => { _cube.Xi(); _cube.Ui(); }, () => { _cube.X(); });
+
+    this.B2 = () => { this.B(); this.B(); }
+
+    this.D = () => Animate(new THREE.Matrix4().makeRotationX(Math.PI), new THREE.Vector3(0, -1, 0), null, () => { _cube.Xi(); _cube.Xi(); _cube.U(); }, () => { _cube.X(); _cube.X(); });
+
+    this.Di = () => Animate(new THREE.Matrix4().makeRotationX(Math.PI), new THREE.Vector3(0, 1, 0), null, () => { _cube.Xi(); _cube.Xi(); _cube.Ui(); }, () => { _cube.X(); _cube.X(); });
+  
+    this.D2 = () => { this.D(); this.D(); }
 
     //Moves - Double layer turns
-    this.d = function () {
-        QueueAnimation(new THREE.Matrix4(), null, new THREE.Vector3(0, -1, 0), () => { _cube.U(); _cube.Yi(); }, () => { });
-    }
+    this.d = () => Animate(new THREE.Matrix4(), null, new THREE.Vector3(0, -1, 0), () => { _cube.U(); _cube.Yi(); }, () => { });
 
-    this.di = function () {
-        QueueAnimation(new THREE.Matrix4(), null, new THREE.Vector3(0, 1, 0), () => { _cube.Ui(); _cube.Y(); }, () => { });
-    }
+    this.di = () => Animate(new THREE.Matrix4(), null, new THREE.Vector3(0, 1, 0), () => { _cube.Ui(); _cube.Y(); }, () => { });
 
-    this.r = function () {
-        QueueAnimation(new THREE.Matrix4().makeRotationZ(Math.PI / 2), null, new THREE.Vector3(1, 0, 0), () => { _cube.Z(); _cube.U(); _cube.Yi(); }, () => { _cube.Zi(); });
-    }
+    this.r = () => Animate(new THREE.Matrix4().makeRotationZ(Math.PI / 2), null, new THREE.Vector3(1, 0, 0), () => { _cube.Z(); _cube.U(); _cube.Yi(); }, () => { _cube.Zi(); });
 
-    this.ri = function () {
-        QueueAnimation(new THREE.Matrix4().makeRotationZ(Math.PI / 2), null, new THREE.Vector3(-1, 0, 0), () => { _cube.Z(); _cube.Ui(); _cube.Y(); }, () => { _cube.Zi(); });
-    }
+    this.ri = () => Animate(new THREE.Matrix4().makeRotationZ(Math.PI / 2), null, new THREE.Vector3(-1, 0, 0), () => { _cube.Z(); _cube.Ui(); _cube.Y(); }, () => { _cube.Zi(); });
 
-    this.I = function () {
-        QueueAnimation(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), null, new THREE.Vector3(-1, 0, 0), () => { _cube.Zi(); _cube.U(); _cube.Yi(); }, () => { _cube.Z(); });
-    }
+    this.I = () => Animate(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), null, new THREE.Vector3(-1, 0, 0), () => { _cube.Zi(); _cube.U(); _cube.Yi(); }, () => { _cube.Z(); });
 
-    this.Ii = function () {
-        QueueAnimation(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), null, new THREE.Vector3(1, 0, 0), () => { _cube.Zi(); _cube.Ui(); _cube.Y(); }, () => { _cube.Z(); });
-    }
+    this.Ii = () => Animate(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), null, new THREE.Vector3(1, 0, 0), () => { _cube.Zi(); _cube.Ui(); _cube.Y(); }, () => { _cube.Z(); });
 }
