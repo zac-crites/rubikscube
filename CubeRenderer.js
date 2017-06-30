@@ -1,6 +1,6 @@
 function CubeRenderer(cube) {
 
-    var _updateCubeletMats = [];
+    var _updateFaceletMats = [];
     var _meshes = [];
     var _topLayerMeshes = [];
     var _bottomLayersMeshes = [];
@@ -43,8 +43,8 @@ function CubeRenderer(cube) {
             var margin = .08;
             var outline = .02;
             var outlineMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.BackSide });
-
-            var materials = []
+            var geometryFaces = [new THREE.Face3(0, 1, 2), new THREE.Face3(0, 2, 3)];
+            var materials = [];
             materials.push(new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide }));
             materials.push(new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide }));
             materials.push(new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide }));
@@ -65,27 +65,24 @@ function CubeRenderer(cube) {
                 down.divideScalar(3);
 
                 var back = right.clone().cross(down).normalize().multiplyScalar(.001);
-
                 var marginRight = right.clone().normalize().multiplyScalar(margin);
                 var marginDown = down.clone().normalize().multiplyScalar(margin);
-
                 var outlineRight = marginRight.clone().normalize().multiplyScalar(outline);
                 var outlineDown = marginDown.clone().normalize().multiplyScalar(outline);
-
                 var width = right.clone().sub(marginRight).sub(marginRight);
                 var height = down.clone().sub(marginDown).sub(marginDown);
 
-                CreateCubelet(facetopleft.clone(), 0, 0, () => materials[_cube.GetFacelet(face, 0)]);
-                CreateCubelet(facetopleft.clone(), 1, 0, () => materials[_cube.GetFacelet(face, 1)]);
-                CreateCubelet(facetopleft.clone(), 2, 0, () => materials[_cube.GetFacelet(face, 2)]);
-                CreateCubelet(facetopleft.clone(), 0, 1, () => materials[_cube.GetFacelet(face, 7)]);
-                CreateCubelet(facetopleft.clone(), 1, 1, () => materials[_cube.GetFacelet(face)]);
-                CreateCubelet(facetopleft.clone(), 2, 1, () => materials[_cube.GetFacelet(face, 3)]);
-                CreateCubelet(facetopleft.clone(), 0, 2, () => materials[_cube.GetFacelet(face, 6)]);
-                CreateCubelet(facetopleft.clone(), 1, 2, () => materials[_cube.GetFacelet(face, 5)]);
-                CreateCubelet(facetopleft.clone(), 2, 2, () => materials[_cube.GetFacelet(face, 4)]);
+                CreateFacelet(facetopleft.clone(), 0, 0, () => materials[_cube.GetFacelet(face, 0)]);
+                CreateFacelet(facetopleft.clone(), 1, 0, () => materials[_cube.GetFacelet(face, 1)]);
+                CreateFacelet(facetopleft.clone(), 2, 0, () => materials[_cube.GetFacelet(face, 2)]);
+                CreateFacelet(facetopleft.clone(), 0, 1, () => materials[_cube.GetFacelet(face, 7)]);
+                CreateFacelet(facetopleft.clone(), 1, 1, () => materials[_cube.GetFacelet(face)]);
+                CreateFacelet(facetopleft.clone(), 2, 1, () => materials[_cube.GetFacelet(face, 3)]);
+                CreateFacelet(facetopleft.clone(), 0, 2, () => materials[_cube.GetFacelet(face, 6)]);
+                CreateFacelet(facetopleft.clone(), 1, 2, () => materials[_cube.GetFacelet(face, 5)]);
+                CreateFacelet(facetopleft.clone(), 2, 2, () => materials[_cube.GetFacelet(face, 4)]);
 
-                function CreateCubelet(topleft, x, y, getMaterial) {
+                function CreateFacelet(topleft, x, y, getMaterial) {
 
                     topleft.add(right.clone().multiplyScalar(x)).add(down.clone().multiplyScalar(y)).add(marginRight).add(marginDown);
                     var topright = topleft.clone().add(width);
@@ -97,16 +94,14 @@ function CubeRenderer(cube) {
                     stickerGeometry.vertices.push(topright);
                     stickerGeometry.vertices.push(bottomright);
                     stickerGeometry.vertices.push(bottomleft);
-                    stickerGeometry.faces.push(new THREE.Face3(0, 1, 2));
-                    stickerGeometry.faces.push(new THREE.Face3(0, 2, 3));
+                    stickerGeometry.faces = geometryFaces;
 
                     var outlineGeometry = new THREE.Geometry();
                     outlineGeometry.vertices.push(topleft.clone().sub(outlineDown).sub(outlineRight).add(back));
                     outlineGeometry.vertices.push(topright.clone().sub(outlineDown).add(outlineRight).add(back));
                     outlineGeometry.vertices.push(bottomright.clone().add(outlineDown).add(outlineRight).add(back));
                     outlineGeometry.vertices.push(bottomleft.clone().add(outlineDown).sub(outlineRight).add(back));
-                    outlineGeometry.faces.push(new THREE.Face3(0, 1, 2));
-                    outlineGeometry.faces.push(new THREE.Face3(0, 2, 3));
+                    outlineGeometry.faces = geometryFaces;
 
                     var stickerMesh = new THREE.Mesh(stickerGeometry, getMaterial());
                     var outlineMesh = new THREE.Mesh(outlineGeometry, outlineMaterial);
@@ -120,7 +115,7 @@ function CubeRenderer(cube) {
                     layerGroup.push(stickerMesh);
                     layerGroup.push(outlineMesh);
 
-                    _updateCubeletMats.push(() => stickerMesh.material = getMaterial());
+                    _updateFaceletMats.push(() => stickerMesh.material = getMaterial());
                 }
             }
         })();
@@ -135,7 +130,7 @@ function CubeRenderer(cube) {
             if (counter-- === duration) {
                 _meshes.forEach((mesh) => mesh.rotation.setFromRotationMatrix(baseRotation));
                 startMoves();
-                _updateCubeletMats.forEach(fn => fn());
+                _updateFaceletMats.forEach(fn => fn());
             }
 
             if (topRotationAxis) {
@@ -152,7 +147,7 @@ function CubeRenderer(cube) {
                 _meshes.forEach((mesh) => mesh.rotation.setFromRotationMatrix(new THREE.Matrix4()));
                 _animationQueue.shift();
                 endMoves();
-                _updateCubeletMats.forEach(fn => fn());
+                _updateFaceletMats.forEach(fn => fn());
                 _animationListeners.forEach(fn => fn());
             }
         });
