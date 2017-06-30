@@ -64,12 +64,12 @@ window.onload = function () {
         scrambling = true;
 
         var moves = []
-        moves.push([() => r.U(), () => r.Ui(), () => { r.U(); r.U(); }]);
-        moves.push([() => r.D(), () => r.Di(), () => { r.D(); r.D(); }]);
-        moves.push([() => r.L(), () => r.Li(), () => { r.L(); r.L(); }]);
-        moves.push([() => r.R(), () => r.Ri(), () => { r.R(); r.R(); }]);
-        moves.push([() => r.F(), () => r.Fi(), () => { r.F(); r.F(); }]);
-        moves.push([() => r.B(), () => r.Bi(), () => { r.B(); r.B(); }]);
+        moves.push([() => r.U(), () => r.Ui(), () => r.U2()]);
+        moves.push([() => r.D(), () => r.Di(), () => r.D2()]);
+        moves.push([() => r.L(), () => r.Li(), () => r.L2()]);
+        moves.push([() => r.R(), () => r.Ri(), () => r.R2()]);
+        moves.push([() => r.F(), () => r.Fi(), () => r.F2()]);
+        moves.push([() => r.B(), () => r.Bi(), () => r.B2()]);
 
         for (var i = 0; i < 30; i++) {
             var idx = Math.floor(Math.random() * (moves.length - 1));
