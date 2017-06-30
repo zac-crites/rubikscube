@@ -28,16 +28,6 @@ function Cube() {
 
     this.GetFacelet = (label, i) => (i === undefined) ? _faces[_faceLabels.indexOf(label)].GetColor() : _faces[_faceLabels.indexOf(label)].Get(i);
 
-    //Utils
-    function shift(i, f) {
-        f[1].Replace(i, f[2].Replace(i, f[3].Replace(i, f[4].Replace(i, f[1].Get(i)))));
-    }
-
-    function repeat(fn, n) {
-        for (var i = 0; i < n; i++)
-            fn();
-    }
-
     //Moves - Full cube rotations
     this.X = () => {
         _faces[1].Rotate(1);
@@ -50,6 +40,7 @@ function Cube() {
         _faces[5].Rotate(2);
         _faces[4] = tmp;
         _faces[4].Rotate(2);
+        return this;
     }
 
     this.Z = () => {
@@ -65,6 +56,7 @@ function Cube() {
         _faces[5].Rotate(3);
         _faces[3] = tmp;
         _faces[3].Rotate(3);
+        return this;
     }
 
     this.Y = () => {
@@ -76,79 +68,65 @@ function Cube() {
         _faces[2] = _faces[3];
         _faces[3] = _faces[4];
         _faces[4] = tmp;
+        return this;
     }
 
-    this.X2 = () => repeat(() => this.X(), 2);
+    this.X2 = () => this.X().X();
 
-    this.Z2 = () => repeat(() => this.Z(), 2);
+    this.Z2 = () => this.Z().Z();
 
-    this.Y2 = () => repeat(() => this.Y(), 2);
+    this.Y2 = () => this.Y().Y();
 
-    this.Xi = () => repeat(() => this.X(), 3);
+    this.Xi = () => this.X2().X();
 
-    this.Zi = () => repeat(() => this.Z(), 3);
+    this.Zi = () => this.Z2().Z();
 
-    this.Yi = () => repeat(() => this.Y(), 3);
+    this.Yi = () => this.Y2().Y();
 
     //Moves - Single face rotations
+    var shift = (i, f) => {
+        f[1].Replace(i, f[2].Replace(i, f[3].Replace(i, f[4].Replace(i, f[1].Get(i)))));
+    }
+
     this.U = () => {
         _faces[0].Rotate(3);
         shift(0, _faces);
         shift(1, _faces);
         shift(2, _faces);
+        return this;
     }
 
-    this.F = () => {
-        this.X();
-        this.U();
-        this.Xi();
-    }
+    this.F = () => this.X().U().Xi();
 
-    this.L = function () {
-        this.Z();
-        this.U();
-        this.Zi();
-    }
+    this.L = () => this.Z().U().Zi();
 
-    this.R = function () {
-        this.Zi();
-        this.U();
-        this.Z();
-    }
+    this.R = () => this.Zi().U().Z();
 
-    this.B = function () {
-        this.Xi();
-        this.U();
-        this.X();
-    }
+    this.B = () => this.Xi().U().X();
 
-    this.D = function () {
-        this.X();
-        this.F();
-        this.Xi();
-    }
+    this.D = () => this.X().F().Xi();
 
-    this.U2 = () => repeat(() => this.U(), 2);
+    this.U2 = () => this.U().U();
 
-    this.F2 = () => repeat(() => this.F(), 2);
+    this.F2 = () => this.F().F();
 
-    this.L2 = () => repeat(() => this.L(), 2);
+    this.L2 = () => this.L().L();
 
-    this.R2 = () => repeat(() => this.R(), 2);
+    this.R2 = () => this.R().R();
 
-    this.B2 = () => repeat(() => this.B(), 2);
+    this.B2 = () => this.B().B();
 
-    this.D2 = () => repeat(() => this.D(), 2);
+    this.D2 = () => this.D().D();
 
-    this.Ui = () => repeat(() => this.U(), 3);
+    this.Ui = () => this.U2().U();
 
-    this.Fi = () => repeat(() => this.F(), 3);
+    this.Fi = () => this.F2().F();
 
-    this.Li = () => repeat(() => this.L(), 3);
+    this.Li = () => this.L2().L();
 
-    this.Ri = () => repeat(() => this.R(), 3);
+    this.Ri = () => this.R2().R();
 
-    this.Bi = () => repeat(() => this.B(), 3);
+    this.Bi = () => this.B2().B();
 
-    this.Di = () => repeat(() => this.D(), 3);
+    this.Di = () => this.D2().D();
 }
