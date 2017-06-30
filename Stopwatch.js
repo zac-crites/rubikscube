@@ -7,6 +7,12 @@ function Stopwatch(_display) {
     var _ticking = false;
     var _solving = false;
 
+    var DurationAsString = (duration) => {
+        var minutes = Math.floor(duration / 60000);
+        var seconds = (duration % 60000) / 1000;
+        return (minutes > 0 ? (minutes + ":" + (seconds < 10 ? "0" : "")) : "") + seconds.toFixed(2);
+    }
+
     var UpdateDisplay = () => {
         if (!_ticking)
             return;
@@ -15,14 +21,14 @@ function Stopwatch(_display) {
         if (!_solving) {
             var elapsed = new Date().getTime() - _countdownStartTime;
             if (elapsed < _countdownDuration) {
-                _display.innerHTML = "-" + (_countdownDuration/1000 - Math.floor(elapsed / 1000));
+                _display.innerHTML = "-" + (_countdownDuration / 1000 - Math.floor(elapsed / 1000));
             }
             else {
                 this.SolveStart(_countdownStartTime + _countdownDuration);
             }
         }
         else {
-            _display.innerHTML = (Math.floor(new Date().getTime() - _solveStartTime ) / 1000).toFixed(2);
+            _display.innerHTML = DurationAsString(new Date().getTime() - _solveStartTime);
         }
     }
 
@@ -41,9 +47,9 @@ function Stopwatch(_display) {
 
     this.Stop = () => {
         _solveFinishTime = new Date().getTime();
-        
-        if( _solving )
-            _display.innerHTML = (Math.floor(_solveFinishTime - _solveStartTime ) / 1000).toFixed(2);
+
+        if (_solving)
+            _display.innerHTML = DurationAsString(_solveFinishTime - _solveStartTime);
 
         _ticking = false;
         _solving = false;
