@@ -24,6 +24,8 @@ function Cube() {
         this.IsSolved = () => !_facelets.some((facelet) => facelet != _color);
     }
 
+    this.Reset = () => _faces = [new Face(0), new Face(1), new Face(2), new Face(3), new Face(4), new Face(5)];
+
     this.IsSolved = () => !_faces.some((face) => !face.IsSolved());
 
     this.GetFacelet = (label, i) => (i === undefined) ? _faces[_faceLabels.indexOf(label)].GetColor() : _faces[_faceLabels.indexOf(label)].Get(i);

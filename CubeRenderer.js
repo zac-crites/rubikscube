@@ -156,6 +156,15 @@ function CubeRenderer(cube) {
 
     this.AddAnimationCompletedListener = (listener) => _animationListeners.push(listener);
 
+    this.AddQueuedAnimationsCompletedListener = (listener) => {
+        _animationQueue.push(() => {
+            listener();
+            _animationQueue.shift();
+            if (_animationQueue.length > 0)
+                _animationQueue[0]();
+        });
+    }
+
     this.IsAnimating = () => _animationQueue.length > 0;
 
     // Moves - Full cube rotations
@@ -226,6 +235,40 @@ function CubeRenderer(cube) {
     this.I = () => Animate(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), null, new THREE.Vector3(-1, 0, 0), () => _cube.Zi().U().Yi(), () => _cube.Z());
 
     this.Ii = () => Animate(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), null, new THREE.Vector3(1, 0, 0), () => _cube.Zi().Ui().Y(), () => _cube.Z());
+
+    this.Reset = () => {
+        var count = 0;
+        var duration = 16;
+        var scaleFactor = 1.1;
+        var tweenInfo = [];
+
+        var zeroVertex = new THREE.Vector3(0, 0, 0);
+        _meshes.forEach(mesh => {
+            mesh.geometry.vertices.forEach(vertex => {
+                var start = vertex.clone();
+                tweenInfo.push({
+                    update: a => vertex.lerpVectors(zeroVertex, start, a),
+                    reset: () => vertex.copy(start)
+                });
+            });
+        });
+
+        _animationQueue.push(() => {
+            if (count++ <= duration) {
+                var a = Math.abs(count - duration / 2) / (duration / 2);
+                if (a <= 0.01) {
+                    _cube.Reset();
+                    _updateFaceletMats.forEach(fn => fn());
+                }
+                tweenInfo.forEach(info => info.update(a));
+                _meshes.forEach(mesh => mesh.geometry.verticesNeedUpdate = true);
+            } else {
+                tweenInfo.forEach(info => info.reset());
+                _meshes.forEach(mesh => mesh.geometry.verticesNeedUpdate = true);
+                _animationQueue.shift();
+            }
+        });
+    };
 
     this.Pulse = () => {
         var count = 0;
