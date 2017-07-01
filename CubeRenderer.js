@@ -239,7 +239,6 @@ function CubeRenderer(cube) {
     this.Reset = () => {
         var count = 0;
         var duration = 16;
-        var scaleFactor = 1.1;
         var tweenInfo = [];
 
         var zeroVertex = new THREE.Vector3(0, 0, 0);
@@ -279,7 +278,7 @@ function CubeRenderer(cube) {
         _meshes.forEach(mesh => {
             mesh.geometry.vertices.forEach(vertex => {
                 var start = vertex.clone();
-                var end = vertex.clone().normalize().multiplyScalar(start.length() * scaleFactor)
+                var end = vertex.clone().multiplyScalar(scaleFactor)
                 tweenInfo.push({
                     update: a => vertex.lerpVectors(end, start, a),
                     reset: () => vertex.copy(start)
