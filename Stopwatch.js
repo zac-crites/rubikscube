@@ -61,6 +61,8 @@ function Stopwatch(_display) {
         _solving = false;
     }
 
+    this.GetTimestamp = () => _ticking ? new Date().getTime() - _countdownStartTime : 0;
+
     this.IsTicking = () => _ticking;
     this.IsSolving = () => _solving;
 }
