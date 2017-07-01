@@ -41,8 +41,9 @@ window.onload = function () {
             scrambling = false;
             stopwatch.Start();
         }
-        if (cube.IsSolved()) {
+        if (stopwatch.IsSolving() && cube.IsSolved()) {
             stopwatch.Stop();
+            renderer3d.Pulse();
         }
     });
 

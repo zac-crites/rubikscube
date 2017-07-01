@@ -226,4 +226,34 @@ function CubeRenderer(cube) {
     this.I = () => Animate(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), null, new THREE.Vector3(-1, 0, 0), () => _cube.Zi().U().Yi(), () => _cube.Z());
 
     this.Ii = () => Animate(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), null, new THREE.Vector3(1, 0, 0), () => _cube.Zi().Ui().Y(), () => _cube.Z());
+
+    this.Pulse = () => {
+        var count = 0;
+        var duration = 5;
+        var scaleFactor = 1.1;
+        var tweenInfo = [];
+
+        _meshes.forEach(mesh => {
+            mesh.geometry.vertices.forEach(vertex => {
+                var start = vertex.clone();
+                var end = vertex.clone().normalize().multiplyScalar(start.length() * scaleFactor)
+                tweenInfo.push({
+                    update: a => vertex.lerpVectors(end, start, a),
+                    reset: () => vertex.copy(start)
+                });
+            });
+        });
+
+        _animationQueue.push(() => {
+            if (count++ <= duration) {
+                var a = Math.abs(count - duration / 2) / (duration / 2);
+                tweenInfo.forEach(info => info.update(a));
+                _meshes.forEach(mesh => mesh.geometry.verticesNeedUpdate = true);
+            } else {
+                tweenInfo.forEach(info => info.reset());
+                _meshes.forEach(mesh => mesh.geometry.verticesNeedUpdate = true);
+                _animationQueue.shift();
+            }
+        });
+    }
 }
