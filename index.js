@@ -1,13 +1,115 @@
-function Replay(_stopwatch) {
+function Pad( str, n ) {
+    
+    var pad = "";
+    for( var i = 0; i < n; i++ )
+        pad += "0";
+    return pad.substring(0, pad.length - str.length) + str
+}
+
+function Replay(_stopwatch, _cube) {
     var _moveList = [];
     var _replaying = false;
 
-    this.Execute = (action) => {
+    var _encodingData = [];
+    _encodingData.push(new Encoding("U", cube => cube.U()));
+    _encodingData.push(new Encoding("U'", cube => cube.Ui()));
+    _encodingData.push(new Encoding("L", cube => cube.L()));
+    _encodingData.push(new Encoding("L'", cube => cube.Li()));
+    _encodingData.push(new Encoding("F", cube => cube.F()));
+    _encodingData.push(new Encoding("F'", cube => cube.Fi()));
+    _encodingData.push(new Encoding("R", cube => cube.R()));
+    _encodingData.push(new Encoding("R'", cube => cube.Ri()));
+    _encodingData.push(new Encoding("B", cube => cube.B()));
+    _encodingData.push(new Encoding("B'", cube => cube.Bi()));
+    _encodingData.push(new Encoding("D", cube => cube.D()));
+    _encodingData.push(new Encoding("D'", cube => cube.Di()));
+    _encodingData.push(new Encoding("X", cube => cube.X()));
+    _encodingData.push(new Encoding("X'", cube => cube.Xi()));
+    _encodingData.push(new Encoding("Z", cube => cube.Z()));
+    _encodingData.push(new Encoding("Z'", cube => cube.Zi()));
+    _encodingData.push(new Encoding("Y", cube => cube.Y()));
+    _encodingData.push(new Encoding("Y'", cube => cube.Yi()));
+    _encodingData.push(new Encoding("I", cube => cube.I()));
+    _encodingData.push(new Encoding("I'", cube => cube.Ii()));
+    _encodingData.push(new Encoding("r", cube => cube.r()));
+    _encodingData.push(new Encoding("r'", cube => cube.ri()));
+
+    function Encoding(opcode, execute) {
+        this.opcode = opcode;
+        this.execute = execute;
+    }
+
+    this.EncodeMoveList = () => {
+
+        var strEncode = "";
+        _moveList.forEach(move => move.opcode === undefined || (strEncode += move.opcode));
+        console.log("Encoded("+_encodingData.length+") = [" + strEncode + "]");
+
+        var arr = new Uint8Array(_moveList.length);
+        var i = 0;
+
+        var lastTimestamp = 0;
+
+        _moveList.forEach(move => {
+            if (move.opcode !== undefined) {
+                var id = _encodingData.findIndex(d => d.opcode === move.opcode);
+                if (id >= 32)
+                    throw "Can't encode id >= 32";
+
+                id = id << 3;
+                arr[i++] = id;
+            }
+        });
+
+        console.log(arr);
+        console.log(btoa(String.fromCharCode.apply(null, arr)));
+    }
+
+    this.DecodeMoveString = encodedMoves => {
+        _moveList = [];
+
+        var moveString = "";
+
+        var decodedMovesAsStr = atob(encodedMoves);
+
+        Array.prototype.forEach.call(decodedMovesAsStr, function (char) {
+            var i = char.charCodeAt(0) >> 3;
+            var t = char.charCodeAt(0) % 8;
+
+            //console.log( Pad(char.charCodeAt(0).toString(2), 8 ) );
+            console.log( Pad(i.toString(2), 5 ) + " " + Pad(t.toString(2), 3));
+            moveString += _encodingData[i].opcode;
+            _moveList.push({
+                timestamp: 0,
+                move: () => _encodingData[i].execute(_cube),
+                opcode: _encodingData[i].opcode
+            });
+        });
+
+        console.log(moveString);
+    }
+
+    this.Execute = (action, code) => {
         _moveList.push({
             timestamp: _stopwatch.GetTimestamp(),
-            move: action
+            move: action,
+            opcode: code
         });
+
         action();
+    }
+
+    this.ExecuteOperation = moveString => {
+        moveString.split(" ").forEach(opcode => {
+            opcode = opcode.replace("i", "'");
+            var move = _encodingData.find(d => d.opcode === opcode);
+            _moveList.push({
+                timestamp: _stopwatch.GetTimestamp(),
+                move: () => move.execute(_cube),
+                opcode: opcode
+            });
+            move.execute(_cube);
+        });
     }
 
     this.Clear = () => _moveList = [];
@@ -47,37 +149,41 @@ window.onload = function () {
     var buttons = new KeyboardControls();
     var stopwatch = new Stopwatch(document.getElementById("timerDisplay"));
     var scrambling = false;
-    var replay = new Replay(stopwatch);
+    var replay = new Replay(stopwatch, renderer3d);
 
-    buttons.AddButton("Z'", () => Rotate(() => renderer3d.Zi()), 81, "Q");
-    buttons.AddButton("B", () => FaceTurn(() => renderer3d.B()), 87, "W");
-    buttons.AddButton("L'", () => FaceTurn(() => renderer3d.Li()), 69, "E");
-    buttons.AddButton("I'", () => FaceTurn(() => renderer3d.Ii()), 82, "R");
+    var url = window.location.href;
+    var queryString = url.substring(url.indexOf('?') + 1);
+    replay.DecodeMoveString(queryString);
+
+    buttons.AddButton("Z'", () => Rotate(() => renderer3d.Zi(), "Z'"), 81, "Q");
+    buttons.AddButton("B", () => FaceTurn(() => renderer3d.B(), 'B'), 87, "W");
+    buttons.AddButton("L'", () => FaceTurn(() => renderer3d.Li(), "L'"), 69, "E");
+    buttons.AddButton("I'", () => FaceTurn(() => renderer3d.Ii(), "I'"), 82, "R");
     buttons.AddButton("", () => { }, 84, "T");
-    buttons.AddButton("X", () => Rotate(() => renderer3d.X()), 89, "Y");
-    buttons.AddButton("r", () => FaceTurn(() => renderer3d.r()), 85, "U");
-    buttons.AddButton("R", () => FaceTurn(() => renderer3d.R()), 73, "I");
-    buttons.AddButton("B'", () => FaceTurn(() => renderer3d.Bi()), 79, "O");
-    buttons.AddButton("Z", () => Rotate(() => renderer3d.Z()), 80, "P");
-    buttons.AddButton("Y'", () => Rotate(() => renderer3d.Yi()), 65, "A");
-    buttons.AddButton("D", () => FaceTurn(() => renderer3d.D()), 83, "S");
-    buttons.AddButton("L", () => FaceTurn(() => renderer3d.L()), 68, "D");
-    buttons.AddButton("U'", () => FaceTurn(() => renderer3d.Ui()), 70, "F");
-    buttons.AddButton("F'", () => FaceTurn(() => renderer3d.Fi()), 71, "G");
-    buttons.AddButton("F", () => FaceTurn(() => renderer3d.F()), 72, "H");
-    buttons.AddButton("U", () => FaceTurn(() => renderer3d.U()), 74, "J");
-    buttons.AddButton("R'", () => FaceTurn(() => renderer3d.Ri()), 75, "K");
-    buttons.AddButton("D'", () => FaceTurn(() => renderer3d.Di()), 76, "L");
-    buttons.AddButton("Y", () => Rotate(() => renderer3d.Y()), 186, ";");
+    buttons.AddButton("X", () => Rotate(() => renderer3d.X(), "X"), 89, "Y");
+    buttons.AddButton("r", () => FaceTurn(() => renderer3d.r(), "r"), 85, "U");
+    buttons.AddButton("R", () => FaceTurn(() => renderer3d.R(), "R"), 73, "I");
+    buttons.AddButton("B'", () => FaceTurn(() => renderer3d.Bi(), "B'"), 79, "O");
+    buttons.AddButton("Z", () => Rotate(() => renderer3d.Z(), "Z"), 80, "P");
+    buttons.AddButton("Y'", () => Rotate(() => renderer3d.Yi(), "Y'"), 65, "A");
+    buttons.AddButton("D", () => FaceTurn(() => renderer3d.D(), "D"), 83, "S");
+    buttons.AddButton("L", () => FaceTurn(() => renderer3d.L(), "L"), 68, "D");
+    buttons.AddButton("U'", () => FaceTurn(() => renderer3d.Ui(), "U'"), 70, "F");
+    buttons.AddButton("F'", () => FaceTurn(() => renderer3d.Fi(), "F'"), 71, "G");
+    buttons.AddButton("F", () => FaceTurn(() => renderer3d.F(), "F"), 72, "H");
+    buttons.AddButton("U", () => FaceTurn(() => renderer3d.U(), "U"), 74, "J");
+    buttons.AddButton("R'", () => FaceTurn(() => renderer3d.Ri(), "R'"), 75, "K");
+    buttons.AddButton("D'", () => FaceTurn(() => renderer3d.Di(), "D'"), 76, "L");
+    buttons.AddButton("Y", () => Rotate(() => renderer3d.Y(), "Y"), 186, ";");
     buttons.AddButton("📹", () => renderer3d.ResetCamera(), 90, "Z", "Reset camera");
     buttons.AddButton("↪️", () => StartReplay(), 88, "X");
     buttons.AddButton("", () => { }, -1, "C");
-    buttons.AddButton("I", () => FaceTurn(() => renderer3d.I()), 86, "V");
+    buttons.AddButton("I", () => FaceTurn(() => renderer3d.I(), "I"), 86, "V");
     buttons.AddButton("", () => { }, -1, "B");
-    buttons.AddButton("X'", () => Rotate(() => renderer3d.Xi()), 78, "N");
-    buttons.AddButton("r'", () => FaceTurn(() => renderer3d.ri()), 77, "M");
+    buttons.AddButton("X'", () => Rotate(() => renderer3d.Xi(), "X'"), 78, "N");
+    buttons.AddButton("r'", () => FaceTurn(() => renderer3d.ri(), "r'"), 77, "M");
     buttons.AddButton("", () => { }, -1, ",");
-    buttons.AddButton("", () => { }, 190, ".");
+    buttons.AddButton("EC", () => replay.EncodeMoveList(), 190, ".");
     buttons.AddButton("🎲", () => Scramble(renderer3d), 191, "/", "Scramble");
 
     renderer3d.AddAnimationCompletedListener(() => {
@@ -88,7 +194,7 @@ window.onload = function () {
             replay.Execute(() => {
                 stopwatch.Stop();
                 renderer3d.Pulse();
-            });
+            }, 'Stop');
         }
     });
 
@@ -100,14 +206,14 @@ window.onload = function () {
         replay.Clear();
     }
 
-    function Rotate(rotate) {
+    function Rotate(rotate, code) {
         if (scrambling || replay.IsReplaying())
             return;
 
-        replay.Execute(rotate);
+        replay.Execute(rotate, code);
     }
 
-    function FaceTurn(move) {
+    function FaceTurn(move, code) {
         if (scrambling || replay.IsReplaying())
             return;
 
@@ -115,7 +221,7 @@ window.onload = function () {
             replay.Execute(() => stopwatch.SolveStart());
         }
 
-        replay.Execute(move);
+        replay.ExecuteOperation(code);
     }
 
     function StartReplay() {
@@ -143,20 +249,21 @@ window.onload = function () {
         scrambling = true;
 
         var faceMoves = []
-        faceMoves.push([() => r.U(), () => r.Ui(), () => r.U2()]);
-        faceMoves.push([() => r.D(), () => r.Di(), () => r.D2()]);
-        faceMoves.push([() => r.L(), () => r.Li(), () => r.L2()]);
-        faceMoves.push([() => r.R(), () => r.Ri(), () => r.R2()]);
-        faceMoves.push([() => r.F(), () => r.Fi(), () => r.F2()]);
-        faceMoves.push([() => r.B(), () => r.Bi(), () => r.B2()]);
+        faceMoves.push(["U", "U'", "U U"]);
+        faceMoves.push(["D", "D'", "D D"]);
+        faceMoves.push(["L", "L'", "L L"]);
+        faceMoves.push(["R", "R'", "R R"]);
+        faceMoves.push(["F", "F'", "F F"]);
+        faceMoves.push(["B", "B'", "B B"]);
 
-        for (var i = 0; i < 30; i++) {
+        for (var i = 0; i < 10; i++) {
             var idx = Math.floor(Math.random() * (faceMoves.length - 1));
             var face = faceMoves[idx];
             faceMoves.splice(idx, 1);
-            replay.Execute(face[Math.floor(Math.random() * face.length)]);
+            replay.ExecuteOperation(face[Math.floor(Math.random() * face.length)]);
             faceMoves.push(face);
         }
+
 
         replay.Execute(() => {
             r.AddQueuedAnimationsCompletedListener(() => {
