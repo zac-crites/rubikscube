@@ -1,14 +1,7 @@
-function Pad(str, n) {
-
-    var pad = "";
-    for (var i = 0; i < n; i++)
-        pad += "0";
-    return pad.substring(0, pad.length - str.length) + str
-}
-
 function Replay(_stopwatch, _cube) {
     var _moveList = [];
     var _replaying = false;
+    var _encodedTimeResolution = 150;
 
     var _encodingData = [];
     _encodingData.push(new Encoding("U", cube => cube.U()));
@@ -40,8 +33,8 @@ function Replay(_stopwatch, _cube) {
     _encodingData.push(new Encoding("r", cube => cube.r()));
     _encodingData.push(new Encoding("r'", cube => cube.ri()));
     _encodingData.push(new Encoding("TimerSignal", () => QueueTimerToggle()));
+    _encodingData.push(new Encoding("Delay", () => { }));
 
-    console.log(_encodingData.length);
     if (_encodingData.length > 32)
         throw "Can't encode id >= 32";
 
@@ -53,23 +46,31 @@ function Replay(_stopwatch, _cube) {
 
     this.EncodeMoveList = () => {
 
-        var strEncode = [];
-        _moveList.forEach(move => move.data.opcode === undefined || strEncode.push(move.data.opcode));
-        console.log("Encoded:");
-        console.log(strEncode);
-
-        var arr = new Uint8Array(_moveList.length);
-        var i = 0;
+        LogMoveList( _moveList, "Encoded");
+        var bytes = [];
         var lastTimestamp = 0;
+        var msPerTick = _encodedTimeResolution;
 
         _moveList.forEach(move => {
             if (move.data.opcode !== undefined) {
                 var id = _encodingData.findIndex(d => d.opcode === move.data.opcode);
                 if (id >= 0 && id < 32) {
                     id = id << 3;
-                    arr[i++] = id;
+
+                    if (move.timestamp > lastTimestamp) {
+                        var offset = move.timestamp - lastTimestamp;
+                        var ticks = Math.floor(offset / msPerTick);
+                        lastTimestamp += ticks * msPerTick;
+                        while (ticks >= 8) {
+                            bytes.push(_encodingData.findIndex(d => d.opcode === "Delay") << 3);
+                            ticks -= 8;
+                        }
+                        id += ticks;
+                    }
+
+                    bytes.push(id);
                 } else {
-                    console.log("opcode error - " + move.opcode)
+                    console.log("opcode error - " + move.data.opcode)
                 }
             }
             else {
@@ -77,10 +78,14 @@ function Replay(_stopwatch, _cube) {
             }
         });
 
-        console.log(arr);
+        var i = 0;
+        var arr = new Uint8Array(bytes.length);
+        bytes.forEach(byte => arr[i++] = byte);
+
         var result = btoa(String.fromCharCode.apply(null, arr));
 
         console.log("(" + result.length + ") " + result);
+        return result;
     }
 
     function QueueTimerToggle() {
@@ -95,27 +100,35 @@ function Replay(_stopwatch, _cube) {
     }
 
     this.DecodeMoveString = encodedMoves => {
-        _moveList = [];
-
-
+        var newMoveList = [];
         var decodedMovesAsStr = atob(encodedMoves);
-        var testStrs = [];
+        var currentTimestamp = 0;
 
         Array.prototype.forEach.call(decodedMovesAsStr, function (char) {
             var i = char.charCodeAt(0) >> 3;
             var t = char.charCodeAt(0) % 8;
 
-            testStrs.push(Pad(i.toString(2), 5) + " " + Pad(t.toString(2), 3));
+            currentTimestamp += _encodedTimeResolution * t;
 
-            _moveList.push({
-                timestamp: 0,
-                data: _encodingData[i]
-            });
+            if (_encodingData[i].opcode === "Delay") {
+                currentTimestamp += _encodedTimeResolution * 8;
+            } else {
+                newMoveList.push({
+                    timestamp: currentTimestamp,
+                    data: _encodingData[i]
+                });
+            }
         });
 
-        var strEncode = [];
-        _moveList.forEach(move => move.data.opcode === undefined || strEncode.push(move.data.opcode));
-        console.log("Decoded(" + _encodingData.length + ") = [" + strEncode.join(' ') + "]");
+        if (_moveList.length === 0)
+            _moveList = newMoveList;
+    }
+
+    function LogMoveList( moveList, label ) {
+        label = ( label !== undefined ) ? label : "Decoded"
+        var logstr = [];
+        moveList.forEach(move => move.data.opcode === undefined || logstr.push(move.data.opcode));
+        console.log( label + "(" + moveList.length + ") = [" + logstr.join(' ') + "]");
     }
 
     function Execute(encoderEntry) {
