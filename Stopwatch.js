@@ -40,7 +40,8 @@ function Stopwatch(_display) {
     }
 
     this.SolveStart = (solveStart) => {
-        _ticking || this.Start();
+        if( !_ticking || _solving )
+            return;
         _solving = true;
         _solveStartTime = solveStart !== undefined ? solveStart : new Date().getTime();
     }

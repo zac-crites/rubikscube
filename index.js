@@ -1,7 +1,7 @@
-function Pad( str, n ) {
-    
+function Pad(str, n) {
+
     var pad = "";
-    for( var i = 0; i < n; i++ )
+    for (var i = 0; i < n; i++)
         pad += "0";
     return pad.substring(0, pad.length - str.length) + str
 }
@@ -13,112 +13,148 @@ function Replay(_stopwatch, _cube) {
     var _encodingData = [];
     _encodingData.push(new Encoding("U", cube => cube.U()));
     _encodingData.push(new Encoding("U'", cube => cube.Ui()));
+    _encodingData.push(new Encoding("U2", cube => cube.U2()));
     _encodingData.push(new Encoding("L", cube => cube.L()));
     _encodingData.push(new Encoding("L'", cube => cube.Li()));
+    _encodingData.push(new Encoding("L2", cube => cube.L2()));
     _encodingData.push(new Encoding("F", cube => cube.F()));
     _encodingData.push(new Encoding("F'", cube => cube.Fi()));
+    _encodingData.push(new Encoding("F2", cube => cube.F2()));
     _encodingData.push(new Encoding("R", cube => cube.R()));
     _encodingData.push(new Encoding("R'", cube => cube.Ri()));
+    _encodingData.push(new Encoding("R2", cube => cube.R2()));
     _encodingData.push(new Encoding("B", cube => cube.B()));
     _encodingData.push(new Encoding("B'", cube => cube.Bi()));
+    _encodingData.push(new Encoding("B2", cube => cube.B2()));
     _encodingData.push(new Encoding("D", cube => cube.D()));
     _encodingData.push(new Encoding("D'", cube => cube.Di()));
-    _encodingData.push(new Encoding("X", cube => cube.X()));
-    _encodingData.push(new Encoding("X'", cube => cube.Xi()));
-    _encodingData.push(new Encoding("Z", cube => cube.Z()));
-    _encodingData.push(new Encoding("Z'", cube => cube.Zi()));
-    _encodingData.push(new Encoding("Y", cube => cube.Y()));
-    _encodingData.push(new Encoding("Y'", cube => cube.Yi()));
+    _encodingData.push(new Encoding("D2", cube => cube.D2()));
+    _encodingData.push(new Encoding("X", cube => cube.X(), true));
+    _encodingData.push(new Encoding("X'", cube => cube.Xi(), true));
+    _encodingData.push(new Encoding("Z", cube => cube.Z(), true));
+    _encodingData.push(new Encoding("Z'", cube => cube.Zi(), true));
+    _encodingData.push(new Encoding("Y", cube => cube.Y(), true));
+    _encodingData.push(new Encoding("Y'", cube => cube.Yi(), true));
     _encodingData.push(new Encoding("I", cube => cube.I()));
     _encodingData.push(new Encoding("I'", cube => cube.Ii()));
     _encodingData.push(new Encoding("r", cube => cube.r()));
     _encodingData.push(new Encoding("r'", cube => cube.ri()));
+    _encodingData.push(new Encoding("TimerSignal", () => QueueTimerToggle()));
 
-    function Encoding(opcode, execute) {
+    console.log(_encodingData.length);
+    if (_encodingData.length > 32)
+        throw "Can't encode id >= 32";
+
+    function Encoding(opcode, execute, clean) {
         this.opcode = opcode;
         this.execute = execute;
+        this.clean = (clean !== undefined) && clean;
     }
 
     this.EncodeMoveList = () => {
 
-        var strEncode = "";
-        _moveList.forEach(move => move.opcode === undefined || (strEncode += move.opcode));
-        console.log("Encoded("+_encodingData.length+") = [" + strEncode + "]");
+        var strEncode = [];
+        _moveList.forEach(move => move.data.opcode === undefined || strEncode.push(move.data.opcode));
+        console.log("Encoded:");
+        console.log(strEncode);
 
         var arr = new Uint8Array(_moveList.length);
         var i = 0;
-
         var lastTimestamp = 0;
 
         _moveList.forEach(move => {
-            if (move.opcode !== undefined) {
-                var id = _encodingData.findIndex(d => d.opcode === move.opcode);
-                if (id >= 32)
-                    throw "Can't encode id >= 32";
-
-                id = id << 3;
-                arr[i++] = id;
+            if (move.data.opcode !== undefined) {
+                var id = _encodingData.findIndex(d => d.opcode === move.data.opcode);
+                if (id >= 0 && id < 32) {
+                    id = id << 3;
+                    arr[i++] = id;
+                } else {
+                    console.log("opcode error - " + move.opcode)
+                }
+            }
+            else {
+                console.log(move);
             }
         });
 
         console.log(arr);
-        console.log(btoa(String.fromCharCode.apply(null, arr)));
+        var result = btoa(String.fromCharCode.apply(null, arr));
+
+        console.log("(" + result.length + ") " + result);
+    }
+
+    function QueueTimerToggle() {
+        _cube.AddQueuedAnimationsCompletedListener(() => {
+            if (!_stopwatch.IsTicking()) {
+                _stopwatch.Start();
+            }
+            else {
+                _stopwatch.Stop();
+            }
+        });
     }
 
     this.DecodeMoveString = encodedMoves => {
         _moveList = [];
 
-        var moveString = "";
 
         var decodedMovesAsStr = atob(encodedMoves);
+        var testStrs = [];
 
         Array.prototype.forEach.call(decodedMovesAsStr, function (char) {
             var i = char.charCodeAt(0) >> 3;
             var t = char.charCodeAt(0) % 8;
 
-            //console.log( Pad(char.charCodeAt(0).toString(2), 8 ) );
-            console.log( Pad(i.toString(2), 5 ) + " " + Pad(t.toString(2), 3));
-            moveString += _encodingData[i].opcode;
+            testStrs.push(Pad(i.toString(2), 5) + " " + Pad(t.toString(2), 3));
+
             _moveList.push({
                 timestamp: 0,
-                move: () => _encodingData[i].execute(_cube),
-                opcode: _encodingData[i].opcode
+                data: _encodingData[i]
             });
         });
 
-        console.log(moveString);
+        var strEncode = [];
+        _moveList.forEach(move => move.data.opcode === undefined || strEncode.push(move.data.opcode));
+        console.log("Decoded(" + _encodingData.length + ") = [" + strEncode.join(' ') + "]");
     }
 
-    this.Execute = (action, code) => {
-        _moveList.push({
-            timestamp: _stopwatch.GetTimestamp(),
-            move: action,
-            opcode: code
-        });
-
-        action();
+    function Execute(encoderEntry) {
+        if (!_encodingData[i].clean && !_stopwatch.IsSolving())
+            _stopwatch.SolveStart();
+        _encodingData[i].execute(_cube);
     }
 
     this.ExecuteOperation = moveString => {
         moveString.split(" ").forEach(opcode => {
-            opcode = opcode.replace("i", "'");
             var move = _encodingData.find(d => d.opcode === opcode);
             _moveList.push({
                 timestamp: _stopwatch.GetTimestamp(),
-                move: () => move.execute(_cube),
-                opcode: opcode
+                data: move
             });
+            if (move.clean !== true)
+                _stopwatch.SolveStart();
             move.execute(_cube);
         });
     }
 
-    this.Clear = () => _moveList = [];
+    this.Reset = () => {
+        _moveList = [];
+        _stopwatch.Reset();
+    }
 
     this.Replay = () => {
         if (_moveList.length === 0)
             return;
+        _stopwatch.Reset();
         _replaying = true;
         TimerUpdate();
+    }
+
+    this.Finish = () => {
+        if (!_stopwatch.IsTicking())
+            return;
+        _stopwatch.Stop();
+        _cube.Pulse();
     }
 
     this.IsReplaying = () => _replaying;
@@ -131,7 +167,10 @@ function Replay(_stopwatch, _cube) {
 
         var currentTime = _stopwatch.GetTimestamp();
         while (_moveList.length > 0 && _moveList[0].timestamp <= currentTime) {
-            _moveList[0].move();
+            if (_moveList[0].data.clean !== true) {
+                _cube.AddQueuedAnimationsCompletedListener(() => _stopwatch.SolveStart());
+            }
+            _moveList[0].data.execute(_cube);
             _moveList.shift();
         }
 
@@ -151,9 +190,11 @@ window.onload = function () {
     var scrambling = false;
     var replay = new Replay(stopwatch, renderer3d);
 
-    var url = window.location.href;
-    var queryString = url.substring(url.indexOf('?') + 1);
-    replay.DecodeMoveString(queryString);
+    var parseIndex = window.location.href.indexOf('?');
+    if (parseIndex > 0) {
+        var queryString = window.location.href.substring(parseIndex + 1);
+        replay.DecodeMoveString(queryString);
+    }
 
     buttons.AddButton("Z'", () => Rotate(() => renderer3d.Zi(), "Z'"), 81, "Q");
     buttons.AddButton("B", () => FaceTurn(() => renderer3d.B(), 'B'), 87, "W");
@@ -190,11 +231,8 @@ window.onload = function () {
         if (replay.IsReplaying())
             return;
 
-        if (stopwatch.IsSolving() && cube.IsSolved()) {
-            replay.Execute(() => {
-                stopwatch.Stop();
-                renderer3d.Pulse();
-            }, 'Stop');
+        if (cube.IsSolved()) {
+            replay.Finish();
         }
     });
 
@@ -202,24 +240,19 @@ window.onload = function () {
         if (scrambling)
             return;
         renderer3d.Reset();
-        stopwatch.Reset();
-        replay.Clear();
+        replay.Reset();
     }
 
     function Rotate(rotate, code) {
         if (scrambling || replay.IsReplaying())
             return;
 
-        replay.Execute(rotate, code);
+        replay.ExecuteOperation(code);
     }
 
     function FaceTurn(move, code) {
         if (scrambling || replay.IsReplaying())
             return;
-
-        if (stopwatch.IsTicking() && !stopwatch.IsSolving()) {
-            replay.Execute(() => stopwatch.SolveStart());
-        }
 
         replay.ExecuteOperation(code);
     }
@@ -231,7 +264,6 @@ window.onload = function () {
             return;
         }
 
-        stopwatch.Reset();
         replay.Replay();
     }
 
@@ -245,18 +277,18 @@ window.onload = function () {
             return;
         }
 
-        stopwatch.Reset();
+        replay.Reset();
         scrambling = true;
 
         var faceMoves = []
-        faceMoves.push(["U", "U'", "U U"]);
-        faceMoves.push(["D", "D'", "D D"]);
-        faceMoves.push(["L", "L'", "L L"]);
-        faceMoves.push(["R", "R'", "R R"]);
-        faceMoves.push(["F", "F'", "F F"]);
-        faceMoves.push(["B", "B'", "B B"]);
+        faceMoves.push(["U", "U'", "U2"]);
+        faceMoves.push(["D", "D'", "D2"]);
+        faceMoves.push(["L", "L'", "L2"]);
+        faceMoves.push(["R", "R'", "R2"]);
+        faceMoves.push(["F", "F'", "F2"]);
+        faceMoves.push(["B", "B'", "B2"]);
 
-        for (var i = 0; i < 10; i++) {
+        for (var i = 0; i < 30; i++) {
             var idx = Math.floor(Math.random() * (faceMoves.length - 1));
             var face = faceMoves[idx];
             faceMoves.splice(idx, 1);
@@ -264,12 +296,7 @@ window.onload = function () {
             faceMoves.push(face);
         }
 
-
-        replay.Execute(() => {
-            r.AddQueuedAnimationsCompletedListener(() => {
-                scrambling = false;
-                stopwatch.Start();
-            });
-        });
+        replay.ExecuteOperation("TimerSignal");
+        renderer3d.AddQueuedAnimationsCompletedListener(() => scrambling = false);
     }
 };
