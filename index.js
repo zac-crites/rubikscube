@@ -180,7 +180,7 @@ function Replay(_stopwatch, _cube) {
 
         var currentTime = _stopwatch.GetTimestamp();
         while (_moveList.length > 0 && _moveList[0].timestamp <= currentTime) {
-            if (_moveList[0].data.clean !== true) {
+            if (_moveList[0].data.clean !== true && !_stopwatch.IsSolving()) {
                 _cube.AddQueuedAnimationsCompletedListener(() => _stopwatch.SolveStart());
             }
             _moveList[0].data.execute(_cube);
@@ -205,8 +205,10 @@ window.onload = function () {
 
     var parseIndex = window.location.href.indexOf('?');
     if (parseIndex > 0) {
+        // UBBoOHBAgBAwgGAggFBgUAh4YFAAUBhoIIBYQHBY4OiSs7K86OgIOgMBuBoBAgqxVznogYU6gDHoATkKsZM1DDM1SQFSMjcLOToAMrS4uwoKTghRAUoAUwpKCglQ6Ai+GwhRASEISgACs0sBUQFJAAFSAAG1uyEJGQkhCQkZCQkzMQIZUDIxIEkBMjE=
         var queryString = window.location.href.substring(parseIndex + 1);
         replay.DecodeMoveString(queryString);
+        replay.Replay();
     }
 
     buttons.AddButton("Z'", () => Rotate(() => renderer3d.Zi(), "Z'"), 81, "Q");
@@ -230,14 +232,14 @@ window.onload = function () {
     buttons.AddButton("D'", () => FaceTurn(() => renderer3d.Di(), "D'"), 76, "L");
     buttons.AddButton("Y", () => Rotate(() => renderer3d.Y(), "Y"), 186, ";");
     buttons.AddButton("📹", () => renderer3d.ResetCamera(), 90, "Z", "Reset camera");
-    buttons.AddButton("↪️", () => StartReplay(), 88, "X");
+    buttons.AddButton("↪️", () => StartReplay(), 88, "X", "Start replay");
     buttons.AddButton("", () => { }, -1, "C");
     buttons.AddButton("I", () => FaceTurn(() => renderer3d.I(), "I"), 86, "V");
     buttons.AddButton("", () => { }, -1, "B");
     buttons.AddButton("X'", () => Rotate(() => renderer3d.Xi(), "X'"), 78, "N");
     buttons.AddButton("r'", () => FaceTurn(() => renderer3d.ri(), "r'"), 77, "M");
     buttons.AddButton("", () => { }, -1, ",");
-    buttons.AddButton("EC", () => replay.EncodeMoveList(), 190, ".");
+    buttons.AddButton("", () => replay.EncodeMoveList(), 190, ".");
     buttons.AddButton("🎲", () => Scramble(renderer3d), 191, "/", "Scramble");
 
     renderer3d.AddAnimationCompletedListener(() => {
