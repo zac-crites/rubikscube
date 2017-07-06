@@ -1,6 +1,7 @@
-function Replay(_stopwatch, _cube) {
-    var _moveList = [];
-    var _replaying = false;
+
+
+function MoveEncoder() {
+
     var _encodedTimeResolution = 150;
 
     var _encodingData = [];
@@ -32,26 +33,37 @@ function Replay(_stopwatch, _cube) {
     _encodingData.push(new Encoding("I'", cube => cube.Ii()));
     _encodingData.push(new Encoding("r", cube => cube.r()));
     _encodingData.push(new Encoding("r'", cube => cube.ri()));
-    _encodingData.push(new Encoding("TimerSignal", () => QueueTimerToggle()));
-    _encodingData.push(new Encoding("Delay", () => { }));
+    _encodingData.push(new Encoding("TimerSignal", ToggleTimerAction));
 
-    if (_encodingData.length > 32)
-        throw "Can't encode id >= 32";
+    if (_encodingData.length > 31)
+        throw "Can't encode id >= 31";
 
     function Encoding(opcode, execute, clean) {
         this.opcode = opcode;
-        this.execute = execute;
         this.clean = (clean !== undefined) && clean;
+        this.execute = execute;
     }
 
-    this.EncodeMoveList = () => {
+    function ToggleTimerAction(cube, stopwatch) {
+        cube.AddQueuedAnimationsCompletedListener(() => {
+            if (!stopwatch.IsTicking()) {
+                stopwatch.Start();
+            }
+            else {
+                stopwatch.Stop();
+            }
+        });
+    }
 
-        LogMoveList( _moveList, "Encoded");
+    this.GetOperationData = operation => _encodingData.find(d => d.opcode === operation);
+
+    this.EncodeMoveList = moveList => {
+
         var bytes = [];
         var lastTimestamp = 0;
         var msPerTick = _encodedTimeResolution;
 
-        _moveList.forEach(move => {
+        moveList.forEach(move => {
             if (move.data.opcode !== undefined) {
                 var id = _encodingData.findIndex(d => d.opcode === move.data.opcode);
                 if (id >= 0 && id < 32) {
@@ -62,7 +74,7 @@ function Replay(_stopwatch, _cube) {
                         var ticks = Math.floor(offset / msPerTick);
                         lastTimestamp += ticks * msPerTick;
                         while (ticks >= 8) {
-                            bytes.push(_encodingData.findIndex(d => d.opcode === "Delay") << 3);
+                            bytes.push(_encodingData.length << 3);
                             ticks -= 8;
                         }
                         id += ticks;
@@ -88,20 +100,9 @@ function Replay(_stopwatch, _cube) {
         return result;
     }
 
-    function QueueTimerToggle() {
-        _cube.AddQueuedAnimationsCompletedListener(() => {
-            if (!_stopwatch.IsTicking()) {
-                _stopwatch.Start();
-            }
-            else {
-                _stopwatch.Stop();
-            }
-        });
-    }
-
-    this.DecodeMoveString = encodedMoves => {
+    this.DecodeMoveListString = encodedMoveString => {
         var newMoveList = [];
-        var decodedMovesAsStr = atob(encodedMoves);
+        var decodedMovesAsStr = atob(encodedMoveString);
         var currentTimestamp = 0;
 
         Array.prototype.forEach.call(decodedMovesAsStr, function (char) {
@@ -110,7 +111,7 @@ function Replay(_stopwatch, _cube) {
 
             currentTimestamp += _encodedTimeResolution * t;
 
-            if (_encodingData[i].opcode === "Delay") {
+            if (i >= _encodingData.length) {
                 currentTimestamp += _encodedTimeResolution * 8;
             } else {
                 newMoveList.push({
@@ -120,33 +121,37 @@ function Replay(_stopwatch, _cube) {
             }
         });
 
+        return newMoveList;
+    }
+}
+
+function Replay(_stopwatch, _cube) {
+    var _moveList = [];
+    var _replaying = false;
+    var _encodedTimeResolution = 150;
+
+    var _encoder = new MoveEncoder();
+
+    this.EncodeMoveList = () => _encoder.EncodeMoveList(_moveList);
+
+    this.DecodeMoveString = encodedMoves => {
+
+        var newMoveList = _encoder.DecodeMoveListString(encodedMoves);
+
         if (_moveList.length === 0)
             _moveList = newMoveList;
     }
 
-    function LogMoveList( moveList, label ) {
-        label = ( label !== undefined ) ? label : "Decoded"
-        var logstr = [];
-        moveList.forEach(move => move.data.opcode === undefined || logstr.push(move.data.opcode));
-        console.log( label + "(" + moveList.length + ") = [" + logstr.join(' ') + "]");
-    }
-
-    function Execute(encoderEntry) {
-        if (!_encodingData[i].clean && !_stopwatch.IsSolving())
-            _stopwatch.SolveStart();
-        _encodingData[i].execute(_cube);
-    }
-
     this.ExecuteOperation = moveString => {
         moveString.split(" ").forEach(opcode => {
-            var move = _encodingData.find(d => d.opcode === opcode);
+            var move = _encoder.GetOperationData(opcode);
             _moveList.push({
                 timestamp: _stopwatch.GetTimestamp(),
                 data: move
             });
             if (move.clean !== true)
                 _stopwatch.SolveStart();
-            move.execute(_cube);
+            move.execute(_cube, _stopwatch);
         });
     }
 
@@ -183,7 +188,7 @@ function Replay(_stopwatch, _cube) {
             if (_moveList[0].data.clean !== true && !_stopwatch.IsSolving()) {
                 _cube.AddQueuedAnimationsCompletedListener(() => _stopwatch.SolveStart());
             }
-            _moveList[0].data.execute(_cube);
+            _moveList[0].data.execute(_cube, _stopwatch);
             _moveList.shift();
         }
 
