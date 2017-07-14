@@ -1,18 +1,28 @@
 function Replay(_stopwatch, _cube) {
+    var _replayMoves = [];
     var _moveList = [];
     var _replaying = false;
     var _encodedTimeResolution = 150;
 
     var _encoder = new ReplayEncoder();
 
-    this.EncodeMoveList = () => _encoder.EncodeMoveList(_moveList);
+    this.EncodeMoveList = () => {
+        if (_replayMoves.length === 0)
+            return;
+
+        var encodedMoves = _encoder.EncodeMoveList(_replayMoves);
+        var parseIndex = window.location.href.indexOf('?');
+        var base = (parseIndex > 0)
+            ? window.location.href.substring(0, parseIndex)
+            : window.location.href;
+
+        window.history.replaceState("", "", "?" + encodedMoves);
+
+        this.Replay();
+    }
 
     this.DecodeMoveString = encodedMoves => {
-
-        var newMoveList = _encoder.DecodeMoveListString(encodedMoves);
-
-        if (_moveList.length === 0)
-            _moveList = newMoveList;
+        _replayMoves = _encoder.DecodeMoveListString(encodedMoves);
     }
 
     this.ExecuteOperation = moveString => {
@@ -34,11 +44,39 @@ function Replay(_stopwatch, _cube) {
     }
 
     this.Replay = () => {
-        if (_moveList.length === 0)
+        if (_replaying)
             return;
-        _stopwatch.Reset();
+
         _replaying = true;
+        DoReplay();
+    }
+
+    function DoReplay() {
+
+        if (!_cube.IsSolved()) {
+            _cube.Reset();
+            _cube.AddQueuedAnimationsCompletedListener(DoReplay);
+            return;
+        }
+
+        var replayMoveIndex = 0;
+        _stopwatch.Reset();
         TimerUpdate();
+
+        function TimerUpdate() {
+            var currentTime = _stopwatch.GetTimestamp();
+            while (_replayMoves.length > replayMoveIndex && _replayMoves[replayMoveIndex].timestamp <= currentTime) {
+                if (_replayMoves[replayMoveIndex].data.clean !== true && !_stopwatch.IsSolving()) {
+                    _cube.AddQueuedAnimationsCompletedListener(() => _stopwatch.SolveStart());
+                }
+                _replayMoves[replayMoveIndex].data.execute(_cube, _stopwatch);
+                replayMoveIndex++;
+            }
+
+            if (_replayMoves.length > replayMoveIndex) {
+                setTimeout(TimerUpdate, 100);
+            }
+        }
     }
 
     this.Finish = () => {
@@ -46,31 +84,18 @@ function Replay(_stopwatch, _cube) {
             return;
         _stopwatch.Stop();
         _cube.Pulse();
+        
+        if (_replaying) {
+            _replaying = false;
+        }
+        else {
+            _replayMoves = _moveList.slice(0);
+        }
     }
 
     this.IsReplaying = () => _replaying;
 
-    function TimerUpdate() {
-        if (_moveList.length === 0) {
-            _replaying = false;
-            return;
-        }
 
-        var currentTime = _stopwatch.GetTimestamp();
-        while (_moveList.length > 0 && _moveList[0].timestamp <= currentTime) {
-            if (_moveList[0].data.clean !== true && !_stopwatch.IsSolving()) {
-                _cube.AddQueuedAnimationsCompletedListener(() => _stopwatch.SolveStart());
-            }
-            _moveList[0].data.execute(_cube, _stopwatch);
-            _moveList.shift();
-        }
-
-        if (_moveList.length > 0) {
-            setTimeout(TimerUpdate, 100);
-        } else {
-            _replaying = false;
-        }
-    }
 }
 
 window.onload = function () {
@@ -110,19 +135,17 @@ window.onload = function () {
     buttons.AddButton("D'", () => Turn("D'"), 76, "L");
     buttons.AddButton("Y", () => Turn("Y"), 186, ";");
     buttons.AddButton("📹", () => renderer3d.ResetCamera(), 90, "Z", "Reset camera");
-    buttons.AddButton("↪️", () => StartReplay(), 88, "X", "Start replay");
+    buttons.AddButton("↪️", () => replay.EncodeMoveList(), 88, "X", "Start replay");
     buttons.AddButton("", () => { }, -1, "C");
     buttons.AddButton("I", () => Turn("I"), 86, "V");
     buttons.AddButton("", () => { }, -1, "B");
     buttons.AddButton("X'", () => Turn("X'"), 78, "N");
     buttons.AddButton("r'", () => Turn("r'"), 77, "M");
     buttons.AddButton("", () => { }, -1, ",");
-    buttons.AddButton("", () => replay.EncodeMoveList(), 190, ".");
+    buttons.AddButton("", () => { }, 190, ".");
     buttons.AddButton("🎲", () => Scramble(renderer3d), 191, "/", "Scramble");
 
     renderer3d.AddAnimationCompletedListener(() => {
-        if (replay.IsReplaying())
-            return;
 
         if (cube.IsSolved()) {
             replay.Finish();

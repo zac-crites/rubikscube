@@ -236,6 +236,9 @@ function CubeRenderer(cube) {
 
     this.Ii = () => Animate(new THREE.Matrix4().makeRotationZ(- Math.PI / 2), null, new THREE.Vector3(1, 0, 0), () => _cube.Zi().Ui().Y(), () => _cube.Z());
 
+    //Utils
+    this.IsSolved = () => _cube.IsSolved();
+
     this.Reset = () => {
         var count = 0;
         var duration = 16;
