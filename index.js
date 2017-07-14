@@ -89,33 +89,33 @@ window.onload = function () {
         replay.Replay();
     }
 
-    buttons.AddButton("Z'", () => Rotate(() => renderer3d.Zi(), "Z'"), 81, "Q");
-    buttons.AddButton("B", () => FaceTurn(() => renderer3d.B(), 'B'), 87, "W");
-    buttons.AddButton("L'", () => FaceTurn(() => renderer3d.Li(), "L'"), 69, "E");
-    buttons.AddButton("I'", () => FaceTurn(() => renderer3d.Ii(), "I'"), 82, "R");
+    buttons.AddButton("Z'", () => Turn("Z'"), 81, "Q");
+    buttons.AddButton("B", () => Turn('B'), 87, "W");
+    buttons.AddButton("L'", () => Turn("L'"), 69, "E");
+    buttons.AddButton("I'", () => Turn("I'"), 82, "R");
     buttons.AddButton("", () => { }, 84, "T");
-    buttons.AddButton("X", () => Rotate(() => renderer3d.X(), "X"), 89, "Y");
-    buttons.AddButton("r", () => FaceTurn(() => renderer3d.r(), "r"), 85, "U");
-    buttons.AddButton("R", () => FaceTurn(() => renderer3d.R(), "R"), 73, "I");
-    buttons.AddButton("B'", () => FaceTurn(() => renderer3d.Bi(), "B'"), 79, "O");
-    buttons.AddButton("Z", () => Rotate(() => renderer3d.Z(), "Z"), 80, "P");
-    buttons.AddButton("Y'", () => Rotate(() => renderer3d.Yi(), "Y'"), 65, "A");
-    buttons.AddButton("D", () => FaceTurn(() => renderer3d.D(), "D"), 83, "S");
-    buttons.AddButton("L", () => FaceTurn(() => renderer3d.L(), "L"), 68, "D");
-    buttons.AddButton("U'", () => FaceTurn(() => renderer3d.Ui(), "U'"), 70, "F");
-    buttons.AddButton("F'", () => FaceTurn(() => renderer3d.Fi(), "F'"), 71, "G");
-    buttons.AddButton("F", () => FaceTurn(() => renderer3d.F(), "F"), 72, "H");
-    buttons.AddButton("U", () => FaceTurn(() => renderer3d.U(), "U"), 74, "J");
-    buttons.AddButton("R'", () => FaceTurn(() => renderer3d.Ri(), "R'"), 75, "K");
-    buttons.AddButton("D'", () => FaceTurn(() => renderer3d.Di(), "D'"), 76, "L");
-    buttons.AddButton("Y", () => Rotate(() => renderer3d.Y(), "Y"), 186, ";");
+    buttons.AddButton("X", () => Turn("X"), 89, "Y");
+    buttons.AddButton("r", () => Turn("r"), 85, "U");
+    buttons.AddButton("R", () => Turn("R"), 73, "I");
+    buttons.AddButton("B'", () => Turn("B'"), 79, "O");
+    buttons.AddButton("Z", () => Turn("Z"), 80, "P");
+    buttons.AddButton("Y'", () => Turn("Y'"), 65, "A");
+    buttons.AddButton("D", () => Turn("D"), 83, "S");
+    buttons.AddButton("L", () => Turn("L"), 68, "D");
+    buttons.AddButton("U'", () => Turn("U'"), 70, "F");
+    buttons.AddButton("F'", () => Turn("F'"), 71, "G");
+    buttons.AddButton("F", () => Turn("F"), 72, "H");
+    buttons.AddButton("U", () => Turn("U"), 74, "J");
+    buttons.AddButton("R'", () => Turn("R'"), 75, "K");
+    buttons.AddButton("D'", () => Turn("D'"), 76, "L");
+    buttons.AddButton("Y", () => Turn("Y"), 186, ";");
     buttons.AddButton("📹", () => renderer3d.ResetCamera(), 90, "Z", "Reset camera");
     buttons.AddButton("↪️", () => StartReplay(), 88, "X", "Start replay");
     buttons.AddButton("", () => { }, -1, "C");
-    buttons.AddButton("I", () => FaceTurn(() => renderer3d.I(), "I"), 86, "V");
+    buttons.AddButton("I", () => Turn("I"), 86, "V");
     buttons.AddButton("", () => { }, -1, "B");
-    buttons.AddButton("X'", () => Rotate(() => renderer3d.Xi(), "X'"), 78, "N");
-    buttons.AddButton("r'", () => FaceTurn(() => renderer3d.ri(), "r'"), 77, "M");
+    buttons.AddButton("X'", () => Turn("X'"), 78, "N");
+    buttons.AddButton("r'", () => Turn("r'"), 77, "M");
     buttons.AddButton("", () => { }, -1, ",");
     buttons.AddButton("", () => replay.EncodeMoveList(), 190, ".");
     buttons.AddButton("🎲", () => Scramble(renderer3d), 191, "/", "Scramble");
@@ -136,14 +136,7 @@ window.onload = function () {
         replay.Reset();
     }
 
-    function Rotate(rotate, code) {
-        if (scrambling || replay.IsReplaying())
-            return;
-
-        replay.ExecuteOperation(code);
-    }
-
-    function FaceTurn(move, code) {
+    function Turn(code) {
         if (scrambling || replay.IsReplaying())
             return;
 
