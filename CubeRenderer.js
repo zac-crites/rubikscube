@@ -52,12 +52,12 @@ function CubeRenderer(cube) {
             materials.push(new THREE.MeshBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide }));
             materials.push(new THREE.MeshBasicMaterial({ color: 0xffaa00, side: THREE.DoubleSide }));
 
-            CreateFace('U', new THREE.Vector3(-1.5, 1.5, -1.5), new THREE.Vector3(3, 0, 0), new THREE.Vector3(0, 0, 3), margin, outline);
-            CreateFace('L', new THREE.Vector3(-1.5, 1.5, -1.5), new THREE.Vector3(0, 0, 3), new THREE.Vector3(0, -3, 0), margin, outline);
-            CreateFace('F', new THREE.Vector3(-1.5, 1.5, 1.5), new THREE.Vector3(3, 0, 0), new THREE.Vector3(0, -3, 0), margin, outline);
-            CreateFace('R', new THREE.Vector3(1.5, 1.5, 1.5), new THREE.Vector3(0, 0, -3), new THREE.Vector3(0, -3, 0), margin, outline);
-            CreateFace('B', new THREE.Vector3(1.5, 1.5, -1.5), new THREE.Vector3(-3, 0, 0), new THREE.Vector3(0, -3, 0), margin, outline);
-            CreateFace('D', new THREE.Vector3(-1.5, -1.5, 1.5), new THREE.Vector3(3, 0, 0), new THREE.Vector3(0, 0, -3), margin, outline);
+            CreateFace(0, new THREE.Vector3(-1.5, 1.5, -1.5), new THREE.Vector3(3, 0, 0), new THREE.Vector3(0, 0, 3), margin, outline);
+            CreateFace(1, new THREE.Vector3(-1.5, 1.5, -1.5), new THREE.Vector3(0, 0, 3), new THREE.Vector3(0, -3, 0), margin, outline);
+            CreateFace(2, new THREE.Vector3(-1.5, 1.5, 1.5), new THREE.Vector3(3, 0, 0), new THREE.Vector3(0, -3, 0), margin, outline);
+            CreateFace(3, new THREE.Vector3(1.5, 1.5, 1.5), new THREE.Vector3(0, 0, -3), new THREE.Vector3(0, -3, 0), margin, outline);
+            CreateFace(4, new THREE.Vector3(1.5, 1.5, -1.5), new THREE.Vector3(-3, 0, 0), new THREE.Vector3(0, -3, 0), margin, outline);
+            CreateFace(5, new THREE.Vector3(-1.5, -1.5, 1.5), new THREE.Vector3(3, 0, 0), new THREE.Vector3(0, 0, -3), margin, outline);
 
             function CreateFace(face, facetopleft, right, down, margin, outline, addTop) {
 
@@ -72,15 +72,15 @@ function CubeRenderer(cube) {
                 var width = right.clone().sub(marginRight).sub(marginRight);
                 var height = down.clone().sub(marginDown).sub(marginDown);
 
-                CreateFacelet(facetopleft.clone(), 0, 0, () => materials[_cube.GetFacelet(face, 0)]);
-                CreateFacelet(facetopleft.clone(), 1, 0, () => materials[_cube.GetFacelet(face, 1)]);
-                CreateFacelet(facetopleft.clone(), 2, 0, () => materials[_cube.GetFacelet(face, 2)]);
-                CreateFacelet(facetopleft.clone(), 0, 1, () => materials[_cube.GetFacelet(face, 7)]);
-                CreateFacelet(facetopleft.clone(), 1, 1, () => materials[_cube.GetFacelet(face)]);
-                CreateFacelet(facetopleft.clone(), 2, 1, () => materials[_cube.GetFacelet(face, 3)]);
-                CreateFacelet(facetopleft.clone(), 0, 2, () => materials[_cube.GetFacelet(face, 6)]);
-                CreateFacelet(facetopleft.clone(), 1, 2, () => materials[_cube.GetFacelet(face, 5)]);
-                CreateFacelet(facetopleft.clone(), 2, 2, () => materials[_cube.GetFacelet(face, 4)]);
+                CreateFacelet(facetopleft.clone(), 0, 0, () => materials[_cube.getFacelet(face, 0)]);
+                CreateFacelet(facetopleft.clone(), 1, 0, () => materials[_cube.getFacelet(face, 1)]);
+                CreateFacelet(facetopleft.clone(), 2, 0, () => materials[_cube.getFacelet(face, 2)]);
+                CreateFacelet(facetopleft.clone(), 0, 1, () => materials[_cube.getFacelet(face, 7)]);
+                CreateFacelet(facetopleft.clone(), 1, 1, () => materials[_cube.getFacelet(face)]);
+                CreateFacelet(facetopleft.clone(), 2, 1, () => materials[_cube.getFacelet(face, 3)]);
+                CreateFacelet(facetopleft.clone(), 0, 2, () => materials[_cube.getFacelet(face, 6)]);
+                CreateFacelet(facetopleft.clone(), 1, 2, () => materials[_cube.getFacelet(face, 5)]);
+                CreateFacelet(facetopleft.clone(), 2, 2, () => materials[_cube.getFacelet(face, 4)]);
 
                 function CreateFacelet(topleft, x, y, getMaterial) {
 
@@ -111,7 +111,7 @@ function CubeRenderer(cube) {
                     _meshes.push(stickerMesh);
                     _meshes.push(outlineMesh);
 
-                    layerGroup = (face === 'U' || (face !== 'D' && y === 0)) ? _topLayerMeshes : _bottomLayersMeshes;
+                    layerGroup = (face === 0 || (face !== 5 && y === 0)) ? _topLayerMeshes : _bottomLayersMeshes;
                     layerGroup.push(stickerMesh);
                     layerGroup.push(outlineMesh);
 
@@ -271,6 +271,10 @@ function CubeRenderer(cube) {
             }
         });
     };
+
+    this.UpdateFaceletMats = () => {
+        _updateFaceletMats.forEach(fn => fn());
+    }
 
     this.Pulse = () => {
         var count = 0;
