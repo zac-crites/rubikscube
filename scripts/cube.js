@@ -174,6 +174,9 @@ define(["require", "exports"], function (require, exports) {
         Cube.prototype.ri = function () {
             return this.Li().Xi();
         };
+        Cube.prototype.waitForMoves = function () {
+            return new Promise(function (resolve) { return resolve(); });
+        };
         Cube.prototype.replace = function (f, i, value) {
             var tmp = f.facelets[i];
             f.facelets[i] = value;

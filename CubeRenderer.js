@@ -165,7 +165,7 @@ function CubeRenderer(cube) {
         });
     }
 
-    this.waitForQueuedMoves = () => {
+    this.waitForMoves = () => {
         return new Promise((resolve) => {
             this.addQueuedAnimationsCompletedListener(() => resolve());
         });
@@ -278,7 +278,7 @@ function CubeRenderer(cube) {
         });
     };
 
-    this.UpdateFaceletMats = () => {
+    this.refreshFacelets = () => {
         _updateFaceletMats.forEach(fn => fn());
     }
 

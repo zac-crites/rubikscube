@@ -1,5 +1,7 @@
 import { Turnable } from "./turnable"
 
+declare var Promise: any;
+
 export enum Face {
     U,
     L,
@@ -96,7 +98,7 @@ export class Cube implements Turnable {
     }
 
     public U(): Cube {
-        this.rotateFace( this.faces[0], 3 );
+        this.rotateFace(this.faces[0], 3);
         this.shift(0);
         this.shift(1);
         this.shift(2);
@@ -130,7 +132,7 @@ export class Cube implements Turnable {
     public D(): Cube {
         return this.X().F().Xi();
     }
-    
+
     public L(): Cube {
         return this.Z().U().Zi();
     }
@@ -154,19 +156,19 @@ export class Cube implements Turnable {
     public Di(): Cube {
         return this.D2().D();
     }
-    
+
     public Li(): Cube {
         return this.L2().L();
     }
-    
+
     public Ri(): Cube {
         return this.R2().R();
     }
-    
+
     public Fi(): Cube {
         return this.F2().F();
     }
-    
+
     public Bi(): Cube {
         return this.B2().B();
     }
@@ -194,24 +196,28 @@ export class Cube implements Turnable {
     public B2(): Cube {
         return this.B().B();
     }
-    
+
     public I(): Cube {
         return this.R().X();
     }
-    
+
     public Ii(): Cube {
         return this.Ri().Xi();
     }
 
-    public r(): Cube{
+    public r(): Cube {
         return this.Li().Xi();
     }
 
-    public ri(): Cube{
+    public ri(): Cube {
         return this.Li().Xi();
     }
 
-    private replace(f:FaceData, i:number, value:number){
+    public waitForMoves(): Promise<void> {
+        return new Promise((resolve) => resolve());
+    }
+
+    private replace(f: FaceData, i: number, value: number) {
         var tmp = f.facelets[i];
         f.facelets[i] = value;
         return tmp;
@@ -219,7 +225,7 @@ export class Cube implements Turnable {
 
     private shift(i: number) {
         let f = this.faces;
-        this.replace( f[1], i, this.replace( f[2], i, this.replace( f[3], i, this.replace( f[4], i, f[1].facelets[i]))));
+        this.replace(f[1], i, this.replace(f[2], i, this.replace(f[3], i, this.replace(f[4], i, f[1].facelets[i]))));
     }
 
     private rotateFace(face: FaceData, times: number) {

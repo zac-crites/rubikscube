@@ -30,8 +30,6 @@ export interface Turnable {
     Ii(): Turnable;
     r(): Turnable;
     ri(): Turnable;
-}
-
-export interface AnimatedTurnable extends Turnable {
-    waitForQueuedMoves(): Promise<void>;
+    
+    waitForMoves(): Promise<void>;
 }

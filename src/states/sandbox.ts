@@ -22,6 +22,8 @@ export class SandboxState implements State {
         let cube = this.cube;
         let camera = this.camera;
 
+        camera.refreshFacelets();
+
         let cubeBindings: [string, string, () => void][] = [
             ["q", "Z'", cube.Zi],
             ["w", "B", cube.B],

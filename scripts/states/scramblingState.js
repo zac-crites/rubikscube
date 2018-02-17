@@ -10,7 +10,7 @@ define(["require", "exports", "../scrambler"], function (require, exports, scram
         ScramblingState.prototype.enter = function () {
             var _this = this;
             this.scrambler.scramble(this.cube);
-            this.cube.waitForQueuedMoves().then(function () {
+            this.cube.waitForMoves().then(function () {
                 _this.context.setState(_this.nextState || _this.context.solveState);
             });
         };

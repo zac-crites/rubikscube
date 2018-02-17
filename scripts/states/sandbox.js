@@ -12,6 +12,7 @@ define(["require", "exports"], function (require, exports) {
             var _this = this;
             var cube = this.cube;
             var camera = this.camera;
+            camera.refreshFacelets();
             var cubeBindings = [
                 ["q", "Z'", cube.Zi],
                 ["w", "B", cube.B],

@@ -1,15 +1,15 @@
 import { State, StateContext } from "./state";
 import { Scrambler } from "../scrambler";
-import { AnimatedTurnable } from "../turnable";
+import { Turnable } from "../turnable";
 import { Cube } from "../cube";
 
 export class ScramblingState implements State {
     private context: StateContext;
     private nextState: State;
     private scrambler: Scrambler;
-    private cube: AnimatedTurnable;
+    private cube: Turnable;
 
-    public constructor(context: StateContext, cube: AnimatedTurnable) {
+    public constructor(context: StateContext, cube: Turnable) {
         this.context = context;
         this.cube = cube;
         this.scrambler = new Scrambler();
@@ -18,7 +18,7 @@ export class ScramblingState implements State {
     public enter(): void {
         this.scrambler.scramble(this.cube);
 
-        this.cube.waitForQueuedMoves().then(() => {
+        this.cube.waitForMoves().then(() => {
             this.context.setState(this.nextState || this.context.solveState);
         });
     }
