@@ -1,7 +1,7 @@
 import { Turnable } from "./turnable";
 
 export class Scrambler {
-    public scramble(cube: Turnable) {
+    public scramble(cube: Turnable, turns:number) {
         let faceMoves: [() => void, () => void, () => void][] = [
             [cube.U, cube.Ui, cube.U2],
             [cube.D, cube.Di, cube.D2],
@@ -11,7 +11,7 @@ export class Scrambler {
             [cube.B, cube.Bi, cube.B2],
         ];
 
-        for (var i = 0; i < 30; i++) {
+        for (var i = 0; i < turns; i++) {
             var idx = Math.floor(Math.random() * (faceMoves.length - 1));
             var face = faceMoves[idx];
             faceMoves.splice(idx, 1);

@@ -16,7 +16,7 @@ export class ScramblingState implements State {
     }
 
     public enter(): void {
-        this.scrambler.scramble(this.cube);
+        this.scrambler.scramble(this.cube, 30);
 
         this.cube.waitForMoves().then(() => {
             this.context.setState(this.nextState || this.context.solveState);

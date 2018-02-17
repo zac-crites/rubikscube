@@ -2,11 +2,12 @@ define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var SandboxState = /** @class */ (function () {
-        function SandboxState(context, cube, controls, camera) {
+        function SandboxState(context, cube, controls, camera, timer) {
             this.context = context;
             this.cube = cube;
             this.controls = controls;
             this.camera = camera;
+            this.timer = timer;
         }
         SandboxState.prototype.enter = function () {
             var _this = this;
@@ -42,6 +43,9 @@ define(["require", "exports"], function (require, exports) {
             cubeBindings.forEach(function (binding) {
                 _this.controls.setupButton(binding[0], binding[1], binding[2]);
             });
+            var startTime = new Date();
+            startTime.setMilliseconds(startTime.getMilliseconds() + 15 * 1000);
+            this.timer.start(startTime);
         };
         SandboxState.prototype.exit = function () {
             this.controls.reset();

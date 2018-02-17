@@ -4,7 +4,7 @@ define(["require", "exports"], function (require, exports) {
     var Scrambler = /** @class */ (function () {
         function Scrambler() {
         }
-        Scrambler.prototype.scramble = function (cube) {
+        Scrambler.prototype.scramble = function (cube, turns) {
             var faceMoves = [
                 [cube.U, cube.Ui, cube.U2],
                 [cube.D, cube.Di, cube.D2],
@@ -13,7 +13,7 @@ define(["require", "exports"], function (require, exports) {
                 [cube.F, cube.Fi, cube.F2],
                 [cube.B, cube.Bi, cube.B2],
             ];
-            for (var i = 0; i < 30; i++) {
+            for (var i = 0; i < turns; i++) {
                 var idx = Math.floor(Math.random() * (faceMoves.length - 1));
                 var face = faceMoves[idx];
                 faceMoves.splice(idx, 1);
