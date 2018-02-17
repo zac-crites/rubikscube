@@ -10,7 +10,7 @@ define(["require", "exports", "./cube", "./hotkeys", "./scrambler", "./states/st
             var renderer3d = new CubeRenderer(cube);
             scrambler.scramble(renderer3d);
             var buttons = new hotkeys_1.Hotkeys((document.getElementById("buttons")));
-            var stateContext = new state_1.StateContext(new sandbox_1.SandboxState(renderer3d, buttons));
+            var stateContext = new state_1.StateContext(new sandbox_1.SandboxState(renderer3d, buttons, renderer3d));
             return 0;
         };
         return Startup;

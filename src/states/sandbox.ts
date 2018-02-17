@@ -1,19 +1,24 @@
 import { State } from "./state";
 import { Turnable } from "../turnable";
 import { Hotkeys } from "../hotkeys";
+import { CameraControls } from "../CameraControls";
 
 export class SandboxState implements State {
 
-    private cube:Turnable;
-    private controls:Hotkeys;
+    private cube: Turnable;
+    private controls: Hotkeys;
+    private camera: CameraControls;
 
-    public constructor(cube: Turnable, controls: Hotkeys) {
+    public constructor(cube: Turnable, controls: Hotkeys, camera: CameraControls) {
         this.cube = cube;
         this.controls = controls;
+        this.camera = camera;
     }
 
     public enter(): void {
         let cube = this.cube;
+        let camera = this.camera;
+
         let cubeBindings: [string, string, () => void][] = [
             ["q", "Z'", cube.Zi],
             ["w", "B", cube.B],
@@ -37,8 +42,8 @@ export class SandboxState implements State {
             ["v", "I", cube.I],
             ["n", "X'", cube.Xi],
             ["m", "r'", cube.ri],
-
-           // ["z", "📹", renderer3d.ResetCamera],
+            
+            ["z", "📹", camera.resetCamera],
         ];
 
         cubeBindings.forEach(binding => {

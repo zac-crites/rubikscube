@@ -36,7 +36,7 @@ function CubeRenderer(cube) {
         }
         DrawFrame();
 
-        this.ResetCamera = () => controls.reset();
+        this.resetCamera = () => controls.reset();
 
         // Build the cube mesh
         (() => {

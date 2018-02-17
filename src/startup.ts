@@ -9,17 +9,15 @@ declare var CubeRenderer;
 
 export class Startup {
     public run(): number {
-
         let cube = new Cube();
         let scrambler = new Scrambler();
-
         let renderer3d = new CubeRenderer(cube);
 
         scrambler.scramble(renderer3d);
 
         let buttons = new Hotkeys(<HTMLDivElement>(document.getElementById("buttons")));
 
-        let stateContext = new StateContext(new SandboxState(renderer3d, buttons));
+        let stateContext = new StateContext(new SandboxState(renderer3d, buttons, renderer3d));
 
         return 0;
     }
