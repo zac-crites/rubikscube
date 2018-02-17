@@ -16,10 +16,10 @@ export class Startup {
 
         let stateContext = new StateContext();
 
-        let scramble = new ScramblingState(stateContext, renderer3d);
-        scramble.setNextState( new SandboxState( renderer3d, controls, renderer3d) );
+        stateContext.scramblerState = new ScramblingState(stateContext, renderer3d);
+        stateContext.solveState = new SandboxState(stateContext, renderer3d, controls, renderer3d)
 
-        stateContext.setState( scramble );
+        stateContext.setState(stateContext.scramblerState);
 
         return 0;
     }

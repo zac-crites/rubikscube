@@ -1,15 +1,18 @@
-import { State } from "./state";
+import { State, StateContext } from "./state";
 import { Turnable } from "../turnable";
 import { Hotkeys } from "../hotkeys";
 import { CameraControls } from "../CameraControls";
+import { Scrambler } from "../scrambler";
+import { ScramblingState } from "./scramblingState";
 
 export class SandboxState implements State {
-
+    private context: StateContext;
     private cube: Turnable;
     private controls: Hotkeys;
     private camera: CameraControls;
 
-    public constructor(cube: Turnable, controls: Hotkeys, camera: CameraControls) {
+    public constructor(context: StateContext, cube: Turnable, controls: Hotkeys, camera: CameraControls) {
+        this.context = context;
         this.cube = cube;
         this.controls = controls;
         this.camera = camera;
@@ -42,8 +45,8 @@ export class SandboxState implements State {
             ["v", "I", cube.I],
             ["n", "X'", cube.Xi],
             ["m", "r'", cube.ri],
-            
             ["z", "📹", camera.resetCamera],
+            ["/", "🎲", () => this.context.setState(this.context.scramblerState)]
         ];
 
         cubeBindings.forEach(binding => {

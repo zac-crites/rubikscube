@@ -2,6 +2,9 @@ export class StateContext {
 
     private currentState: State;
 
+    scramblerState:State;
+    solveState:State;
+
     public constructor(state?: State) {
         this.setState(state);
     }

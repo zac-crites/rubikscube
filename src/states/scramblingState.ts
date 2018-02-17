@@ -19,7 +19,7 @@ export class ScramblingState implements State {
         this.scrambler.scramble(this.cube);
 
         this.cube.waitForQueuedMoves().then(() => {
-            this.context.setState(this.nextState);
+            this.context.setState(this.nextState || this.context.solveState);
         });
     }
 
