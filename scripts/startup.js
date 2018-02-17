@@ -1,4 +1,4 @@
-define(["require", "exports", "./cube", "./hotkeys"], function (require, exports, cube_1, hotkeys_1) {
+define(["require", "exports", "./cube", "./hotkeys", "./scrambler"], function (require, exports, cube_1, hotkeys_1, scrambler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Startup = /** @class */ (function () {
@@ -6,6 +6,8 @@ define(["require", "exports", "./cube", "./hotkeys"], function (require, exports
         }
         Startup.prototype.run = function () {
             var cube = new cube_1.Cube();
+            var scrambler = new scrambler_1.Scrambler();
+            scrambler.scramble(cube);
             var renderer3d = new CubeRenderer(cube);
             var buttons = new hotkeys_1.Hotkeys((document.getElementById("buttons")));
             var cubeBindings = [

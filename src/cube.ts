@@ -176,7 +176,7 @@ export class Cube implements Turnable {
     }
 
     public D2(): Cube {
-        return this.D2().D2();
+        return this.D().D();
     }
 
     public L2(): Cube {

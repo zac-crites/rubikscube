@@ -148,7 +148,7 @@ define(["require", "exports"], function (require, exports) {
             return this.U().U();
         };
         Cube.prototype.D2 = function () {
-            return this.D2().D2();
+            return this.D().D();
         };
         Cube.prototype.L2 = function () {
             return this.L().L();
