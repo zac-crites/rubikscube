@@ -1,0 +1,47 @@
+define(["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var SandboxState = /** @class */ (function () {
+        function SandboxState(cube, controls) {
+            this.cube = cube;
+            this.controls = controls;
+        }
+        SandboxState.prototype.enter = function () {
+            var _this = this;
+            var cube = this.cube;
+            var cubeBindings = [
+                ["q", "Z'", cube.Zi],
+                ["w", "B", cube.B],
+                ["e", "L'", cube.Li],
+                //["r", "I'", renderer3d.Ii],
+                ["y", "X", cube.X],
+                // ["u", "r", renderer3d.r],
+                ["i", "R", cube.R],
+                ["o", "B'", cube.Bi],
+                ["p", "Z", cube.Z],
+                ["a", "Y'", cube.Yi],
+                ["s", "D", cube.D],
+                ["d", "L", cube.L],
+                ["f", "U'", cube.Ui],
+                ["g", "F'", cube.Fi],
+                ["h", "F", cube.F],
+                ["j", "U", cube.U],
+                ["k", "R'", cube.Ri],
+                ["l", "D'", cube.Di],
+                [";", "Y", cube.Y],
+                // ["z", "📹", renderer3d.ResetCamera],
+                // ["v", "I", renderer3d.I],
+                ["n", "X'", cube.Xi],
+            ];
+            cubeBindings.forEach(function (binding) {
+                _this.controls.setupButton(binding[0], binding[1], binding[2]);
+            });
+        };
+        SandboxState.prototype.exit = function () {
+            this.controls.reset();
+        };
+        return SandboxState;
+    }());
+    exports.SandboxState = SandboxState;
+});
+//# sourceMappingURL=sandbox.js.map
