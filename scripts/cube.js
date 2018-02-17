@@ -162,6 +162,18 @@ define(["require", "exports"], function (require, exports) {
         Cube.prototype.B2 = function () {
             return this.B().B();
         };
+        Cube.prototype.I = function () {
+            return this.R().X();
+        };
+        Cube.prototype.Ii = function () {
+            return this.Ri().Xi();
+        };
+        Cube.prototype.r = function () {
+            return this.Li().Xi();
+        };
+        Cube.prototype.ri = function () {
+            return this.Li().Xi();
+        };
         Cube.prototype.replace = function (f, i, value) {
             var tmp = f.facelets[i];
             f.facelets[i] = value;

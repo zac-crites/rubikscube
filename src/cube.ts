@@ -194,6 +194,22 @@ export class Cube implements Turnable {
     public B2(): Cube {
         return this.B().B();
     }
+    
+    public I(): Cube {
+        return this.R().X();
+    }
+    
+    public Ii(): Cube {
+        return this.Ri().Xi();
+    }
+
+    public r(): Cube{
+        return this.Li().Xi();
+    }
+
+    public ri(): Cube{
+        return this.Li().Xi();
+    }
 
     private replace(f:FaceData, i:number, value:number){
         var tmp = f.facelets[i];

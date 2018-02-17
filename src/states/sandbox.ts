@@ -18,13 +18,12 @@ export class SandboxState implements State {
             ["q", "Z'", cube.Zi],
             ["w", "B", cube.B],
             ["e", "L'", cube.Li],
-            //["r", "I'", renderer3d.Ii],
+            ["r", "I'", cube.Ii],
             ["y", "X", cube.X],
-           // ["u", "r", renderer3d.r],
+            ["u", "r", cube.r],
             ["i", "R", cube.R],
             ["o", "B'", cube.Bi],
             ["p", "Z", cube.Z],
-
             ["a", "Y'", cube.Yi],
             ["s", "D", cube.D],
             ["d", "L", cube.L],
@@ -35,11 +34,11 @@ export class SandboxState implements State {
             ["k", "R'", cube.Ri],
             ["l", "D'", cube.Di],
             [";", "Y", cube.Y],
+            ["v", "I", cube.I],
+            ["n", "X'", cube.Xi],
+            ["m", "r'", cube.ri],
 
            // ["z", "📹", renderer3d.ResetCamera],
-           // ["v", "I", renderer3d.I],
-            ["n", "X'", cube.Xi],
-          //  ["m", "r'", renderer3d.ri],
         ];
 
         cubeBindings.forEach(binding => {

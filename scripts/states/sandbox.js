@@ -13,9 +13,9 @@ define(["require", "exports"], function (require, exports) {
                 ["q", "Z'", cube.Zi],
                 ["w", "B", cube.B],
                 ["e", "L'", cube.Li],
-                //["r", "I'", renderer3d.Ii],
+                ["r", "I'", cube.Ii],
                 ["y", "X", cube.X],
-                // ["u", "r", renderer3d.r],
+                ["u", "r", cube.r],
                 ["i", "R", cube.R],
                 ["o", "B'", cube.Bi],
                 ["p", "Z", cube.Z],
@@ -29,9 +29,9 @@ define(["require", "exports"], function (require, exports) {
                 ["k", "R'", cube.Ri],
                 ["l", "D'", cube.Di],
                 [";", "Y", cube.Y],
-                // ["z", "📹", renderer3d.ResetCamera],
-                // ["v", "I", renderer3d.I],
+                ["v", "I", cube.I],
                 ["n", "X'", cube.Xi],
+                ["m", "r'", cube.ri],
             ];
             cubeBindings.forEach(function (binding) {
                 _this.controls.setupButton(binding[0], binding[1], binding[2]);
