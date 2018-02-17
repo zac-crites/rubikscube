@@ -9,7 +9,7 @@ export class StandardControls {
         this.hotkeys = hotkey;
     }
 
-    public register(target: Turnable, camera: CameraControls) {
+    public register(target: Turnable, camera?: CameraControls) {
         let targetBindings: [string, string, () => void][] = [
             ["q", "Z'", target.Zi],
             ["w", "B", target.B],
@@ -33,9 +33,12 @@ export class StandardControls {
             ["v", "I", target.I],
             ["n", "X'", target.Xi],
             ["m", "r'", target.ri],
-            ["z", "📹", camera.resetCamera],
             // ["/", "🎲", () => this.context.setState(this.context.scramblerState)]
         ];
+
+        if( camera ){
+            targetBindings.push(["z", "📹", camera.resetCamera] );
+        }
 
         targetBindings.forEach(binding => {
             this.hotkeys.setupButton(binding[0], binding[1], binding[2]);

@@ -19,8 +19,8 @@ export class Startup {
         let stateContext = new StateContext();
 
         stateContext.scramblerState = new ScramblingState(stateContext, renderer3d);
-        stateContext.countdownState = new CountdownState(stateContext, timer)
-        stateContext.solveState = new TimedSolveState(stateContext, renderer3d, controls, renderer3d, timer)
+        stateContext.countdownState = new CountdownState(stateContext, timer, controls, renderer3d );
+        stateContext.solveState = new TimedSolveState(stateContext, renderer3d, controls, renderer3d, timer);
         stateContext.setState(stateContext.scramblerState);
 
         return 0;

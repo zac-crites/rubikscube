@@ -11,6 +11,11 @@ export enum Face {
     D,
 }
 
+export interface CubeState {
+    isSolved():boolean;
+    getFacelet(face: Face, i: number): Face;
+}
+
 class FaceData {
     readonly center: Face;
     facelets: Face[] = [];
@@ -23,7 +28,7 @@ class FaceData {
     }
 }
 
-export class Cube implements Turnable {
+export class Cube implements Turnable, CubeState {
 
     private faces: FaceData[];
 

@@ -30,8 +30,10 @@ define(["require", "exports"], function (require, exports) {
                 ["v", "I", target.I],
                 ["n", "X'", target.Xi],
                 ["m", "r'", target.ri],
-                ["z", "📹", camera.resetCamera],
             ];
+            if (camera) {
+                targetBindings.push(["z", "📹", camera.resetCamera]);
+            }
             targetBindings.forEach(function (binding) {
                 _this.hotkeys.setupButton(binding[0], binding[1], binding[2]);
             });
