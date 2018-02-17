@@ -2,15 +2,18 @@ export class StateContext {
 
     private currentState: State;
 
-    public constructor(state: State) {
-        this.currentState = state;
-        this.currentState.enter();
+    public constructor(state?: State) {
+        this.setState(state);
     }
 
     public setState(state: State) {
-        this.currentState.exit();
+        if (this.currentState) {
+            this.currentState.exit();
+        }
         this.currentState = state;
-        this.currentState.enter();
+        if (this.currentState) {
+            this.currentState.enter();
+        }
     }
 }
 
