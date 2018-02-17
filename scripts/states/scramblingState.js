@@ -11,7 +11,7 @@ define(["require", "exports", "../scrambler"], function (require, exports, scram
             var _this = this;
             this.scrambler.scramble(this.cube, 30);
             this.cube.waitForMoves().then(function () {
-                _this.context.setState(_this.nextState || _this.context.solveState);
+                _this.context.setState(_this.nextState || _this.context.countdownState);
             });
         };
         ScramblingState.prototype.exit = function () {

@@ -43,11 +43,10 @@ define(["require", "exports"], function (require, exports) {
             cubeBindings.forEach(function (binding) {
                 _this.controls.setupButton(binding[0], binding[1], binding[2]);
             });
-            var startTime = new Date();
-            startTime.setMilliseconds(startTime.getMilliseconds() + 15 * 1000);
-            this.timer.start(startTime);
+            this.timer.start();
         };
         SandboxState.prototype.exit = function () {
+            this.timer.reset();
             this.controls.reset();
         };
         return SandboxState;

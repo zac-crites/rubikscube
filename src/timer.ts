@@ -1,3 +1,5 @@
+declare var Promise: any;
+
 export class Timer {
     private element: HTMLDivElement;
     private startTime: Date;
@@ -5,12 +7,27 @@ export class Timer {
 
     public constructor(element: HTMLDivElement) {
         this.element = element;
-        element.innerText = "-.--";
+        element.innerHTML = "&nbsp;";
     }
 
-    public start(startTime?:Date) {
-        this.startTime = startTime || new Date();
+    public start() {
+        this.startTime = new Date();
         this.interval = window.setInterval(() => this.update(), 16);
+    }
+
+    public countdown(duration: number): Promise<void> {
+        this.startTime = new Date();
+        this.startTime.setTime(this.startTime.getTime() + duration);
+
+        return new Promise(resolve => {
+            this.interval = window.setInterval(() => {
+                this.update();
+                if (new Date().getTime() > this.startTime.getTime()) {
+                    stop();
+                    resolve();
+                }
+            }, 16);
+        });
     }
 
     public stop() {
@@ -21,14 +38,18 @@ export class Timer {
         }
     }
 
+    public reset() {
+        stop();
+        this.element.innerHTML = "&nbsp;";
+    }
+
     private update() {
         let diff = new Date().getTime() - this.startTime.getTime();
         this.element.innerHTML = this.displayDuration(diff);
     }
 
     private displayDuration(duration: number): string {
-        if( duration < 0 )
-        {
+        if (duration < 0) {
             return Math.floor(duration / 1000).toString();
         }
         var minutes = Math.floor(duration / 60000);

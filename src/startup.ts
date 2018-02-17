@@ -6,6 +6,7 @@ import { StateContext } from "./states/state";
 import { SandboxState } from "./states/sandbox";
 import { ScramblingState } from "./states/scramblingState";
 import { Timer } from "./timer";
+import { CountdownState } from "./states/countdownState";
 
 declare var CubeRenderer;
 
@@ -18,6 +19,7 @@ export class Startup {
         let stateContext = new StateContext();
 
         stateContext.scramblerState = new ScramblingState(stateContext, renderer3d);
+        stateContext.countdownState = new CountdownState(stateContext, timer)
         stateContext.solveState = new SandboxState(stateContext, renderer3d, controls, renderer3d, timer)
         stateContext.setState(stateContext.scramblerState);
 

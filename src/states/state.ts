@@ -4,6 +4,7 @@ export class StateContext {
 
     scramblerState:State;
     solveState:State;
+    countdownState:State;
 
     public constructor(state?: State) {
         this.setState(state);

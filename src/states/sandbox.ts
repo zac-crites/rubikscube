@@ -13,7 +13,7 @@ export class SandboxState implements State {
     private camera: CameraControls;
     private timer: Timer;
 
-    public constructor(context: StateContext, cube: Turnable, controls: Hotkeys, camera: CameraControls, timer:Timer) {
+    public constructor(context: StateContext, cube: Turnable, controls: Hotkeys, camera: CameraControls, timer: Timer) {
         this.context = context;
         this.cube = cube;
         this.controls = controls;
@@ -58,12 +58,11 @@ export class SandboxState implements State {
             this.controls.setupButton(binding[0], binding[1], binding[2]);
         });
 
-        let startTime = new Date();
-        startTime.setMilliseconds( startTime.getMilliseconds() + 15 * 1000 );
-        this.timer.start( startTime );
+        this.timer.start();
     }
 
     public exit(): void {
+        this.timer.reset();
         this.controls.reset();
     }
 }
