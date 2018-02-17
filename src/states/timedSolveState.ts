@@ -6,7 +6,7 @@ import { Scrambler } from "../scrambler";
 import { ScramblingState } from "./scramblingState";
 import { Timer } from "../timer";
 
-export class SandboxState implements State {
+export class TimedSolveState implements State {
     private context: StateContext;
     private cube: Turnable;
     private controls: Hotkeys;

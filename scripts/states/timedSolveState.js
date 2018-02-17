@@ -1,15 +1,15 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var SandboxState = /** @class */ (function () {
-        function SandboxState(context, cube, controls, camera, timer) {
+    var TimedSolveState = /** @class */ (function () {
+        function TimedSolveState(context, cube, controls, camera, timer) {
             this.context = context;
             this.cube = cube;
             this.controls = controls;
             this.camera = camera;
             this.timer = timer;
         }
-        SandboxState.prototype.enter = function () {
+        TimedSolveState.prototype.enter = function () {
             var _this = this;
             var cube = this.cube;
             var camera = this.camera;
@@ -45,12 +45,12 @@ define(["require", "exports"], function (require, exports) {
             });
             this.timer.start();
         };
-        SandboxState.prototype.exit = function () {
+        TimedSolveState.prototype.exit = function () {
             this.timer.reset();
             this.controls.reset();
         };
-        return SandboxState;
+        return TimedSolveState;
     }());
-    exports.SandboxState = SandboxState;
+    exports.TimedSolveState = TimedSolveState;
 });
-//# sourceMappingURL=sandbox.js.map
+//# sourceMappingURL=timedSolveState.js.map

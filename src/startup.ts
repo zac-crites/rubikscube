@@ -3,7 +3,7 @@ import { Cube } from "./cube";
 import { Hotkeys } from "./hotkeys";
 import { Scrambler } from "./scrambler";
 import { StateContext } from "./states/state";
-import { SandboxState } from "./states/sandbox";
+import { TimedSolveState } from "./states/timedSolveState";
 import { ScramblingState } from "./states/scramblingState";
 import { Timer } from "./timer";
 import { CountdownState } from "./states/countdownState";
@@ -20,7 +20,7 @@ export class Startup {
 
         stateContext.scramblerState = new ScramblingState(stateContext, renderer3d);
         stateContext.countdownState = new CountdownState(stateContext, timer)
-        stateContext.solveState = new SandboxState(stateContext, renderer3d, controls, renderer3d, timer)
+        stateContext.solveState = new TimedSolveState(stateContext, renderer3d, controls, renderer3d, timer)
         stateContext.setState(stateContext.scramblerState);
 
         return 0;
