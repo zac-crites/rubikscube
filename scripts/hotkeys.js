@@ -2,10 +2,8 @@ define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var KeyData = /** @class */ (function () {
-        function KeyData(_a) {
-            var key = _a.key, element = _a.element;
-            this.key = key;
-            this.element = element;
+        function KeyData(element) {
+            this.element = element || (document.createElement('div'));
         }
         return KeyData;
     }());
@@ -13,7 +11,7 @@ define(["require", "exports"], function (require, exports) {
         function Hotkeys(element) {
             var _this = this;
             this.keyMap = {};
-            this.initializeUI(element);
+            this.initialize(element);
             window.addEventListener("keydown", function (ev) { return _this.keyHandler(ev); });
         }
         Hotkeys.prototype.setupButton = function (key, text, action) {
@@ -29,15 +27,21 @@ define(["require", "exports"], function (require, exports) {
         };
         Hotkeys.prototype.keyHandler = function (ev) {
             var data = this.keyMap[ev.key];
-            if (data === undefined || data.action === undefined) {
-                return;
+            if (data !== undefined && data.action !== undefined) {
+                data.action();
             }
-            data.action();
         };
-        Hotkeys.prototype.initializeUI = function (rootElement) {
-            this.addRow(rootElement, ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"]);
-            this.addRow(rootElement, ["A", "S", "D", "F", "G", "H", "J", "K", "L", ";"]);
-            this.addRow(rootElement, ["Z", "X", "C", "V", "B", "N", "M", ",", ".", "/"]);
+        Hotkeys.prototype.initialize = function (rootElement) {
+            var keys = [
+                ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
+                ["A", "S", "D", "F", "G", "H", "J", "K", "L", ";"],
+                ["Z", "X", "C", "V", "B", "N", "M", ",", ".", "/"]
+            ];
+            for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+                var row = keys_1[_i];
+                this.addRow(rootElement, row);
+            }
+            this.keyMap[" "] = new KeyData();
         };
         Hotkeys.prototype.addRow = function (rootElement, buttons) {
             var currentRow = (document.createElement('div'));
@@ -60,10 +64,7 @@ define(["require", "exports"], function (require, exports) {
             button.appendChild(keyDiv);
             button.appendChild(textDiv);
             row.appendChild(button);
-            this.keyMap[keytext.toLowerCase()] = new KeyData({
-                key: keytext,
-                element: textDiv
-            });
+            this.keyMap[keytext.toLowerCase()] = new KeyData(textDiv);
         };
         return Hotkeys;
     }());

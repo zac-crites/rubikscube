@@ -1,11 +1,9 @@
 class KeyData {
-    key: string;
     element: HTMLDivElement;
     action: () => void;
 
-    public constructor({ key, element }: { key?: string, element?: HTMLDivElement }) {
-        this.key = key;
-        this.element = element;
+    public constructor(element?: HTMLDivElement) {
+        this.element = element || (<HTMLDivElement>(document.createElement('div')));
     }
 }
 
@@ -13,7 +11,7 @@ export class Hotkeys {
     private keyMap: { [key: string]: KeyData } = {};
 
     public constructor(element: HTMLDivElement) {
-        this.initializeUI(element);
+        this.initialize(element);
         window.addEventListener("keydown", (ev) => this.keyHandler(ev));
     }
 
@@ -31,16 +29,23 @@ export class Hotkeys {
 
     private keyHandler(ev: KeyboardEvent) {
         let data = this.keyMap[ev.key];
-        if (data === undefined || data.action === undefined) {
-            return;
+        if (data !== undefined && data.action !== undefined) {
+            data.action();
         }
-        data.action();
     }
 
-    private initializeUI(rootElement: HTMLDivElement) {
-        this.addRow(rootElement, ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"]);
-        this.addRow(rootElement, ["A", "S", "D", "F", "G", "H", "J", "K", "L", ";"]);
-        this.addRow(rootElement, ["Z", "X", "C", "V", "B", "N", "M", ",", ".", "/"]);
+    private initialize(rootElement: HTMLDivElement) {
+        let keys = [
+            ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
+            ["A", "S", "D", "F", "G", "H", "J", "K", "L", ";"],
+            ["Z", "X", "C", "V", "B", "N", "M", ",", ".", "/"]
+        ];
+
+        for (let row of keys) {
+            this.addRow(rootElement, row);
+        }
+
+        this.keyMap[" "] = new KeyData();
     }
 
     private addRow(rootElement: HTMLDivElement, buttons: string[]) {
@@ -72,9 +77,6 @@ export class Hotkeys {
 
         row.appendChild(button);
 
-        this.keyMap[keytext.toLowerCase()] = new KeyData({
-            key: keytext,
-            element: textDiv
-        });
+        this.keyMap[keytext.toLowerCase()] = new KeyData(textDiv);
     }
 }
