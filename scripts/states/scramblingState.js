@@ -8,12 +8,13 @@ define(["require", "exports", "../scrambler"], function (require, exports, scram
             this.scrambler = new scrambler_1.Scrambler();
         }
         ScramblingState.prototype.enter = function () {
-            console.log("ScramblingState.enter()");
+            var _this = this;
             this.scrambler.scramble(this.cube);
-            this.context.setState(this.nextState);
+            this.cube.waitForQueuedMoves().then(function () {
+                _this.context.setState(_this.nextState);
+            });
         };
         ScramblingState.prototype.exit = function () {
-            console.log("ScramblingState.exit()");
         };
         ScramblingState.prototype.setNextState = function (next) {
             this.nextState = next;

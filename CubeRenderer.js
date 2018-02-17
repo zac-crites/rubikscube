@@ -156,12 +156,18 @@ function CubeRenderer(cube) {
 
     this.AddAnimationCompletedListener = (listener) => _animationListeners.push(listener);
 
-    this.AddQueuedAnimationsCompletedListener = (listener) => {
+    this.addQueuedAnimationsCompletedListener = (listener) => {
         _animationQueue.push(() => {
             listener();
             _animationQueue.shift();
             if (_animationQueue.length > 0)
                 _animationQueue[0]();
+        });
+    }
+
+    this.waitForQueuedMoves = () => {
+        return new Promise((resolve) => {
+            this.addQueuedAnimationsCompletedListener(() => resolve());
         });
     }
 
