@@ -1,5 +1,5 @@
-import { Turnable } from "./turnable";
-import { Cube } from "./cube";
+import { Turnable, Turn } from "./turnable";
+import { Cube, Face } from "./cube";
 import { Hotkeys } from "./hotkeys";
 import { Scrambler } from "./scrambler";
 import { StateContext } from "./states/state";
@@ -18,11 +18,20 @@ export class Startup {
         let timer = new Timer(<HTMLDivElement>(document.getElementById("timerDisplay")));
         let stateContext = new StateContext();
 
+        this.implementApply(renderer3d);
+
         stateContext.scramblerState = new ScramblingState(stateContext, renderer3d);
-        stateContext.countdownState = new CountdownState(stateContext, timer, controls, renderer3d );
+        stateContext.countdownState = new CountdownState(stateContext, timer, controls, renderer3d);
         stateContext.solveState = new TimedSolveState(stateContext, renderer3d, controls, renderer3d, timer);
         stateContext.setState(stateContext.scramblerState);
 
         return 0;
+    }
+
+    private implementApply(t: any) {
+        t.apply = (turn: Turn): Turnable => {
+            t[turn]();
+            return t;
+        };
     }
 }

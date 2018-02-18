@@ -50,6 +50,10 @@ define(["require", "exports"], function (require, exports) {
             }
             return this.faces[face].facelets[i];
         };
+        Cube.prototype.apply = function (turn) {
+            this[turn.toString()]();
+            return this;
+        };
         Cube.prototype.X = function () {
             this.rotateFace(this.faces[1], 1);
             this.rotateFace(this.faces[3], 3);

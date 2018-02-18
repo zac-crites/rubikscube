@@ -1,4 +1,4 @@
-import { Turnable } from "./turnable"
+import { Turnable, Turn } from "./turnable"
 
 declare var Promise: any;
 
@@ -12,7 +12,7 @@ export enum Face {
 }
 
 export interface CubeState {
-    isSolved():boolean;
+    isSolved(): boolean;
     getFacelet(face: Face, i: number): Face;
 }
 
@@ -57,6 +57,11 @@ export class Cube implements Turnable, CubeState {
             return this.faces[face].center;
         }
         return this.faces[face].facelets[i];
+    }
+
+    public apply(turn: Turn): Cube {
+        this[turn.toString()]();
+        return this;
     }
 
     public X(): Cube {

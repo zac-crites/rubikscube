@@ -1,6 +1,6 @@
 import { State, StateContext } from "./state";
 import { Timer } from "../timer";
-import { Turnable } from "../turnable";
+import { Turnable, Turn } from "../turnable";
 import { Hotkeys } from "../hotkeys";
 import { StandardControls } from "../standardControls";
 
@@ -19,7 +19,7 @@ export class CountdownState implements State {
     }
 
     public enter(): void {
-        this.controls.register(this.wrap(this.cube, (legal) => this.onMove(legal)), null);
+        this.controls.register(this.wrap(this.cube, (safe) => this.onMove(safe)), null);
 
         this.timer.countdown(15000).then(() => {
             this.context.setState(this.nextState || this.context.solveState);
@@ -35,22 +35,22 @@ export class CountdownState implements State {
         this.nextState = next;
     }
 
-    private wrap(target: Turnable, move: (isLegal: boolean) => void): Turnable {
-        let legalNames = ["X", "Xi", "Y", "Yi", "Z", "Zi"];
+    private wrap(target: Turnable, move: (isSafe: boolean) => void): Turnable {
+        let safeTurns = [ Turn.X, Turn.Xi, Turn.Y, Turn.Yi, Turn.Z, Turn.Zi];
         let wrapper = {};
 
         Object.getOwnPropertyNames(target).forEach(name => {
             wrapper[name] = (...args: any[]) => {
-                let isLegal = legalNames.some(n => n === name);
-                move(isLegal);
+                let isSafe = safeTurns.some(n => n === name);
+                move(isSafe);
                 target[name](...args);
             };
         });
         return <Turnable>wrapper;
     }
 
-    private onMove(isLegal) {
-        if (!isLegal) {
+    private onMove(isSafe) {
+        if (!isSafe) {
             this.context.setState(this.nextState || this.context.solveState);
         }
     }
