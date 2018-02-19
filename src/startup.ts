@@ -22,7 +22,7 @@ export class Startup {
 
         stateContext.scramblerState = new ScramblingState(stateContext, renderer3d);
         stateContext.countdownState = new CountdownState(stateContext, timer, controls, renderer3d);
-        stateContext.solveState = new TimedSolveState(stateContext, renderer3d, controls, renderer3d, timer);
+        stateContext.solveState = new TimedSolveState(stateContext, renderer3d, controls, renderer3d, timer, cube);
         stateContext.setState(stateContext.scramblerState);
 
         return 0;

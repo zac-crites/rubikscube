@@ -13,7 +13,7 @@ export enum Face {
 
 export interface CubeState {
     isSolved(): boolean;
-    getFacelet(face: Face, i: number): Face;
+    getFacelet(face: Face, i?: number): Face;
 }
 
 class FaceData {
@@ -25,6 +25,10 @@ class FaceData {
         while (this.facelets.length < 8) {
             this.facelets.push(face);
         }
+    }
+
+    public isSolved(): boolean {
+        return this.facelets.every(f => f === this.center);
     }
 }
 
@@ -44,12 +48,7 @@ export class Cube implements Turnable, CubeState {
     }
 
     public isSolved(): boolean {
-        for (let i = 0; i < this.faces.length; i++) {
-            if (!this.faces[i].facelets.every(facelet => facelet === i)) {
-                return false;
-            }
-        }
-        return true;
+        return this.faces.every(f => f.isSolved());
     }
 
     public getFacelet(face: Face, i: number): Face {
@@ -60,7 +59,7 @@ export class Cube implements Turnable, CubeState {
     }
 
     public apply(turn: Turn): Cube {
-        this[turn.toString()]();
+        this[turn]();
         return this;
     }
 

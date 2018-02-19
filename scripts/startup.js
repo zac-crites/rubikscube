@@ -13,7 +13,7 @@ define(["require", "exports", "./cube", "./hotkeys", "./states/state", "./states
             this.implementApply(renderer3d);
             stateContext.scramblerState = new scramblingState_1.ScramblingState(stateContext, renderer3d);
             stateContext.countdownState = new countdownState_1.CountdownState(stateContext, timer, controls, renderer3d);
-            stateContext.solveState = new timedSolveState_1.TimedSolveState(stateContext, renderer3d, controls, renderer3d, timer);
+            stateContext.solveState = new timedSolveState_1.TimedSolveState(stateContext, renderer3d, controls, renderer3d, timer, cube);
             stateContext.setState(stateContext.scramblerState);
             return 0;
         };

@@ -18,6 +18,10 @@ define(["require", "exports"], function (require, exports) {
                 this.facelets.push(face);
             }
         }
+        FaceData.prototype.isSolved = function () {
+            var _this = this;
+            return this.facelets.every(function (f) { return f === _this.center; });
+        };
         return FaceData;
     }());
     var Cube = /** @class */ (function () {
@@ -31,18 +35,7 @@ define(["require", "exports"], function (require, exports) {
             }
         };
         Cube.prototype.isSolved = function () {
-            var _loop_1 = function (i) {
-                if (!this_1.faces[i].facelets.every(function (facelet) { return facelet === i; })) {
-                    return { value: false };
-                }
-            };
-            var this_1 = this;
-            for (var i = 0; i < this.faces.length; i++) {
-                var state_1 = _loop_1(i);
-                if (typeof state_1 === "object")
-                    return state_1.value;
-            }
-            return true;
+            return this.faces.every(function (f) { return f.isSolved(); });
         };
         Cube.prototype.getFacelet = function (face, i) {
             if (i === undefined) {
@@ -51,7 +44,7 @@ define(["require", "exports"], function (require, exports) {
             return this.faces[face].facelets[i];
         };
         Cube.prototype.apply = function (turn) {
-            this[turn.toString()]();
+            this[turn]();
             return this;
         };
         Cube.prototype.X = function () {

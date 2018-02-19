@@ -1,11 +1,12 @@
 import { State, StateContext } from "./state";
-import { Turnable } from "../turnable";
+import { Turnable, Turn } from "../turnable";
 import { Hotkeys } from "../hotkeys";
 import { CameraControls } from "../CameraControls";
 import { Scrambler } from "../scrambler";
 import { ScramblingState } from "./scramblingState";
 import { Timer } from "../timer";
 import { StandardControls } from "../standardControls";
+import { CubeState } from "../cube";
 
 export class TimedSolveState implements State {
     private context: StateContext;
@@ -13,13 +14,15 @@ export class TimedSolveState implements State {
     private controls: StandardControls;
     private camera: CameraControls;
     private timer: Timer;
+    private cubeState: CubeState;
 
-    public constructor(context: StateContext, cube: Turnable, controls: Hotkeys, camera: CameraControls, timer: Timer) {
+    public constructor(context: StateContext, cube: Turnable, controls: Hotkeys, camera: CameraControls, timer: Timer, cubeState: CubeState) {
         this.context = context;
         this.cube = cube;
-        this.controls = new StandardControls( controls );
+        this.controls = new StandardControls(controls);
         this.camera = camera;
         this.timer = timer;
+        this.cubeState = cubeState;
     }
 
     public enter(): void {
@@ -28,12 +31,34 @@ export class TimedSolveState implements State {
 
         camera.refreshFacelets();
 
-        this.controls.register( cube, camera );
+        let wrapper = this.turnCompletedListeningWrapper(cube, () => this.onTurnCompleted());
+
+        this.controls.register(wrapper, camera);
         this.timer.start();
     }
 
     public exit(): void {
-        this.timer.reset();
         this.controls.reset();
+    }
+
+    private onTurnCompleted(): void {
+        if (this.cubeState.isSolved()) {
+            this.timer.stop();
+        }
+    }
+
+    private turnCompletedListeningWrapper(target: Turnable, callback: () => void): Turnable {
+        let wrapper = {};
+
+        Object.getOwnPropertyNames(target).forEach(name => {
+            wrapper[name] = (...args: any[]) => {
+                target[name](...args);
+                target.waitForMoves().then(() => {
+                    callback();
+                });
+            }
+        });
+
+        return <Turnable>wrapper;
     }
 }

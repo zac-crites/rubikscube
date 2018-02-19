@@ -31,8 +31,8 @@ export class Timer {
     }
 
     public stop() {
-        this.update();
         if (this.interval !== 0) {
+            this.update();
             window.clearInterval(this.interval);
             this.interval = 0;
         }
