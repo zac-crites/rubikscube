@@ -10,6 +10,7 @@ export class StateContext {
     public scramblerState:State;
     public solveState:State;
     public countdownState:State;
+    public practiceState:State;
 
     public constructor(state?: State) {
         this.setState(state);
