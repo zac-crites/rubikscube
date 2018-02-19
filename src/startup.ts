@@ -7,6 +7,7 @@ import { TimedSolveState } from "./states/timedSolveState";
 import { ScramblingState } from "./states/scramblingState";
 import { Timer } from "./timer";
 import { CountdownState } from "./states/countdownState";
+import { IdleState } from "./states/idlestate";
 
 declare var CubeRenderer;
 
@@ -23,7 +24,7 @@ export class Startup {
         stateContext.scramblerState = new ScramblingState(stateContext, renderer3d);
         stateContext.countdownState = new CountdownState(stateContext, timer, controls, renderer3d);
         stateContext.solveState = new TimedSolveState(stateContext, renderer3d, controls, renderer3d, timer, cube);
-        stateContext.setState(stateContext.scramblerState);
+        stateContext.setState(new IdleState(stateContext));
 
         return 0;
     }

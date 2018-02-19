@@ -1,4 +1,4 @@
-define(["require", "exports", "./cube", "./hotkeys", "./states/state", "./states/timedSolveState", "./states/scramblingState", "./timer", "./states/countdownState"], function (require, exports, cube_1, hotkeys_1, state_1, timedSolveState_1, scramblingState_1, timer_1, countdownState_1) {
+define(["require", "exports", "./cube", "./hotkeys", "./states/state", "./states/timedSolveState", "./states/scramblingState", "./timer", "./states/countdownState", "./states/idlestate"], function (require, exports, cube_1, hotkeys_1, state_1, timedSolveState_1, scramblingState_1, timer_1, countdownState_1, idlestate_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Startup = /** @class */ (function () {
@@ -14,7 +14,7 @@ define(["require", "exports", "./cube", "./hotkeys", "./states/state", "./states
             stateContext.scramblerState = new scramblingState_1.ScramblingState(stateContext, renderer3d);
             stateContext.countdownState = new countdownState_1.CountdownState(stateContext, timer, controls, renderer3d);
             stateContext.solveState = new timedSolveState_1.TimedSolveState(stateContext, renderer3d, controls, renderer3d, timer, cube);
-            stateContext.setState(stateContext.scramblerState);
+            stateContext.setState(new idlestate_1.IdleState(stateContext));
             return 0;
         };
         Startup.prototype.implementApply = function (t) {

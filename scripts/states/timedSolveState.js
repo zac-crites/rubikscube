@@ -1,4 +1,4 @@
-define(["require", "exports", "../standardControls"], function (require, exports, standardControls_1) {
+define(["require", "exports", "../standardControls", "./idlestate"], function (require, exports, standardControls_1, idlestate_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TimedSolveState = /** @class */ (function () {
@@ -25,6 +25,7 @@ define(["require", "exports", "../standardControls"], function (require, exports
         TimedSolveState.prototype.onTurnCompleted = function () {
             if (this.cubeState.isSolved()) {
                 this.timer.stop();
+                this.context.setState(new idlestate_1.IdleState(this.context));
             }
         };
         TimedSolveState.prototype.turnCompletedListeningWrapper = function (target, callback) {

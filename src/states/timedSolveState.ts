@@ -7,6 +7,7 @@ import { ScramblingState } from "./scramblingState";
 import { Timer } from "../timer";
 import { StandardControls } from "../standardControls";
 import { CubeState } from "../cube";
+import { IdleState } from "./idlestate";
 
 export class TimedSolveState implements State {
     private context: StateContext;
@@ -44,6 +45,7 @@ export class TimedSolveState implements State {
     private onTurnCompleted(): void {
         if (this.cubeState.isSolved()) {
             this.timer.stop();
+            this.context.setState(new IdleState(this.context));
         }
     }
 
