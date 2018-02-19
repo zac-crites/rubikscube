@@ -1,10 +1,14 @@
-export class StateContext {
+export interface State {
+    enter(): void;
+    exit(): void;
+}
 
+export class StateContext {
     private currentState: State;
 
-    scramblerState:State;
-    solveState:State;
-    countdownState:State;
+    public scramblerState:State;
+    public solveState:State;
+    public countdownState:State;
 
     public constructor(state?: State) {
         this.setState(state);
@@ -19,9 +23,4 @@ export class StateContext {
             this.currentState.enter();
         }
     }
-}
-
-export interface State {
-    enter(): void;
-    exit(): void;
 }
