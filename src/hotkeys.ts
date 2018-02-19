@@ -42,26 +42,37 @@ export class Hotkeys {
         let oldActions = this.actions;
         this.actions = {};
 
+        let menu = document.getElementById("menu") as HTMLDivElement;
         let rows = this.rootElement.getElementsByClassName("tr") as HTMLCollectionOf<HTMLDivElement>;
+
+        menu.innerHTML = null;
+        menu.classList.remove("hidden");
         for (let i = 0; i < rows.length; i++) {
             rows[i].classList.add("hidden");
         }
 
-        console.log(rows);
         return new Promise<MenuOption>((resolve: (MenuOption) => void, reject) => {
-            console.log(prompt);
+
+            let menuHeader = document.createElement("div") as HTMLDivElement;
+            menuHeader.classList.add("menuheader");
+            menuHeader.textContent = prompt;
+            menu.appendChild(menuHeader);
             options.forEach(option => {
-                console.log(" - " + option.toString());
-                this.actions[option.key.toLowerCase()] = () => resolve(option); 
+                let menuoption = document.createElement("div") as HTMLDivElement;
+                menuoption.classList.add("menuitem");
+                menuoption.textContent = option.key + ": " + option.text;
+                menu.appendChild(menuoption);
+                this.actions[option.key.toLowerCase()] = () => resolve(option);
             });
-        }).then( ( option ) => {
+        }).then((option) => {
             this.actions = oldActions;
             option.callback();
+            menu.classList.add("hidden");
             for (let i = 0; i < rows.length; i++) {
                 rows[i].classList.remove("hidden");
             }
             return option;
-        } );
+        });
     }
 
     private keyHandler(ev: KeyboardEvent) {

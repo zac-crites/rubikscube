@@ -38,20 +38,29 @@ define(["require", "exports"], function (require, exports) {
             var _this = this;
             var oldActions = this.actions;
             this.actions = {};
+            var menu = document.getElementById("menu");
             var rows = this.rootElement.getElementsByClassName("tr");
+            menu.innerHTML = null;
+            menu.classList.remove("hidden");
             for (var i = 0; i < rows.length; i++) {
                 rows[i].classList.add("hidden");
             }
-            console.log(rows);
             return new Promise(function (resolve, reject) {
-                console.log(prompt);
+                var menuHeader = document.createElement("div");
+                menuHeader.classList.add("menuheader");
+                menuHeader.textContent = prompt;
+                menu.appendChild(menuHeader);
                 options.forEach(function (option) {
-                    console.log(" - " + option.toString());
+                    var menuoption = document.createElement("div");
+                    menuoption.classList.add("menuitem");
+                    menuoption.textContent = option.key + ": " + option.text;
+                    menu.appendChild(menuoption);
                     _this.actions[option.key.toLowerCase()] = function () { return resolve(option); };
                 });
             }).then(function (option) {
                 _this.actions = oldActions;
                 option.callback();
+                menu.classList.add("hidden");
                 for (var i = 0; i < rows.length; i++) {
                     rows[i].classList.remove("hidden");
                 }

@@ -14,9 +14,9 @@ export class IdleState implements State {
 
     public enter(): void {
         let context = this.context;
-        this.hotkeys.showMenu("Choose mode:", [
-            new MenuOption("f", "Scramble", () => this.context.setState(this.context.scramblerState)),
-            new MenuOption("j", "Solve", () => this.context.setState(this.context.solveState)),
+        this.hotkeys.showMenu("Rubik's cube simulator.  Choose mode:", [
+            new MenuOption("f", "Timed solve", () => this.context.setState(this.context.scramblerState)),
+            new MenuOption("j", "Practice", () => this.context.setState(this.context.solveState)),
         ]);
     }
 

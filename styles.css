@@ -79,6 +79,36 @@ div.td {
     text-decoration: underline;
 }
 
+.buttoncontainer {
+    height: 10em;
+}
+
 #buttons .hidden {
     display: none;
+}
+
+#menu {
+    font-family: monospace;
+    width: 25em;
+    background: #323232;
+    border: 1px solid black;
+    align-content: center;
+    float: left;
+    position: relative;
+    text-align: left;
+    color: #b2b2b2;
+    -webkit-user-select: none;  
+    -moz-user-select: none;    
+    -ms-user-select: none;      
+    user-select: none;
+}
+
+#menu .menuheader {
+    margin: 7px;
+    padding: 2px;
+}
+
+#menu .menuitem {
+    margin: 7px;
+    padding: 2px;
 }

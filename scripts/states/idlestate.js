@@ -10,9 +10,9 @@ define(["require", "exports", "../hotkeys"], function (require, exports, hotkeys
         IdleState.prototype.enter = function () {
             var _this = this;
             var context = this.context;
-            this.hotkeys.showMenu("Choose mode:", [
-                new hotkeys_1.MenuOption("f", "Scramble", function () { return _this.context.setState(_this.context.scramblerState); }),
-                new hotkeys_1.MenuOption("j", "Solve", function () { return _this.context.setState(_this.context.solveState); }),
+            this.hotkeys.showMenu("Rubik's cube simulator.  Choose mode:", [
+                new hotkeys_1.MenuOption("f", "Timed solve", function () { return _this.context.setState(_this.context.scramblerState); }),
+                new hotkeys_1.MenuOption("j", "Practice", function () { return _this.context.setState(_this.context.solveState); }),
             ]);
         };
         IdleState.prototype.exit = function () {
