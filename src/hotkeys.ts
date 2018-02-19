@@ -15,10 +15,12 @@ export class MenuOption {
 }
 
 export class Hotkeys {
+    private rootElement: HTMLDivElement;
     private actions: { [key: string]: () => void } = {};
     private elements: { [key: string]: HTMLDivElement } = {};
 
     public constructor(element: HTMLDivElement) {
+        this.rootElement = element;
         this.initialize(element);
         window.addEventListener("keydown", (ev) => this.keyHandler(ev));
     }
@@ -40,18 +42,26 @@ export class Hotkeys {
         let oldActions = this.actions;
         this.actions = {};
 
-        console.log(options);
+        let rows = this.rootElement.getElementsByClassName("tr") as HTMLCollectionOf<HTMLDivElement>;
+        for (let i = 0; i < rows.length; i++) {
+            rows[i].classList.add("hidden");
+        }
+
+        console.log(rows);
         return new Promise<MenuOption>((resolve: (MenuOption) => void, reject) => {
             console.log(prompt);
-            options.forEach(o => {
-                console.log(" - " + o.toString());
-                this.actions[o.key.toLowerCase()] = () => {
-                    this.actions = oldActions;
-                    o.callback();
-                    resolve(o);
-                }
+            options.forEach(option => {
+                console.log(" - " + option.toString());
+                this.actions[option.key.toLowerCase()] = () => resolve(option); 
             });
-        });
+        }).then( ( option ) => {
+            this.actions = oldActions;
+            option.callback();
+            for (let i = 0; i < rows.length; i++) {
+                rows[i].classList.remove("hidden");
+            }
+            return option;
+        } );
     }
 
     private keyHandler(ev: KeyboardEvent) {

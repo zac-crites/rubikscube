@@ -18,6 +18,7 @@ define(["require", "exports"], function (require, exports) {
             var _this = this;
             this.actions = {};
             this.elements = {};
+            this.rootElement = element;
             this.initialize(element);
             window.addEventListener("keydown", function (ev) { return _this.keyHandler(ev); });
         }
@@ -37,17 +38,24 @@ define(["require", "exports"], function (require, exports) {
             var _this = this;
             var oldActions = this.actions;
             this.actions = {};
-            console.log(options);
+            var rows = this.rootElement.getElementsByClassName("tr");
+            for (var i = 0; i < rows.length; i++) {
+                rows[i].classList.add("hidden");
+            }
+            console.log(rows);
             return new Promise(function (resolve, reject) {
                 console.log(prompt);
-                options.forEach(function (o) {
-                    console.log(" - " + o.toString());
-                    _this.actions[o.key.toLowerCase()] = function () {
-                        _this.actions = oldActions;
-                        o.callback();
-                        resolve(o);
-                    };
+                options.forEach(function (option) {
+                    console.log(" - " + option.toString());
+                    _this.actions[option.key.toLowerCase()] = function () { return resolve(option); };
                 });
+            }).then(function (option) {
+                _this.actions = oldActions;
+                option.callback();
+                for (var i = 0; i < rows.length; i++) {
+                    rows[i].classList.remove("hidden");
+                }
+                return option;
             });
         };
         Hotkeys.prototype.keyHandler = function (ev) {

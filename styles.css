@@ -78,3 +78,7 @@ div.td {
 .footer a:hover{
     text-decoration: underline;
 }
+
+#buttons .hidden {
+    display: none;
+}
