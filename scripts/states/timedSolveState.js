@@ -1,11 +1,11 @@
-define(["require", "exports", "../standardControls"], function (require, exports, standardControls_1) {
+define(["require", "exports", "../standardControlScheme"], function (require, exports, standardControlScheme_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TimedSolveState = /** @class */ (function () {
-        function TimedSolveState(context, cube, controls, camera, timer, cubeState) {
+        function TimedSolveState(context, cube, hotkeys, camera, timer, cubeState) {
             this.context = context;
             this.cube = cube;
-            this.controls = new standardControls_1.StandardControls(controls);
+            this.hotkeys = hotkeys;
             this.camera = camera;
             this.timer = timer;
             this.cubeState = cubeState;
@@ -14,13 +14,16 @@ define(["require", "exports", "../standardControls"], function (require, exports
             var _this = this;
             var cube = this.cube;
             var camera = this.camera;
-            camera.refreshFacelets();
             var wrapper = this.turnCompletedListeningWrapper(cube, function () { return _this.onTurnCompleted(); });
-            this.controls.register(wrapper, camera);
+            new standardControlScheme_1.StandardControlScheme().register(this.hotkeys, wrapper, camera);
+            this.hotkeys.setupButton("/", "🎲", function () {
+                _this.timer.reset();
+                _this.context.setState(_this.context.scramblerState);
+            });
             this.timer.start();
         };
         TimedSolveState.prototype.exit = function () {
-            this.controls.reset();
+            this.hotkeys.reset();
         };
         TimedSolveState.prototype.onTurnCompleted = function () {
             if (this.cubeState.isSolved()) {

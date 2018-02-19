@@ -1,4 +1,4 @@
-define(["require", "exports", "../standardControls", "../scrambler"], function (require, exports, standardControls_1, scrambler_1) {
+define(["require", "exports", "../standardControlScheme", "../scrambler"], function (require, exports, standardControlScheme_1, scrambler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var PracticeState = /** @class */ (function () {
@@ -9,9 +9,12 @@ define(["require", "exports", "../standardControls", "../scrambler"], function (
         }
         PracticeState.prototype.enter = function () {
             var _this = this;
-            var controls = new standardControls_1.StandardControls(this.hotkeys);
-            controls.register(this.cube, this.camera);
-            this.hotkeys.setupButton("/", "🎲", function () { return new scrambler_1.Scrambler().scramble(_this.cube, 30); });
+            new standardControlScheme_1.StandardControlScheme().register(this.hotkeys, this.cube, this.camera);
+            this.hotkeys.setupButton("/", "🎲", function () {
+                _this.hotkeys.reset();
+                new scrambler_1.Scrambler().scramble(_this.cube, 30);
+                _this.cube.waitForMoves().then(function () { return _this.enter(); });
+            });
         };
         PracticeState.prototype.exit = function () {
         };

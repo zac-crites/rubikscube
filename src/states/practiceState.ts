@@ -2,7 +2,7 @@ import { State, StateContext } from "./state";
 import { Turnable } from "../turnable";
 import { Hotkeys } from "../hotkeys";
 import { CameraControls } from "../cameraControls";
-import { StandardControls } from "../standardControls";
+import { StandardControlScheme } from "../standardControlScheme";
 import { Scrambler } from "../scrambler";
 
 export class PracticeState implements State {
@@ -18,9 +18,12 @@ export class PracticeState implements State {
     }
 
     public enter(): void {
-        var controls = new StandardControls(this.hotkeys);
-        controls.register(this.cube, this.camera);
-        this.hotkeys.setupButton("/", "🎲", () => new Scrambler().scramble(this.cube, 30));
+        new StandardControlScheme().register(this.hotkeys, this.cube, this.camera);
+        this.hotkeys.setupButton("/", "🎲", () => {
+            this.hotkeys.reset();
+            new Scrambler().scramble(this.cube, 30);
+            this.cube.waitForMoves().then(() => this.enter());
+        });
     }
 
     public exit(): void {

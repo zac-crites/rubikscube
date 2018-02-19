@@ -1,23 +1,25 @@
-define(["require", "exports", "../turnable", "../standardControls"], function (require, exports, turnable_1, standardControls_1) {
+define(["require", "exports", "../turnable", "../standardControlScheme"], function (require, exports, turnable_1, standardControlScheme_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CountdownState = /** @class */ (function () {
         function CountdownState(context, timer, hotkeys, cube) {
             this.context = context;
             this.timer = timer;
-            this.controls = new standardControls_1.StandardControls(hotkeys);
+            this.hotkeys = hotkeys;
             this.cube = cube;
         }
         CountdownState.prototype.enter = function () {
             var _this = this;
-            this.controls.register(this.wrap(this.cube, function (safe) { return _this.onMove(safe); }), null);
+            var cubeWrapper = this.wrap(this.cube, function (safe) { return _this.onMove(safe); });
+            new standardControlScheme_1.StandardControlScheme().register(this.hotkeys, cubeWrapper, null);
+            this.hotkeys.setupButton("/", "🎲", function () { return _this.context.setState(_this.context.scramblerState); });
             this.timer.countdown(15000).then(function () {
                 _this.context.setState(_this.nextState || _this.context.solveState);
             });
         };
         CountdownState.prototype.exit = function () {
-            this.timer.stop();
-            this.controls.reset();
+            this.timer.reset();
+            this.hotkeys.reset();
         };
         CountdownState.prototype.setNextState = function (next) {
             this.nextState = next;

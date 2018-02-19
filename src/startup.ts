@@ -27,6 +27,7 @@ export class Startup {
         stateContext.countdownState = new CountdownState(stateContext, timer, controls, renderer3d);
         stateContext.solveState = new TimedSolveState(stateContext, renderer3d, controls, renderer3d, timer, cube);
         stateContext.practiceState = new PracticeState(renderer3d, controls, renderer3d);
+
         stateContext.setState(stateContext.idleState);
 
         return 0;
@@ -34,7 +35,7 @@ export class Startup {
 
     private implementApply(t: any) {
         t.apply = (turn: Turn): Turnable => {
-            t[turn]();
+            t[Turn[turn]]();
             return t;
         };
     }

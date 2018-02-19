@@ -5,22 +5,22 @@ import { CameraControls } from "../CameraControls";
 import { Scrambler } from "../scrambler";
 import { ScramblingState } from "./scramblingState";
 import { Timer } from "../timer";
-import { StandardControls } from "../standardControls";
 import { CubeState } from "../cube";
 import { IdleState } from "./idlestate";
+import { StandardControlScheme } from "../standardControlScheme";
 
 export class TimedSolveState implements State {
     private context: StateContext;
     private cube: Turnable;
-    private controls: StandardControls;
+    private hotkeys: Hotkeys;
     private camera: CameraControls;
     private timer: Timer;
     private cubeState: CubeState;
 
-    public constructor(context: StateContext, cube: Turnable, controls: Hotkeys, camera: CameraControls, timer: Timer, cubeState: CubeState) {
+    public constructor(context: StateContext, cube: Turnable, hotkeys: Hotkeys, camera: CameraControls, timer: Timer, cubeState: CubeState) {
         this.context = context;
         this.cube = cube;
-        this.controls = new StandardControls(controls);
+        this.hotkeys = hotkeys;
         this.camera = camera;
         this.timer = timer;
         this.cubeState = cubeState;
@@ -30,16 +30,18 @@ export class TimedSolveState implements State {
         let cube = this.cube;
         let camera = this.camera;
 
-        camera.refreshFacelets();
-
         let wrapper = this.turnCompletedListeningWrapper(cube, () => this.onTurnCompleted());
 
-        this.controls.register(wrapper, camera);
+        new StandardControlScheme().register(this.hotkeys, wrapper, camera);
+        this.hotkeys.setupButton("/", "🎲", () => {
+            this.timer.reset();
+            this.context.setState(this.context.scramblerState);
+        });
         this.timer.start();
     }
 
     public exit(): void {
-        this.controls.reset();
+        this.hotkeys.reset();
     }
 
     private onTurnCompleted(): void {

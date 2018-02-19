@@ -23,7 +23,7 @@ export class Timer {
             this.interval = window.setInterval(() => {
                 this.update();
                 if (new Date().getTime() > this.startTime.getTime()) {
-                    stop();
+                    this.stop();
                     resolve();
                 }
             }, 16);
@@ -39,7 +39,7 @@ export class Timer {
     }
 
     public reset() {
-        stop();
+        this.stop();
         this.element.innerHTML = "&nbsp;";
     }
 

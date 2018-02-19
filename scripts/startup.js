@@ -1,4 +1,4 @@
-define(["require", "exports", "./cube", "./hotkeys", "./states/state", "./states/timedSolveState", "./states/scramblingState", "./timer", "./states/countdownState", "./states/idlestate", "./states/practiceState"], function (require, exports, cube_1, hotkeys_1, state_1, timedSolveState_1, scramblingState_1, timer_1, countdownState_1, idlestate_1, practiceState_1) {
+define(["require", "exports", "./turnable", "./cube", "./hotkeys", "./states/state", "./states/timedSolveState", "./states/scramblingState", "./timer", "./states/countdownState", "./states/idlestate", "./states/practiceState"], function (require, exports, turnable_1, cube_1, hotkeys_1, state_1, timedSolveState_1, scramblingState_1, timer_1, countdownState_1, idlestate_1, practiceState_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Startup = /** @class */ (function () {
@@ -21,7 +21,7 @@ define(["require", "exports", "./cube", "./hotkeys", "./states/state", "./states
         };
         Startup.prototype.implementApply = function (t) {
             t.apply = function (turn) {
-                t[turn]();
+                t[turnable_1.Turn[turn]]();
                 return t;
             };
         };

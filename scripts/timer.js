@@ -20,7 +20,7 @@ define(["require", "exports"], function (require, exports) {
                 _this.interval = window.setInterval(function () {
                     _this.update();
                     if (new Date().getTime() > _this.startTime.getTime()) {
-                        stop();
+                        _this.stop();
                         resolve();
                     }
                 }, 16);
@@ -34,7 +34,7 @@ define(["require", "exports"], function (require, exports) {
             }
         };
         Timer.prototype.reset = function () {
-            stop();
+            this.stop();
             this.element.innerHTML = "&nbsp;";
         };
         Timer.prototype.update = function () {
