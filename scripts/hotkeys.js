@@ -1,34 +1,59 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var KeyData = /** @class */ (function () {
-        function KeyData(element) {
-            this.element = element || (document.createElement('div'));
+    var MenuOption = /** @class */ (function () {
+        function MenuOption(key, text, callback) {
+            this.key = key;
+            this.text = text;
+            this.callback = callback;
         }
-        return KeyData;
+        MenuOption.prototype.toString = function () {
+            return this.key + ": " + this.text;
+        };
+        return MenuOption;
     }());
+    exports.MenuOption = MenuOption;
     var Hotkeys = /** @class */ (function () {
         function Hotkeys(element) {
             var _this = this;
-            this.keyMap = {};
+            this.actions = {};
+            this.elements = {};
             this.initialize(element);
             window.addEventListener("keydown", function (ev) { return _this.keyHandler(ev); });
         }
         Hotkeys.prototype.setupButton = function (key, text, action) {
-            this.keyMap[key.toLowerCase()].element.textContent = text;
-            this.keyMap[key.toLowerCase()].action = action;
+            var k = key.toLowerCase();
+            this.actions[k] = action;
+            if (this.elements[k]) {
+                this.elements[k].textContent = text;
+            }
         };
         Hotkeys.prototype.reset = function () {
             var _this = this;
-            Object.keys(this.keyMap).forEach(function (key) {
-                _this.keyMap[key].action = undefined;
-                _this.keyMap[key].element.innerText = null;
+            Object.keys(this.elements).forEach(function (key) { return _this.elements[key].textContent = ""; });
+            this.actions = {};
+        };
+        Hotkeys.prototype.showMenu = function (prompt, options) {
+            var _this = this;
+            var oldActions = this.actions;
+            this.actions = {};
+            console.log(options);
+            return new Promise(function (resolve, reject) {
+                console.log(prompt);
+                options.forEach(function (o) {
+                    console.log(" - " + o.toString());
+                    _this.actions[o.key.toLowerCase()] = function () {
+                        _this.actions = oldActions;
+                        o.callback();
+                        resolve(o);
+                    };
+                });
             });
         };
         Hotkeys.prototype.keyHandler = function (ev) {
-            var data = this.keyMap[ev.key];
-            if (data !== undefined && data.action !== undefined) {
-                data.action();
+            var action = this.actions[ev.key];
+            if (action !== undefined) {
+                action();
             }
         };
         Hotkeys.prototype.initialize = function (rootElement) {
@@ -41,7 +66,6 @@ define(["require", "exports"], function (require, exports) {
                 var row = keys_1[_i];
                 this.addRow(rootElement, row);
             }
-            this.keyMap[" "] = new KeyData();
         };
         Hotkeys.prototype.addRow = function (rootElement, buttons) {
             var currentRow = (document.createElement('div'));
@@ -64,7 +88,7 @@ define(["require", "exports"], function (require, exports) {
             button.appendChild(keyDiv);
             button.appendChild(textDiv);
             row.appendChild(button);
-            this.keyMap[keytext.toLowerCase()] = new KeyData(textDiv);
+            this.elements[keytext.toLowerCase()] = textDiv;
         };
         return Hotkeys;
     }());

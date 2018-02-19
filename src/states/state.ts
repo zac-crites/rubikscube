@@ -6,6 +6,7 @@ export interface State {
 export class StateContext {
     private currentState: State;
 
+    public idleState:State;
     public scramblerState:State;
     public solveState:State;
     public countdownState:State;

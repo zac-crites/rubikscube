@@ -1,36 +1,63 @@
-class KeyData {
-    element: HTMLDivElement;
-    action: () => void;
+export class MenuOption {
+    public key: string;
+    public text: string;
+    public callback: () => void;
 
-    public constructor(element?: HTMLDivElement) {
-        this.element = element || (<HTMLDivElement>(document.createElement('div')));
+    public constructor(key: string, text: string, callback: () => void) {
+        this.key = key;
+        this.text = text;
+        this.callback = callback;
+    }
+
+    public toString(): string {
+        return this.key + ": " + this.text;
     }
 }
 
 export class Hotkeys {
-    private keyMap: { [key: string]: KeyData } = {};
+    private actions: { [key: string]: () => void } = {};
+    private elements: { [key: string]: HTMLDivElement } = {};
 
     public constructor(element: HTMLDivElement) {
         this.initialize(element);
         window.addEventListener("keydown", (ev) => this.keyHandler(ev));
     }
 
-    public setupButton(key: string, text: string, action: () => void) {
-        this.keyMap[key.toLowerCase()].element.textContent = text;
-        this.keyMap[key.toLowerCase()].action = action;
+    public setupButton(key: string, text: string, action: () => void): void {
+        let k = key.toLowerCase();
+        this.actions[k] = action;
+        if (this.elements[k]) {
+            this.elements[k].textContent = text;
+        }
     }
 
-    public reset() {
-        Object.keys(this.keyMap).forEach(key => {
-            this.keyMap[key].action = undefined;
-            this.keyMap[key].element.innerText = null;
+    public reset(): void {
+        Object.keys(this.elements).forEach(key => this.elements[key].textContent = "");
+        this.actions = {};
+    }
+
+    public showMenu(prompt: string, options: MenuOption[]): Promise<MenuOption> {
+        let oldActions = this.actions;
+        this.actions = {};
+
+        console.log(options);
+        return new Promise<MenuOption>((resolve: (MenuOption) => void, reject) => {
+            console.log(prompt);
+            options.forEach(o => {
+                console.log(" - " + o.toString());
+                this.actions[o.key.toLowerCase()] = () => {
+                    this.actions = oldActions;
+                    o.callback();
+                    resolve(o);
+                }
+            });
         });
     }
 
     private keyHandler(ev: KeyboardEvent) {
-        let data = this.keyMap[ev.key];
-        if (data !== undefined && data.action !== undefined) {
-            data.action();
+        let action = this.actions[ev.key];
+        if (action !== undefined) {
+            action();
         }
     }
 
@@ -44,8 +71,6 @@ export class Hotkeys {
         for (let row of keys) {
             this.addRow(rootElement, row);
         }
-
-        this.keyMap[" "] = new KeyData();
     }
 
     private addRow(rootElement: HTMLDivElement, buttons: string[]) {
@@ -77,6 +102,6 @@ export class Hotkeys {
 
         row.appendChild(button);
 
-        this.keyMap[keytext.toLowerCase()] = new KeyData(textDiv);
+        this.elements[keytext.toLowerCase()] = textDiv;
     }
 }

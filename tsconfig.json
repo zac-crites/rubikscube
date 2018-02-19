@@ -4,6 +4,10 @@
         "module": "amd",
         "sourceMap": true,
         "outDir": "scripts",
-        "rootDir": "src"        
+        "rootDir": "src",
+        "lib": [
+            "dom",
+            "es2015"
+        ]
     },
 }

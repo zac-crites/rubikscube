@@ -45,7 +45,7 @@ export class TimedSolveState implements State {
     private onTurnCompleted(): void {
         if (this.cubeState.isSolved()) {
             this.timer.stop();
-            this.context.setState(new IdleState(this.context));
+            this.context.setState(this.context.idleState);
         }
     }
 

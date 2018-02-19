@@ -21,10 +21,11 @@ export class Startup {
 
         this.implementApply(renderer3d);
 
+        stateContext.idleState = new IdleState(stateContext, controls);
         stateContext.scramblerState = new ScramblingState(stateContext, renderer3d);
         stateContext.countdownState = new CountdownState(stateContext, timer, controls, renderer3d);
         stateContext.solveState = new TimedSolveState(stateContext, renderer3d, controls, renderer3d, timer, cube);
-        stateContext.setState(new IdleState(stateContext));
+        stateContext.setState(stateContext.idleState);
 
         return 0;
     }

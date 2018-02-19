@@ -11,10 +11,11 @@ define(["require", "exports", "./cube", "./hotkeys", "./states/state", "./states
             var timer = new timer_1.Timer((document.getElementById("timerDisplay")));
             var stateContext = new state_1.StateContext();
             this.implementApply(renderer3d);
+            stateContext.idleState = new idlestate_1.IdleState(stateContext, controls);
             stateContext.scramblerState = new scramblingState_1.ScramblingState(stateContext, renderer3d);
             stateContext.countdownState = new countdownState_1.CountdownState(stateContext, timer, controls, renderer3d);
             stateContext.solveState = new timedSolveState_1.TimedSolveState(stateContext, renderer3d, controls, renderer3d, timer, cube);
-            stateContext.setState(new idlestate_1.IdleState(stateContext));
+            stateContext.setState(stateContext.idleState);
             return 0;
         };
         Startup.prototype.implementApply = function (t) {
