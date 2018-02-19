@@ -69,7 +69,7 @@ define(["require", "exports"], function (require, exports) {
         };
         Hotkeys.prototype.keyHandler = function (ev) {
             var action = this.actions[ev.key];
-            if (action !== undefined) {
+            if (!ev.repeat && action !== undefined) {
                 action();
             }
         };

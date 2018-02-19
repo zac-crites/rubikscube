@@ -77,7 +77,7 @@ export class Hotkeys {
 
     private keyHandler(ev: KeyboardEvent) {
         let action = this.actions[ev.key];
-        if (action !== undefined) {
+        if (!ev.repeat && action !== undefined) {
             action();
         }
     }
