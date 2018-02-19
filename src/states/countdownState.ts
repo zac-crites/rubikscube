@@ -41,7 +41,7 @@ export class CountdownState implements State {
 
         Object.getOwnPropertyNames(target).forEach(name => {
             wrapper[name] = (...args: any[]) => {
-                let isSafe = safeTurns.some(n => n === name);
+                let isSafe = safeTurns.some(n => Turn[n] === name);
                 move(isSafe);
                 target[name](...args);
             };

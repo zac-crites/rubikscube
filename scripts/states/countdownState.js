@@ -31,7 +31,7 @@ define(["require", "exports", "../turnable", "../standardControls"], function (r
                     for (var _i = 0; _i < arguments.length; _i++) {
                         args[_i] = arguments[_i];
                     }
-                    var isSafe = safeTurns.some(function (n) { return n === name; });
+                    var isSafe = safeTurns.some(function (n) { return turnable_1.Turn[n] === name; });
                     move(isSafe);
                     target[name].apply(target, args);
                 };
