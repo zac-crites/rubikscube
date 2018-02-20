@@ -13,10 +13,10 @@ define(["require", "exports", "./turnable", "./timer"], function (require, expor
     Object.defineProperty(exports, "__esModule", { value: true });
     var TurnRecorder = /** @class */ (function (_super) {
         __extends(TurnRecorder, _super);
-        function TurnRecorder(target) {
+        function TurnRecorder(target, moveData) {
             var _this = _super.call(this, target) || this;
-            _this.moves = [];
             _this.timer = new timer_1.Timer();
+            _this.moves = moveData || [];
             return _this;
         }
         TurnRecorder.prototype.apply = function (turn) {

@@ -20,11 +20,12 @@ export interface Recorder {
 export class TurnRecorder extends TurnableWrapper implements Recorder {
     private timer: Timer;
     private stopTime: number | null;
-    private moves: MoveData[] = [];
+    private moves: MoveData[];
 
-    public constructor(target: Turnable) {
+    public constructor(target: Turnable,moveData?:MoveData[]) {
         super(target);
         this.timer = new Timer();
+        this.moves = moveData || [];
     }
 
     public apply(turn: Turn): Turnable {

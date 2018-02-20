@@ -1,6 +1,7 @@
 import { State, StateContext } from "./state";
 import { Recorder } from "../turnRecorder";
 import { Hotkeys, MenuOption } from "../hotkeys";
+import { ReplayConverter } from "../replayConverter";
 
 export class SolvedState implements State {
     private context: StateContext;
@@ -17,6 +18,7 @@ export class SolvedState implements State {
         this.recorder.stop();
 
         let replay = this.recorder.getReplay();
+        window.history.replaceState("", "", "?" + new ReplayConverter().replayToString(replay));
 
         this.hotkeys.showMenu("Solved in " + (replay.moves[replay.moves.length-1].timestamp / 1000),[
             new MenuOption("f","Reset", () => this.context.setState( this.context.scramblerState ) ),
