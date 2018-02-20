@@ -66,11 +66,11 @@ export class Hotkeys {
             });
         }).then((option) => {
             this.actions = oldActions;
-            option.callback();
             menu.classList.add("hidden");
             for (let i = 0; i < rows.length; i++) {
                 rows[i].classList.remove("hidden");
             }
+            option.callback();
             return option;
         });
     }

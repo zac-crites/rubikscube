@@ -11,6 +11,7 @@ export class StateContext {
     public solveState: State;
     public countdownState: State;
     public practiceState: State;
+    public solvedState: State;
 
     public constructor(state?: State) {
         this.currentState = state || {

@@ -19,9 +19,6 @@ export class IdleState implements State {
             new MenuOption("f", "Timed solve", () => this.context.setState(this.context.scramblerState)),
             new MenuOption("j", "Practice", () => this.context.setState(this.context.practiceState)),
         ]);
-
-        this.recorder.stop();
-        console.log(this.recorder.getReplay());
     }
 
     public exit(): void {

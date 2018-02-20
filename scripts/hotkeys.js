@@ -59,11 +59,11 @@ define(["require", "exports"], function (require, exports) {
                 });
             }).then(function (option) {
                 _this.actions = oldActions;
-                option.callback();
                 menu.classList.add("hidden");
                 for (var i = 0; i < rows.length; i++) {
                     rows[i].classList.remove("hidden");
                 }
+                option.callback();
                 return option;
             });
         };

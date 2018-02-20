@@ -38,7 +38,7 @@ define(["require", "exports", "../turnable", "../standardControlScheme"], functi
         TimedSolveState.prototype.onTurnCompleted = function () {
             if (this.cubeState.isSolved()) {
                 this.timer.stop();
-                this.context.setState(this.context.idleState);
+                this.context.setState(this.context.solvedState);
             }
         };
         return TimedSolveState;

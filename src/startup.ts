@@ -10,6 +10,7 @@ import { CountdownState } from "./states/countdownState";
 import { IdleState } from "./states/idlestate";
 import { PracticeState } from "./states/practiceState";
 import { TurnRecorder } from "./turnRecorder";
+import { SolvedState } from "./states/solvedState";
 
 declare var CubeRenderer;
 
@@ -30,6 +31,7 @@ export class Startup {
         stateContext.countdownState = new CountdownState(stateContext, timer, controls, recordingWrapper);
         stateContext.solveState = new TimedSolveState(stateContext, recordingWrapper, controls, renderer3d, timer, cube);
         stateContext.practiceState = new PracticeState(renderer3d, controls, renderer3d);
+        stateContext.solvedState = new SolvedState(stateContext,controls,recordingWrapper);
 
         stateContext.setState(stateContext.idleState);
 
