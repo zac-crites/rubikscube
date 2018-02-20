@@ -35,5 +35,19 @@ define(["require", "exports"], function (require, exports) {
         Turn[Turn["r"] = 29] = "r";
         Turn[Turn["ri"] = 30] = "ri";
     })(Turn = exports.Turn || (exports.Turn = {}));
+    var TurnableWrapper = /** @class */ (function () {
+        function TurnableWrapper(target) {
+            this.target = target;
+        }
+        TurnableWrapper.prototype.apply = function (turn) {
+            this.target.apply(turn);
+            return this;
+        };
+        TurnableWrapper.prototype.waitForMoves = function () {
+            return this.target.waitForMoves();
+        };
+        return TurnableWrapper;
+    }());
+    exports.TurnableWrapper = TurnableWrapper;
 });
 //# sourceMappingURL=turnable.js.map

@@ -36,3 +36,17 @@ export interface Turnable {
     apply(turn: Turn): Turnable;
     waitForMoves(): Promise<void>;
 }
+
+export class TurnableWrapper implements Turnable {
+    private target: Turnable;
+    public constructor(target: Turnable) {
+        this.target = target;
+    }
+    public apply(turn: Turn): Turnable {
+        this.target.apply(turn);
+        return this;
+    }
+    public waitForMoves(): Promise<void> {
+        return this.target.waitForMoves();
+    }
+}

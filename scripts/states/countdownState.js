@@ -1,3 +1,13 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 define(["require", "exports", "../turnable", "../standardControlScheme"], function (require, exports, turnable_1, standardControlScheme_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -10,7 +20,7 @@ define(["require", "exports", "../turnable", "../standardControlScheme"], functi
         }
         CountdownState.prototype.enter = function () {
             var _this = this;
-            var cubeWrapper = this.wrap(this.cube, function (safe) { return _this.onMove(safe); });
+            var cubeWrapper = new SafeCheckWrapper(this.cube, function (isSafe) { return _this.onMove(isSafe); });
             new standardControlScheme_1.StandardControlScheme().register(this.hotkeys, cubeWrapper);
             this.hotkeys.setupButton("/", "🎲", function () { return _this.context.setState(_this.context.scramblerState); });
             this.timer.countdown(15000).then(function () {
@@ -24,22 +34,6 @@ define(["require", "exports", "../turnable", "../standardControlScheme"], functi
         CountdownState.prototype.setNextState = function (next) {
             this.nextState = next;
         };
-        CountdownState.prototype.wrap = function (target, move) {
-            var safeTurns = [turnable_1.Turn.X, turnable_1.Turn.Xi, turnable_1.Turn.Y, turnable_1.Turn.Yi, turnable_1.Turn.Z, turnable_1.Turn.Zi];
-            var wrapper = {};
-            Object.getOwnPropertyNames(target).forEach(function (name) {
-                wrapper[name] = function () {
-                    var args = [];
-                    for (var _i = 0; _i < arguments.length; _i++) {
-                        args[_i] = arguments[_i];
-                    }
-                    var isSafe = safeTurns.some(function (n) { return turnable_1.Turn[n] === name; });
-                    move(isSafe);
-                    target[name].apply(target, args);
-                };
-            });
-            return wrapper;
-        };
         CountdownState.prototype.onMove = function (isSafe) {
             if (!isSafe) {
                 this.context.setState(this.nextState || this.context.solveState);
@@ -48,5 +42,20 @@ define(["require", "exports", "../turnable", "../standardControlScheme"], functi
         return CountdownState;
     }());
     exports.CountdownState = CountdownState;
+    var SafeCheckWrapper = /** @class */ (function (_super) {
+        __extends(SafeCheckWrapper, _super);
+        function SafeCheckWrapper(target, callback) {
+            var _this = _super.call(this, target) || this;
+            _this.safeTurns = [turnable_1.Turn.X, turnable_1.Turn.Xi, turnable_1.Turn.Y, turnable_1.Turn.Yi, turnable_1.Turn.Z, turnable_1.Turn.Zi];
+            _this.callback = callback;
+            return _this;
+        }
+        SafeCheckWrapper.prototype.apply = function (turn) {
+            this.callback(this.safeTurns.some(function (s) { return s === turn; }));
+            _super.prototype.apply.call(this, turn);
+            return this;
+        };
+        return SafeCheckWrapper;
+    }(turnable_1.TurnableWrapper));
 });
 //# sourceMappingURL=countdownState.js.map

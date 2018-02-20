@@ -1,6 +1,6 @@
 import { State, StateContext } from "./state";
 import { Timer } from "../timer";
-import { Turnable, Turn } from "../turnable";
+import { Turnable, Turn, TurnableWrapper } from "../turnable";
 import { Hotkeys } from "../hotkeys";
 import { StandardControlScheme } from "../standardControlScheme";
 
@@ -19,7 +19,7 @@ export class CountdownState implements State {
     }
 
     public enter(): void {
-        let cubeWrapper = this.wrap(this.cube, (safe) => this.onMove(safe));
+        let cubeWrapper = new SafeCheckWrapper(this.cube, (isSafe) => this.onMove(isSafe));
         new StandardControlScheme().register(this.hotkeys, cubeWrapper);
         this.hotkeys.setupButton("/", "🎲", () => this.context.setState(this.context.scramblerState));
 
@@ -37,23 +37,25 @@ export class CountdownState implements State {
         this.nextState = next;
     }
 
-    private wrap(target: Turnable, move: (isSafe: boolean) => void): Turnable {
-        let safeTurns = [Turn.X, Turn.Xi, Turn.Y, Turn.Yi, Turn.Z, Turn.Zi];
-        let wrapper = {};
-
-        Object.getOwnPropertyNames(target).forEach(name => {
-            wrapper[name] = (...args: any[]) => {
-                let isSafe = safeTurns.some(n => Turn[n] === name);
-                move(isSafe);
-                target[name](...args);
-            };
-        });
-        return <Turnable>wrapper;
-    }
-
     private onMove(isSafe) {
         if (!isSafe) {
             this.context.setState(this.nextState || this.context.solveState);
         }
+    }
+}
+
+class SafeCheckWrapper extends TurnableWrapper {
+    private safeTurns = [Turn.X, Turn.Xi, Turn.Y, Turn.Yi, Turn.Z, Turn.Zi];
+    private callback: (isSafe: boolean) => void;
+
+    public constructor(target: Turnable, callback: (isSafe: boolean) => void) {
+        super(target);
+        this.callback = callback;
+    }
+
+    public apply(turn: Turn): Turnable {
+        this.callback(this.safeTurns.some(s => s === turn));
+        super.apply(turn);
+        return this;
     }
 }
