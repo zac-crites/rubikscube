@@ -5,6 +5,7 @@
         "sourceMap": true,
         "outDir": "scripts",
         "rootDir": "src",
+        "strictNullChecks": true,
         "lib": [
             "dom",
             "es2015"

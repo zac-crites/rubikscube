@@ -45,7 +45,7 @@ export class Hotkeys {
         let menu = document.getElementById("menu") as HTMLDivElement;
         let rows = this.rootElement.getElementsByClassName("tr") as HTMLCollectionOf<HTMLDivElement>;
 
-        menu.innerHTML = null;
+        menu.innerHTML = "";
         menu.classList.remove("hidden");
         for (let i = 0; i < rows.length; i++) {
             rows[i].classList.add("hidden");

@@ -40,7 +40,7 @@ define(["require", "exports"], function (require, exports) {
             this.actions = {};
             var menu = document.getElementById("menu");
             var rows = this.rootElement.getElementsByClassName("tr");
-            menu.innerHTML = null;
+            menu.innerHTML = "";
             menu.classList.remove("hidden");
             for (var i = 0; i < rows.length; i++) {
                 rows[i].classList.add("hidden");

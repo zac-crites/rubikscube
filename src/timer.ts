@@ -7,7 +7,7 @@ export class Timer {
 
     public constructor(element?: HTMLDivElement) {
         this.element = element || document.createElement("div") as HTMLDivElement;
-        element.innerHTML = "&nbsp;";
+        this.element.innerHTML = "&nbsp;";
     }
 
     public start() {

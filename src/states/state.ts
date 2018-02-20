@@ -6,23 +6,23 @@ export interface State {
 export class StateContext {
     private currentState: State;
 
-    public idleState:State;
-    public scramblerState:State;
-    public solveState:State;
-    public countdownState:State;
-    public practiceState:State;
+    public idleState: State;
+    public scramblerState: State;
+    public solveState: State;
+    public countdownState: State;
+    public practiceState: State;
 
     public constructor(state?: State) {
-        this.setState(state);
+        this.currentState = state || {
+            enter: () => { },
+            exit: () => { }
+        };
+        this.currentState.enter();
     }
 
     public setState(state: State) {
-        if (this.currentState) {
-            this.currentState.exit();
-        }
+        this.currentState.exit();
         this.currentState = state;
-        if (this.currentState) {
-            this.currentState.enter();
-        }
+        this.currentState.enter();
     }
 }

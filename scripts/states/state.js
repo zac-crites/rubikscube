@@ -3,16 +3,16 @@ define(["require", "exports"], function (require, exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var StateContext = /** @class */ (function () {
         function StateContext(state) {
-            this.setState(state);
+            this.currentState = state || {
+                enter: function () { },
+                exit: function () { }
+            };
+            this.currentState.enter();
         }
         StateContext.prototype.setState = function (state) {
-            if (this.currentState) {
-                this.currentState.exit();
-            }
+            this.currentState.exit();
             this.currentState = state;
-            if (this.currentState) {
-                this.currentState.enter();
-            }
+            this.currentState.enter();
         };
         return StateContext;
     }());

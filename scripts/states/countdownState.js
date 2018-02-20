@@ -11,7 +11,7 @@ define(["require", "exports", "../turnable", "../standardControlScheme"], functi
         CountdownState.prototype.enter = function () {
             var _this = this;
             var cubeWrapper = this.wrap(this.cube, function (safe) { return _this.onMove(safe); });
-            new standardControlScheme_1.StandardControlScheme().register(this.hotkeys, cubeWrapper, null);
+            new standardControlScheme_1.StandardControlScheme().register(this.hotkeys, cubeWrapper);
             this.hotkeys.setupButton("/", "🎲", function () { return _this.context.setState(_this.context.scramblerState); });
             this.timer.countdown(15000).then(function () {
                 _this.context.setState(_this.nextState || _this.context.solveState);

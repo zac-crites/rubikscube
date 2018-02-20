@@ -20,7 +20,7 @@ export class CountdownState implements State {
 
     public enter(): void {
         let cubeWrapper = this.wrap(this.cube, (safe) => this.onMove(safe));
-        new StandardControlScheme().register(this.hotkeys, cubeWrapper, null);
+        new StandardControlScheme().register(this.hotkeys, cubeWrapper);
         this.hotkeys.setupButton("/", "🎲", () => this.context.setState(this.context.scramblerState));
 
         this.timer.countdown(15000).then(() => {
