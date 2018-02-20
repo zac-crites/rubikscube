@@ -18,11 +18,11 @@ export class SolvedState implements State {
 
         let replay = this.recorder.getReplay();
 
-        this.hotkeys.showMenu("Solved in " + (replay.time / 1000),[
+        this.hotkeys.showMenu("Solved in " + (replay.moves[replay.moves.length-1].timestamp / 1000),[
             new MenuOption("f","Reset", () => this.context.setState( this.context.scramblerState ) ),
             new MenuOption("j","Show replay", () =>{
                 console.log( replay );
-                this.context.setState( this.context.idleState );
+                this.context.setState( this.context.replayState );
             }  )
         ]);
     }

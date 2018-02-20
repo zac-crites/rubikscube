@@ -17,12 +17,12 @@ define(["require", "exports"], function (require, exports) {
         };
         Timer.prototype.countdown = function (duration) {
             var _this = this;
-            this.startTime = new Date();
+            var startTime = this.startTime = new Date();
             this.startTime.setTime(this.startTime.getTime() + duration);
             return new Promise(function (resolve) {
                 _this.interval = window.setInterval(function () {
                     _this.update();
-                    if (new Date().getTime() > _this.startTime.getTime()) {
+                    if (new Date().getTime() > startTime.getTime()) {
                         _this.stop();
                         resolve();
                     }
@@ -39,18 +39,21 @@ define(["require", "exports"], function (require, exports) {
         };
         Timer.prototype.reset = function () {
             this.stop();
+            this.startTime = null;
             this.endTime = null;
             this.element.innerHTML = "&nbsp;";
         };
         Timer.prototype.getTime = function () {
-            return (this.endTime || new Date()).getTime() - this.startTime.getTime();
+            return this.startTime !== null ? (this.endTime || new Date()).getTime() - this.startTime.getTime() : 0;
         };
         Timer.prototype.isStarted = function () {
             return this.interval !== 0;
         };
         Timer.prototype.update = function () {
-            var diff = new Date().getTime() - this.startTime.getTime();
-            this.element.innerHTML = this.displayDuration(diff);
+            if (this.startTime) {
+                var diff = new Date().getTime() - this.startTime.getTime();
+                this.element.innerHTML = this.displayDuration(diff);
+            }
         };
         Timer.prototype.displayDuration = function (duration) {
             if (duration < 0) {

@@ -11,6 +11,7 @@ import { IdleState } from "./states/idlestate";
 import { PracticeState } from "./states/practiceState";
 import { TurnRecorder } from "./turnRecorder";
 import { SolvedState } from "./states/solvedState";
+import { ReplayState } from "./states/replayState";
 
 declare var CubeRenderer;
 
@@ -27,11 +28,12 @@ export class Startup {
         let recordingWrapper = new TurnRecorder(renderer3d);
 
         stateContext.idleState = new IdleState(stateContext, controls, recordingWrapper);
-        stateContext.scramblerState = new ScramblingState(stateContext, recordingWrapper, recordingWrapper);
+        stateContext.scramblerState = new ScramblingState(stateContext, recordingWrapper, recordingWrapper,timer);
         stateContext.countdownState = new CountdownState(stateContext, timer, controls, recordingWrapper);
         stateContext.solveState = new TimedSolveState(stateContext, recordingWrapper, controls, renderer3d, timer, cube);
         stateContext.practiceState = new PracticeState(renderer3d, controls, renderer3d);
-        stateContext.solvedState = new SolvedState(stateContext,controls,recordingWrapper);
+        stateContext.solvedState = new SolvedState(stateContext, controls, recordingWrapper);
+        stateContext.replayState = new ReplayState(stateContext, renderer3d, recordingWrapper, timer);
 
         stateContext.setState(stateContext.idleState);
 

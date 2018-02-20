@@ -21,22 +21,24 @@ define(["require", "exports", "./turnable", "./timer"], function (require, expor
         }
         TurnRecorder.prototype.apply = function (turn) {
             this.moves.push({
-                move: turn,
+                turn: turn,
                 timestamp: this.timer.getTime()
             });
             _super.prototype.apply.call(this, turn);
             return this;
         };
-        TurnRecorder.prototype.start = function () {
+        TurnRecorder.prototype.reset = function () {
             this.moves = [];
+            this.timer.reset();
+        };
+        TurnRecorder.prototype.start = function () {
             this.timer.start();
         };
         TurnRecorder.prototype.stop = function () {
-            this.stopTime = this.timer.getTime();
+            this.stopTime = this.stopTime || this.timer.getTime();
         };
         TurnRecorder.prototype.getReplay = function () {
             return {
-                time: this.stopTime || 0,
                 moves: this.moves
             };
         };

@@ -11,11 +11,11 @@ define(["require", "exports", "../hotkeys"], function (require, exports, hotkeys
             var _this = this;
             this.recorder.stop();
             var replay = this.recorder.getReplay();
-            this.hotkeys.showMenu("Solved in " + (replay.time / 1000), [
+            this.hotkeys.showMenu("Solved in " + (replay.moves[replay.moves.length - 1].timestamp / 1000), [
                 new hotkeys_1.MenuOption("f", "Reset", function () { return _this.context.setState(_this.context.scramblerState); }),
                 new hotkeys_1.MenuOption("j", "Show replay", function () {
                     console.log(replay);
-                    _this.context.setState(_this.context.idleState);
+                    _this.context.setState(_this.context.replayState);
                 })
             ]);
         };

@@ -2,7 +2,7 @@ declare var Promise: any;
 
 export class Timer {
     private element: HTMLDivElement;
-    private startTime: Date;
+    private startTime: Date | null;
     private endTime: Date | null;
     private interval: number = 0;
 
@@ -20,13 +20,13 @@ export class Timer {
     }
 
     public countdown(duration: number): Promise<void> {
-        this.startTime = new Date();
+        let startTime = this.startTime = new Date();
         this.startTime.setTime(this.startTime.getTime() + duration);
 
         return new Promise(resolve => {
             this.interval = window.setInterval(() => {
                 this.update();
-                if (new Date().getTime() > this.startTime.getTime()) {
+                if (new Date().getTime() > startTime.getTime()) {
                     this.stop();
                     resolve();
                 }
@@ -45,12 +45,13 @@ export class Timer {
 
     public reset() {
         this.stop();
+        this.startTime = null;
         this.endTime = null;
         this.element.innerHTML = "&nbsp;";
     }
 
     public getTime(): number {
-        return (this.endTime || new Date()).getTime() - this.startTime.getTime();
+        return this.startTime !== null ? (this.endTime || new Date()).getTime() - this.startTime.getTime() : 0;
     }
 
     public isStarted(): boolean {
@@ -58,8 +59,11 @@ export class Timer {
     }
 
     private update() {
-        let diff = new Date().getTime() - this.startTime.getTime();
-        this.element.innerHTML = this.displayDuration(diff);
+        if( this.startTime )
+        {
+            let diff = new Date().getTime() - this.startTime.getTime();
+            this.element.innerHTML = this.displayDuration(diff);
+        }
     }
 
     private displayDuration(duration: number): string {

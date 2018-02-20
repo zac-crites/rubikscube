@@ -3,15 +3,15 @@ import { Timer } from "./timer";
 
 export interface MoveData {
     timestamp: number;
-    move: Turn;
+    turn: Turn;
 }
 
 export interface Replay {
-    time: number;
     moves: MoveData[];
 }
 
 export interface Recorder {
+    reset(): void;
     start(): void;
     stop(): void;
     getReplay(): Replay;
@@ -29,25 +29,28 @@ export class TurnRecorder extends TurnableWrapper implements Recorder {
 
     public apply(turn: Turn): Turnable {
         this.moves.push({
-            move: turn,
+            turn: turn,
             timestamp: this.timer.getTime()
         });
         super.apply(turn);
         return this;
     }
 
-    public start(): void {
+    public reset(): void {
         this.moves = [];
+        this.timer.reset();
+    }
+
+    public start(): void {
         this.timer.start();
     }
 
     public stop(): void {
-        this.stopTime = this.timer.getTime();
+        this.stopTime = this.stopTime || this.timer.getTime();
     }
 
     public getReplay(): Replay {
         return {
-            time: this.stopTime || 0,
             moves: this.moves
         };
     }
