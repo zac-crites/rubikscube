@@ -5,8 +5,8 @@ export class Timer {
     private startTime: Date;
     private interval: number = 0;
 
-    public constructor(element: HTMLDivElement) {
-        this.element = element;
+    public constructor(element?: HTMLDivElement) {
+        this.element = element || document.createElement("div") as HTMLDivElement;
         element.innerHTML = "&nbsp;";
     }
 

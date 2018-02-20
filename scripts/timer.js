@@ -4,7 +4,7 @@ define(["require", "exports"], function (require, exports) {
     var Timer = /** @class */ (function () {
         function Timer(element) {
             this.interval = 0;
-            this.element = element;
+            this.element = element || document.createElement("div");
             element.innerHTML = "&nbsp;";
         }
         Timer.prototype.start = function () {
