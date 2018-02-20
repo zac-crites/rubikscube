@@ -1,13 +1,16 @@
 import { State, StateContext } from "./state";
 import { Hotkeys, MenuOption } from "../hotkeys";
+import { Recorder } from "../turnRecorder";
 
 export class IdleState implements State {
     private context: StateContext;
     private hotkeys: Hotkeys;
+    private recorder: Recorder;
 
-    public constructor(context: StateContext, keys: Hotkeys) {
+    public constructor(context: StateContext, keys: Hotkeys, recorder: Recorder) {
         this.context = context;
         this.hotkeys = keys;
+        this.recorder = recorder;
     }
 
     public enter(): void {
@@ -16,6 +19,9 @@ export class IdleState implements State {
             new MenuOption("f", "Timed solve", () => this.context.setState(this.context.scramblerState)),
             new MenuOption("j", "Practice", () => this.context.setState(this.context.practiceState)),
         ]);
+
+        this.recorder.stop();
+        console.log(this.recorder.getReplay());
     }
 
     public exit(): void {

@@ -3,9 +3,11 @@ declare var Promise: any;
 export class Timer {
     private element: HTMLDivElement;
     private startTime: Date;
+    private endTime: Date | null;
     private interval: number = 0;
 
     public constructor(element?: HTMLDivElement) {
+        this.startTime = new Date();
         this.element = element || document.createElement("div") as HTMLDivElement;
         this.element.innerHTML = "&nbsp;";
     }
@@ -34,6 +36,7 @@ export class Timer {
 
     public stop() {
         if (this.interval !== 0) {
+            this.endTime = new Date();
             this.update();
             window.clearInterval(this.interval);
             this.interval = 0;
@@ -42,7 +45,16 @@ export class Timer {
 
     public reset() {
         this.stop();
+        this.endTime = null;
         this.element.innerHTML = "&nbsp;";
+    }
+
+    public getTime(): number {
+        return (this.endTime || new Date()).getTime() - this.startTime.getTime();
+    }
+
+    public isStarted(): boolean {
+        return this.interval !== 0;
     }
 
     private update() {

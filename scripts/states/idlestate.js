@@ -2,9 +2,10 @@ define(["require", "exports", "../hotkeys"], function (require, exports, hotkeys
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var IdleState = /** @class */ (function () {
-        function IdleState(context, keys) {
+        function IdleState(context, keys, recorder) {
             this.context = context;
             this.hotkeys = keys;
+            this.recorder = recorder;
         }
         IdleState.prototype.enter = function () {
             var _this = this;
@@ -13,6 +14,8 @@ define(["require", "exports", "../hotkeys"], function (require, exports, hotkeys
                 new hotkeys_1.MenuOption("f", "Timed solve", function () { return _this.context.setState(_this.context.scramblerState); }),
                 new hotkeys_1.MenuOption("j", "Practice", function () { return _this.context.setState(_this.context.practiceState); }),
             ]);
+            this.recorder.stop();
+            console.log(this.recorder.getReplay());
         };
         IdleState.prototype.exit = function () {
         };

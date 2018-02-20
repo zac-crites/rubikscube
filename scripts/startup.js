@@ -1,4 +1,4 @@
-define(["require", "exports", "./turnable", "./cube", "./hotkeys", "./states/state", "./states/timedSolveState", "./states/scramblingState", "./timer", "./states/countdownState", "./states/idlestate", "./states/practiceState"], function (require, exports, turnable_1, cube_1, hotkeys_1, state_1, timedSolveState_1, scramblingState_1, timer_1, countdownState_1, idlestate_1, practiceState_1) {
+define(["require", "exports", "./turnable", "./cube", "./hotkeys", "./states/state", "./states/timedSolveState", "./states/scramblingState", "./timer", "./states/countdownState", "./states/idlestate", "./states/practiceState", "./turnRecorder"], function (require, exports, turnable_1, cube_1, hotkeys_1, state_1, timedSolveState_1, scramblingState_1, timer_1, countdownState_1, idlestate_1, practiceState_1, turnRecorder_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Startup = /** @class */ (function () {
@@ -11,10 +11,11 @@ define(["require", "exports", "./turnable", "./cube", "./hotkeys", "./states/sta
             var timer = new timer_1.Timer((document.getElementById("timerDisplay")));
             var stateContext = new state_1.StateContext();
             this.implementApply(renderer3d);
-            stateContext.idleState = new idlestate_1.IdleState(stateContext, controls);
-            stateContext.scramblerState = new scramblingState_1.ScramblingState(stateContext, renderer3d);
-            stateContext.countdownState = new countdownState_1.CountdownState(stateContext, timer, controls, renderer3d);
-            stateContext.solveState = new timedSolveState_1.TimedSolveState(stateContext, renderer3d, controls, renderer3d, timer, cube);
+            var recordingWrapper = new turnRecorder_1.TurnRecorder(renderer3d);
+            stateContext.idleState = new idlestate_1.IdleState(stateContext, controls, recordingWrapper);
+            stateContext.scramblerState = new scramblingState_1.ScramblingState(stateContext, recordingWrapper, recordingWrapper);
+            stateContext.countdownState = new countdownState_1.CountdownState(stateContext, timer, controls, recordingWrapper);
+            stateContext.solveState = new timedSolveState_1.TimedSolveState(stateContext, recordingWrapper, controls, renderer3d, timer, cube);
             stateContext.practiceState = new practiceState_1.PracticeState(renderer3d, controls, renderer3d);
             stateContext.setState(stateContext.idleState);
             return 0;

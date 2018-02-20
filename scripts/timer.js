@@ -4,6 +4,7 @@ define(["require", "exports"], function (require, exports) {
     var Timer = /** @class */ (function () {
         function Timer(element) {
             this.interval = 0;
+            this.startTime = new Date();
             this.element = element || document.createElement("div");
             this.element.innerHTML = "&nbsp;";
         }
@@ -30,6 +31,7 @@ define(["require", "exports"], function (require, exports) {
         };
         Timer.prototype.stop = function () {
             if (this.interval !== 0) {
+                this.endTime = new Date();
                 this.update();
                 window.clearInterval(this.interval);
                 this.interval = 0;
@@ -37,7 +39,14 @@ define(["require", "exports"], function (require, exports) {
         };
         Timer.prototype.reset = function () {
             this.stop();
+            this.endTime = null;
             this.element.innerHTML = "&nbsp;";
+        };
+        Timer.prototype.getTime = function () {
+            return (this.endTime || new Date()).getTime() - this.startTime.getTime();
+        };
+        Timer.prototype.isStarted = function () {
+            return this.interval !== 0;
         };
         Timer.prototype.update = function () {
             var diff = new Date().getTime() - this.startTime.getTime();
