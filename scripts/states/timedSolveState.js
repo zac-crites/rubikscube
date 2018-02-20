@@ -1,4 +1,14 @@
-define(["require", "exports", "../standardControlScheme"], function (require, exports, standardControlScheme_1) {
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+define(["require", "exports", "../turnable", "../standardControlScheme"], function (require, exports, turnable_1, standardControlScheme_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TimedSolveState = /** @class */ (function () {
@@ -14,7 +24,7 @@ define(["require", "exports", "../standardControlScheme"], function (require, ex
             var _this = this;
             var cube = this.cube;
             var camera = this.camera;
-            var wrapper = this.turnCompletedListeningWrapper(cube, function () { return _this.onTurnCompleted(); });
+            var wrapper = new TurnCompletedWrapper(cube, function () { return _this.onTurnCompleted(); });
             new standardControlScheme_1.StandardControlScheme().register(this.hotkeys, wrapper, camera);
             this.hotkeys.setupButton("/", "🎲", function () {
                 _this.timer.reset();
@@ -31,24 +41,23 @@ define(["require", "exports", "../standardControlScheme"], function (require, ex
                 this.context.setState(this.context.idleState);
             }
         };
-        TimedSolveState.prototype.turnCompletedListeningWrapper = function (target, callback) {
-            var wrapper = {};
-            Object.getOwnPropertyNames(target).forEach(function (name) {
-                wrapper[name] = function () {
-                    var args = [];
-                    for (var _i = 0; _i < arguments.length; _i++) {
-                        args[_i] = arguments[_i];
-                    }
-                    target[name].apply(target, args);
-                    target.waitForMoves().then(function () {
-                        callback();
-                    });
-                };
-            });
-            return wrapper;
-        };
         return TimedSolveState;
     }());
     exports.TimedSolveState = TimedSolveState;
+    var TurnCompletedWrapper = /** @class */ (function (_super) {
+        __extends(TurnCompletedWrapper, _super);
+        function TurnCompletedWrapper(target, callback) {
+            var _this = _super.call(this, target) || this;
+            _this.callback = callback;
+            return _this;
+        }
+        TurnCompletedWrapper.prototype.apply = function (turn) {
+            var _this = this;
+            _super.prototype.apply.call(this, turn);
+            _super.prototype.waitForMoves.call(this).then(function () { return _this.callback(); });
+            return this;
+        };
+        return TurnCompletedWrapper;
+    }(turnable_1.TurnableWrapper));
 });
 //# sourceMappingURL=timedSolveState.js.map

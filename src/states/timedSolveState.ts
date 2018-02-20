@@ -1,5 +1,5 @@
 import { State, StateContext } from "./state";
-import { Turnable, Turn } from "../turnable";
+import { Turnable, Turn, TurnableWrapper } from "../turnable";
 import { Hotkeys } from "../hotkeys";
 import { CameraControls } from "../CameraControls";
 import { Scrambler } from "../scrambler";
@@ -29,8 +29,7 @@ export class TimedSolveState implements State {
     public enter(): void {
         let cube = this.cube;
         let camera = this.camera;
-
-        let wrapper = this.turnCompletedListeningWrapper(cube, () => this.onTurnCompleted());
+        let wrapper = new TurnCompletedWrapper(cube, () => this.onTurnCompleted());
 
         new StandardControlScheme().register(this.hotkeys, wrapper, camera);
         this.hotkeys.setupButton("/", "🎲", () => {
@@ -50,19 +49,18 @@ export class TimedSolveState implements State {
             this.context.setState(this.context.idleState);
         }
     }
+}
 
-    private turnCompletedListeningWrapper(target: Turnable, callback: () => void): Turnable {
-        let wrapper = {};
+class TurnCompletedWrapper extends TurnableWrapper {
+    private callback: () => void;
+    public constructor(target: Turnable, callback: () => void) {
+        super(target);
+        this.callback = callback;
+    }
 
-        Object.getOwnPropertyNames(target).forEach(name => {
-            wrapper[name] = (...args: any[]) => {
-                target[name](...args);
-                target.waitForMoves().then(() => {
-                    callback();
-                });
-            }
-        });
-
-        return <Turnable>wrapper;
+    public apply(turn: Turn): Turnable {
+        super.apply(turn);
+        super.waitForMoves().then(() => this.callback());
+        return this;
     }
 }
