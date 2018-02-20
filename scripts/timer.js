@@ -9,8 +9,10 @@ define(["require", "exports"], function (require, exports) {
         }
         Timer.prototype.start = function () {
             var _this = this;
-            this.startTime = new Date();
-            this.interval = window.setInterval(function () { return _this.update(); }, 16);
+            if (this.interval === 0) {
+                this.startTime = new Date();
+                this.interval = window.setInterval(function () { return _this.update(); }, 16);
+            }
         };
         Timer.prototype.countdown = function (duration) {
             var _this = this;

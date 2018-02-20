@@ -33,7 +33,7 @@ define(["require", "exports", "./turnable"], function (require, exports, turnabl
                 hotkeys.setupButton("z", "📹", camera.resetCamera);
             }
             targetBindings.forEach(function (binding) {
-                hotkeys.setupButton(binding[0], binding[1], function () { return target[turnable_1.Turn[binding[2]]](); });
+                hotkeys.setupButton(binding[0], binding[1], function () { return target.apply(binding[2]); });
             });
         };
         return StandardControlScheme;

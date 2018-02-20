@@ -11,8 +11,10 @@ export class Timer {
     }
 
     public start() {
-        this.startTime = new Date();
-        this.interval = window.setInterval(() => this.update(), 16);
+        if (this.interval === 0) {
+            this.startTime = new Date();
+            this.interval = window.setInterval(() => this.update(), 16);
+        }
     }
 
     public countdown(duration: number): Promise<void> {

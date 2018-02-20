@@ -34,7 +34,7 @@ export class StandardControlScheme {
         }
 
         targetBindings.forEach(binding => {
-            hotkeys.setupButton(binding[0], binding[1], () => target[Turn[binding[2]]]());
+            hotkeys.setupButton(binding[0], binding[1], () => target.apply(binding[2]));
         });
     }
 }
