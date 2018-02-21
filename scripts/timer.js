@@ -7,6 +7,7 @@ define(["require", "exports"], function (require, exports) {
             this.startTime = new Date();
             this.element = element || document.createElement("div");
             this.element.innerHTML = "&nbsp;";
+            this.endTime = null;
         }
         Timer.prototype.start = function () {
             var _this = this;

@@ -1,20 +1,16 @@
-import { State, StateContext } from "./state";
 import { Hotkeys, MenuOption } from "../hotkeys";
-import { Recorder } from "../turnRecorder";
+import { IState, StateContext } from "./state";
 
-export class IdleState implements State {
+export class IdleState implements IState {
     private context: StateContext;
     private hotkeys: Hotkeys;
-    private recorder: Recorder;
 
-    public constructor(context: StateContext, keys: Hotkeys, recorder: Recorder) {
+    public constructor(context: StateContext, keys: Hotkeys) {
         this.context = context;
         this.hotkeys = keys;
-        this.recorder = recorder;
     }
 
     public enter(): void {
-        let context = this.context;
         this.hotkeys.showMenu("Rubik's cube simulator.  Choose mode:", [
             new MenuOption("f", "Timed solve", () => this.context.setState(this.context.scramblerState)),
             new MenuOption("j", "Practice", () => this.context.setState(this.context.practiceState)),
@@ -22,5 +18,6 @@ export class IdleState implements State {
     }
 
     public exit(): void {
+        return;
     }
 }

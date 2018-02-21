@@ -8,7 +8,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-define(["require", "exports", "../turnable", "../standardControlScheme"], function (require, exports, turnable_1, standardControlScheme_1) {
+define(["require", "exports", "../standardControlScheme", "../turnable"], function (require, exports, standardControlScheme_1, turnable_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CountdownState = /** @class */ (function () {
@@ -17,6 +17,7 @@ define(["require", "exports", "../turnable", "../standardControlScheme"], functi
             this.timer = timer;
             this.hotkeys = hotkeys;
             this.cube = cube;
+            this.nextState = null;
         }
         CountdownState.prototype.enter = function () {
             var _this = this;

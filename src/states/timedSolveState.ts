@@ -1,26 +1,32 @@
-import { State, StateContext } from "./state";
-import { Turnable, Turn, TurnableWrapper } from "../turnable";
+import { ICameraControls } from "../CameraControls";
+import { ICubeState } from "../cube";
 import { Hotkeys } from "../hotkeys";
-import { CameraControls } from "../CameraControls";
-import { Scrambler } from "../scrambler";
-import { ScramblingState } from "./scramblingState";
-import { Timer } from "../timer";
-import { CubeState } from "../cube";
-import { IdleState } from "./idlestate";
 import { StandardControlScheme } from "../standardControlScheme";
-import { Recorder, CurrentReplayProvider } from "../turnRecorder";
+import { Timer } from "../timer";
+import { ITurnable, Turn, TurnableWrapper } from "../turnable";
+import { CurrentReplayProvider, IRecorder } from "../turnRecorder";
+import { IState, StateContext } from "./state";
 
-export class TimedSolveState implements State {
+export class TimedSolveState implements IState {
     private context: StateContext;
-    private cube: Turnable;
+    private cube: ITurnable;
     private hotkeys: Hotkeys;
-    private camera: CameraControls;
+    private camera: ICameraControls;
     private timer: Timer;
-    private cubeState: CubeState;
-    private recorder: Recorder;
+    private cubeState: ICubeState;
+    private recorder: IRecorder;
     private currentReplayProvider: CurrentReplayProvider;
 
-    public constructor(context: StateContext, cube: Turnable, hotkeys: Hotkeys, camera: CameraControls, timer: Timer, cubeState: CubeState, recorder: Recorder, currentReplay: CurrentReplayProvider) {
+    public constructor(
+        context: StateContext,
+        cube: ITurnable,
+        hotkeys: Hotkeys,
+        camera: ICameraControls,
+        timer: Timer,
+        cubeState: ICubeState,
+        recorder: IRecorder,
+        currentReplay: CurrentReplayProvider) {
+
         this.context = context;
         this.cube = cube;
         this.hotkeys = hotkeys;
@@ -32,9 +38,9 @@ export class TimedSolveState implements State {
     }
 
     public enter(): void {
-        let cube = this.cube;
-        let camera = this.camera;
-        let wrapper = new TurnCompletedWrapper(cube, () => this.onTurnCompleted());
+        const cube = this.cube;
+        const camera = this.camera;
+        const wrapper = new TurnCompletedWrapper(cube, () => this.onTurnCompleted());
 
         new StandardControlScheme().register(this.hotkeys, wrapper, camera);
         this.hotkeys.setupButton("/", "🎲", () => {
@@ -60,12 +66,12 @@ export class TimedSolveState implements State {
 
 class TurnCompletedWrapper extends TurnableWrapper {
     private callback: () => void;
-    public constructor(target: Turnable, callback: () => void) {
+    public constructor(target: ITurnable, callback: () => void) {
         super(target);
         this.callback = callback;
     }
 
-    public apply(turn: Turn): Turnable {
+    public apply(turn: Turn): ITurnable {
         super.apply(turn);
         super.waitForMoves().then(() => this.callback());
         return this;

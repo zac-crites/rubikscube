@@ -26,7 +26,7 @@ export class Hotkeys {
     }
 
     public setupButton(key: string, text: string, action: () => void): void {
-        let k = key.toLowerCase();
+        const k = key.toLowerCase();
         this.actions[k] = action;
         if (this.elements[k]) {
             this.elements[k].textContent = text;
@@ -34,31 +34,32 @@ export class Hotkeys {
     }
 
     public reset(): void {
-        Object.keys(this.elements).forEach(key => this.elements[key].textContent = "");
+        Object.keys(this.elements).forEach((key) => this.elements[key].textContent = "");
         this.actions = {};
     }
 
     public showMenu(prompt: string, options: MenuOption[]): Promise<MenuOption> {
-        let oldActions = this.actions;
+        const oldActions = this.actions;
         this.actions = {};
 
-        let menu = document.getElementById("menu") as HTMLDivElement;
-        let rows = this.rootElement.getElementsByClassName("tr") as HTMLCollectionOf<HTMLDivElement>;
+        const menu = document.getElementById("menu") as HTMLDivElement;
+        const rows = this.rootElement.getElementsByClassName("tr") as NodeListOf<HTMLDivElement>;
 
         menu.innerHTML = "";
         menu.classList.remove("hidden");
+        // tslint:disable-next-line:prefer-for-of
         for (let i = 0; i < rows.length; i++) {
             rows[i].classList.add("hidden");
         }
 
-        return new Promise<MenuOption>((resolve: (MenuOption) => void, reject) => {
+        return new Promise<MenuOption>((resolve: (o: MenuOption) => void) => {
 
-            let menuHeader = document.createElement("div") as HTMLDivElement;
+            const menuHeader = document.createElement("div") as HTMLDivElement;
             menuHeader.classList.add("menuheader");
             menuHeader.textContent = prompt;
             menu.appendChild(menuHeader);
-            options.forEach(option => {
-                let menuoption = document.createElement("div") as HTMLDivElement;
+            options.forEach((option) => {
+                const menuoption = document.createElement("div") as HTMLDivElement;
                 menuoption.classList.add("menuitem");
                 menuoption.textContent = option.key + ": " + option.text;
                 menu.appendChild(menuoption);
@@ -67,6 +68,7 @@ export class Hotkeys {
         }).then((option) => {
             this.actions = oldActions;
             menu.classList.add("hidden");
+            // tslint:disable-next-line:prefer-for-of
             for (let i = 0; i < rows.length; i++) {
                 rows[i].classList.remove("hidden");
             }
@@ -76,45 +78,45 @@ export class Hotkeys {
     }
 
     private keyHandler(ev: KeyboardEvent) {
-        let action = this.actions[ev.key];
+        const action = this.actions[ev.key];
         if (!ev.repeat && action !== undefined) {
             action();
         }
     }
 
     private initialize(rootElement: HTMLDivElement) {
-        let keys = [
+        const keys = [
             ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
             ["A", "S", "D", "F", "G", "H", "J", "K", "L", ";"],
-            ["Z", "X", "C", "V", "B", "N", "M", ",", ".", "/"]
+            ["Z", "X", "C", "V", "B", "N", "M", ",", ".", "/"],
         ];
 
-        for (let row of keys) {
+        for (const row of keys) {
             this.addRow(rootElement, row);
         }
     }
 
     private addRow(rootElement: HTMLDivElement, buttons: string[]) {
-        let currentRow = <HTMLDivElement>(document.createElement('div'));
+        const currentRow = (document.createElement("div")) as HTMLDivElement;
         currentRow.classList.add("tr");
         rootElement.appendChild(currentRow);
 
-        for (let i = 0; i < buttons.length; i++) {
-            this.addButton(currentRow, buttons[i], "");
+        for (const button of buttons) {
+            this.addButton(currentRow, button, "");
         }
     }
 
     private addButton(row: HTMLDivElement, keytext: string, text: string) {
 
-        let keyDiv = <HTMLDivElement>(document.createElement('div'));
+        const keyDiv = document.createElement("div");
         keyDiv.classList.add("keybind");
         keyDiv.textContent = keytext;
 
-        let textDiv = <HTMLDivElement>(document.createElement('div'));
+        const textDiv = document.createElement("div");
         textDiv.classList.add("buttontext");
         textDiv.textContent = text;
 
-        let button = <HTMLDivElement>(document.createElement('div'));
+        const button = document.createElement("div");
         button.classList.add("movebutton");
         button.classList.add("td");
 

@@ -1,4 +1,4 @@
-define(["require", "exports"], function (require, exports) {
+define(["require", "exports", "./turnable"], function (require, exports, turnable_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Face;
@@ -26,6 +26,7 @@ define(["require", "exports"], function (require, exports) {
     }());
     var Cube = /** @class */ (function () {
         function Cube() {
+            this.faces = [];
             this.reset();
         }
         Cube.prototype.reset = function () {
@@ -44,7 +45,7 @@ define(["require", "exports"], function (require, exports) {
             return this.faces[face].facelets[i];
         };
         Cube.prototype.apply = function (turn) {
-            this[turn]();
+            this[turnable_1.Turn[turn]]();
             return this;
         };
         Cube.prototype.X = function () {

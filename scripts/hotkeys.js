@@ -42,10 +42,11 @@ define(["require", "exports"], function (require, exports) {
             var rows = this.rootElement.getElementsByClassName("tr");
             menu.innerHTML = "";
             menu.classList.remove("hidden");
+            // tslint:disable-next-line:prefer-for-of
             for (var i = 0; i < rows.length; i++) {
                 rows[i].classList.add("hidden");
             }
-            return new Promise(function (resolve, reject) {
+            return new Promise(function (resolve) {
                 var menuHeader = document.createElement("div");
                 menuHeader.classList.add("menuheader");
                 menuHeader.textContent = prompt;
@@ -60,6 +61,7 @@ define(["require", "exports"], function (require, exports) {
             }).then(function (option) {
                 _this.actions = oldActions;
                 menu.classList.add("hidden");
+                // tslint:disable-next-line:prefer-for-of
                 for (var i = 0; i < rows.length; i++) {
                     rows[i].classList.remove("hidden");
                 }
@@ -77,7 +79,7 @@ define(["require", "exports"], function (require, exports) {
             var keys = [
                 ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
                 ["A", "S", "D", "F", "G", "H", "J", "K", "L", ";"],
-                ["Z", "X", "C", "V", "B", "N", "M", ",", ".", "/"]
+                ["Z", "X", "C", "V", "B", "N", "M", ",", ".", "/"],
             ];
             for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
                 var row = keys_1[_i];
@@ -85,21 +87,22 @@ define(["require", "exports"], function (require, exports) {
             }
         };
         Hotkeys.prototype.addRow = function (rootElement, buttons) {
-            var currentRow = (document.createElement('div'));
+            var currentRow = (document.createElement("div"));
             currentRow.classList.add("tr");
             rootElement.appendChild(currentRow);
-            for (var i = 0; i < buttons.length; i++) {
-                this.addButton(currentRow, buttons[i], "");
+            for (var _i = 0, buttons_1 = buttons; _i < buttons_1.length; _i++) {
+                var button = buttons_1[_i];
+                this.addButton(currentRow, button, "");
             }
         };
         Hotkeys.prototype.addButton = function (row, keytext, text) {
-            var keyDiv = (document.createElement('div'));
+            var keyDiv = document.createElement("div");
             keyDiv.classList.add("keybind");
             keyDiv.textContent = keytext;
-            var textDiv = (document.createElement('div'));
+            var textDiv = document.createElement("div");
             textDiv.classList.add("buttontext");
             textDiv.textContent = text;
-            var button = (document.createElement('div'));
+            var button = document.createElement("div");
             button.classList.add("movebutton");
             button.classList.add("td");
             button.appendChild(keyDiv);

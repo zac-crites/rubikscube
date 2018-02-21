@@ -1,30 +1,32 @@
-export interface State {
+export interface IState {
     enter(): void;
     exit(): void;
 }
 
+const state: IState = {
+    enter: () => { return; },
+    exit: () => { return; },
+};
+
 export class StateContext {
-    private currentState: State;
+    public idleState: IState = state;
+    public scramblerState: IState = state;
+    public solveState: IState = state;
+    public countdownState: IState = state;
+    public practiceState: IState = state;
+    public solvedState: IState = state;
+    public replayState: IState = state;
 
-    public idleState: State;
-    public scramblerState: State;
-    public solveState: State;
-    public countdownState: State;
-    public practiceState: State;
-    public solvedState: State;
-    public replayState: State;
+    private currentState: IState;
 
-    public constructor(state?: State) {
-        this.currentState = state || {
-            enter: () => { },
-            exit: () => { }
-        };
+    public constructor(startState?: IState) {
+        this.currentState = startState || state;
         this.currentState.enter();
     }
 
-    public setState(state: State) {
+    public setState(newState: IState) {
         this.currentState.exit();
-        this.currentState = state;
+        this.currentState = newState;
         this.currentState.enter();
     }
 }

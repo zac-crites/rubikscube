@@ -1,4 +1,4 @@
-define(["require", "exports", "../turnable", "../timer"], function (require, exports, turnable_1, timer_1) {
+define(["require", "exports", "../timer", "../turnable"], function (require, exports, timer_1, turnable_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var ReplayState = /** @class */ (function () {
@@ -13,11 +13,11 @@ define(["require", "exports", "../turnable", "../timer"], function (require, exp
             this.start();
         };
         ReplayState.prototype.exit = function () {
+            return;
         };
         ReplayState.prototype.start = function () {
             var _this = this;
             if (this.replay.currentReplay === null) {
-                console.error("Cannot replay null");
                 this.context.setState(this.context.idleState);
                 return;
             }

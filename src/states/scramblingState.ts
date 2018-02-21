@@ -1,19 +1,18 @@
-import { State, StateContext } from "./state";
 import { Scrambler } from "../scrambler";
-import { Turnable } from "../turnable";
-import { Cube } from "../cube";
-import { TurnRecorder, Recorder } from "../turnRecorder";
 import { Timer } from "../timer";
+import { ITurnable } from "../turnable";
+import { IRecorder } from "../turnRecorder";
+import { IState, StateContext } from "./state";
 
-export class ScramblingState implements State {
+export class ScramblingState implements IState {
     private context: StateContext;
-    private nextState: State | null;
+    private nextState: IState | null;
     private scrambler: Scrambler;
-    private cube: Turnable;
-    private recorder: Recorder;
+    private cube: ITurnable;
+    private recorder: IRecorder;
     private timer: Timer;
 
-    public constructor(context: StateContext, cube: Turnable, recorder:Recorder, timer:Timer) {
+    public constructor(context: StateContext, cube: ITurnable, recorder: IRecorder, timer: Timer) {
         this.context = context;
         this.cube = cube;
         this.recorder = recorder;
@@ -34,9 +33,10 @@ export class ScramblingState implements State {
     }
 
     public exit(): void {
+        return;
     }
 
-    public setNextState(next: State) {
+    public setNextState(next: IState) {
         this.nextState = next;
     }
 }

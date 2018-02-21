@@ -1,4 +1,4 @@
-define(["require", "exports", "../standardControlScheme", "../scrambler"], function (require, exports, standardControlScheme_1, scrambler_1) {
+define(["require", "exports", "../scrambler", "../standardControlScheme"], function (require, exports, scrambler_1, standardControlScheme_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var PracticeState = /** @class */ (function () {
@@ -17,6 +17,7 @@ define(["require", "exports", "../standardControlScheme", "../scrambler"], funct
             });
         };
         PracticeState.prototype.exit = function () {
+            return;
         };
         return PracticeState;
     }());

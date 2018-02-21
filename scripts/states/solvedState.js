@@ -12,7 +12,7 @@ define(["require", "exports", "../hotkeys"], function (require, exports, hotkeys
                 new hotkeys_1.MenuOption("f", "Scramble", function () { return _this.context.setState(_this.context.scramblerState); }),
                 new hotkeys_1.MenuOption("j", "Replay", function () {
                     _this.context.setState(_this.context.replayState);
-                })
+                }),
             ]);
         };
         SolvedState.prototype.exit = function () {

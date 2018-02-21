@@ -1,10 +1,10 @@
+import { ICameraControls } from "./CameraControls";
 import { Hotkeys } from "./hotkeys";
-import { Turnable, Turn } from "./turnable";
-import { CameraControls } from "./CameraControls";
+import { ITurnable, Turn } from "./turnable";
 
 export class StandardControlScheme {
-    public register(hotkeys: Hotkeys, target: Turnable, camera?: CameraControls) {
-        let targetBindings: [string, string, Turn][] = [
+    public register(hotkeys: Hotkeys, target: ITurnable, camera?: ICameraControls) {
+        const targetBindings: Array<[string, string, Turn]> = [
             ["q", "Z'", Turn.Zi],
             ["w", "B", Turn.B],
             ["e", "L'", Turn.Li],
@@ -33,7 +33,7 @@ export class StandardControlScheme {
             hotkeys.setupButton("z", "📹", camera.resetCamera);
         }
 
-        targetBindings.forEach(binding => {
+        targetBindings.forEach((binding) => {
             hotkeys.setupButton(binding[0], binding[1], () => target.apply(binding[2]));
         });
     }

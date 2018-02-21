@@ -1,20 +1,22 @@
-import { Replay, MoveData } from "./turnRecorder";
+
 import { Turn } from "./turnable";
+import { MoveData, Replay } from "./turnRecorder";
+
+// tslint:disable:no-bitwise
 
 export class ReplayConverter {
     private timeResolution: number = 150;
 
     public replayToString(replay: Replay): string {
-        let bytes: number[] = [];
+        const bytes: number[] = [];
         let lastTimestamp = 0;
 
-        for (let i = 0; i < replay.moves.length; i++) {
-            let move = replay.moves[i];
-            let id = replay.moves[i].turn << 3;
+        for (const move of replay.moves) {
+            let id = move.turn << 3;
 
             if (move.timestamp > lastTimestamp) {
-                var offset = move.timestamp - lastTimestamp;
-                var ticks = Math.floor(offset / this.timeResolution);
+                const offset = move.timestamp - lastTimestamp;
+                let ticks = Math.floor(offset / this.timeResolution);
                 lastTimestamp += ticks * this.timeResolution;
                 while (ticks >= 8) {
                     bytes.push((Turn.ri + 1) << 3);
@@ -27,20 +29,20 @@ export class ReplayConverter {
         }
 
         let i = 0;
-        let arr = new Uint8Array(bytes.length);
-        bytes.forEach(byte => arr[i++] = byte);
+        const arr = new Uint8Array(bytes.length);
+        bytes.forEach((byte) => arr[i++] = byte);
         return btoa(String.fromCharCode.apply(null, arr));
     }
 
     public stringToReplay(replayString: string): Replay {
-        let newMoveList: MoveData[] = [];
-        let decodedMovesAsStr = atob(replayString);
+        const newMoveList: MoveData[] = [];
+        const decodedMovesAsStr = atob(replayString);
+        const timeRes = this.timeResolution;
         let currentTimestamp = 0;
-        let timeRes = this.timeResolution;
 
-        Array.prototype.forEach.call(decodedMovesAsStr, function (char:any) {
-            let i = char.charCodeAt(0) >> 3;
-            let t = char.charCodeAt(0) % 8;
+        Array.prototype.forEach.call(decodedMovesAsStr, (char: any) => {
+            const i = char.charCodeAt(0) >> 3;
+            const t = char.charCodeAt(0) % 8;
 
             currentTimestamp += timeRes * t;
 
@@ -49,13 +51,13 @@ export class ReplayConverter {
             } else {
                 newMoveList.push({
                     timestamp: currentTimestamp,
-                    turn: i
+                    turn: i,
                 });
             }
         });
 
         return {
-            moves: newMoveList
+            moves: newMoveList,
         };
     }
 }

@@ -1,9 +1,7 @@
-import { State, StateContext } from "./state";
-import { Recorder, CurrentReplayProvider } from "../turnRecorder";
 import { Hotkeys, MenuOption } from "../hotkeys";
-import { ReplayConverter } from "../replayConverter";
+import { IState, StateContext } from "./state";
 
-export class SolvedState implements State {
+export class SolvedState implements IState {
     private context: StateContext;
     private hotkeys: Hotkeys;
 
@@ -17,7 +15,7 @@ export class SolvedState implements State {
             new MenuOption("f", "Scramble", () => this.context.setState(this.context.scramblerState)),
             new MenuOption("j", "Replay", () => {
                 this.context.setState(this.context.replayState);
-            })
+            }),
         ]);
     }
 

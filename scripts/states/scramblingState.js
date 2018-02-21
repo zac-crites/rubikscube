@@ -8,6 +8,7 @@ define(["require", "exports", "../scrambler"], function (require, exports, scram
             this.recorder = recorder;
             this.timer = timer;
             this.scrambler = new scrambler_1.Scrambler();
+            this.nextState = null;
         }
         ScramblingState.prototype.enter = function () {
             var _this = this;
@@ -21,6 +22,7 @@ define(["require", "exports", "../scrambler"], function (require, exports, scram
             });
         };
         ScramblingState.prototype.exit = function () {
+            return;
         };
         ScramblingState.prototype.setNextState = function (next) {
             this.nextState = next;

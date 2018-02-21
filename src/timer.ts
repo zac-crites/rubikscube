@@ -10,6 +10,7 @@ export class Timer {
         this.startTime = new Date();
         this.element = element || document.createElement("div") as HTMLDivElement;
         this.element.innerHTML = "&nbsp;";
+        this.endTime = null;
     }
 
     public start() {
@@ -20,10 +21,10 @@ export class Timer {
     }
 
     public countdown(duration: number): Promise<void> {
-        let startTime = this.startTime = new Date();
+        const startTime = this.startTime = new Date();
         this.startTime.setTime(this.startTime.getTime() + duration);
 
-        return new Promise(resolve => {
+        return new Promise((resolve: () => void) => {
             this.interval = window.setInterval(() => {
                 this.update();
                 if (new Date().getTime() > startTime.getTime()) {
@@ -59,9 +60,8 @@ export class Timer {
     }
 
     private update() {
-        if( this.startTime )
-        {
-            let diff = new Date().getTime() - this.startTime.getTime();
+        if (this.startTime) {
+            const diff = new Date().getTime() - this.startTime.getTime();
             this.element.innerHTML = this.displayDuration(diff);
         }
     }
@@ -70,8 +70,8 @@ export class Timer {
         if (duration < 0) {
             return Math.floor(duration / 1000).toString();
         }
-        var minutes = Math.floor(duration / 60000);
-        var seconds = (duration % 60000) / 1000;
+        const minutes = Math.floor(duration / 60000);
+        const seconds = (duration % 60000) / 1000;
         return (minutes > 0 ? (minutes + ":" + (seconds < 10 ? "0" : "")) : "") + seconds.toFixed(2);
     }
 }

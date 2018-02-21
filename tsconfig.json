@@ -5,9 +5,10 @@
         "sourceMap": true,
         "outDir": "scripts",
         "rootDir": "src",
-        "strictNullChecks": true,
         "allowUnreachableCode": false,
         "allowUnusedLabels": false,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
         "strict": true,
         "lib": [
             "dom",

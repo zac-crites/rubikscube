@@ -29,20 +29,20 @@ export enum Turn {
     I,
     Ii,
     r,
-    ri
+    ri,
 }
 
-export interface Turnable {
-    apply(turn: Turn): Turnable;
+export interface ITurnable {
+    apply(turn: Turn): ITurnable;
     waitForMoves(): Promise<void>;
 }
 
-export class TurnableWrapper implements Turnable {
-    private target: Turnable;
-    public constructor(target: Turnable) {
+export class TurnableWrapper implements ITurnable {
+    private target: ITurnable;
+    public constructor(target: ITurnable) {
         this.target = target;
     }
-    public apply(turn: Turn): Turnable {
+    public apply(turn: Turn): ITurnable {
         this.target.apply(turn);
         return this;
     }

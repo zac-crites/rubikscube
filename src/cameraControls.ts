@@ -1,4 +1,4 @@
-export interface CameraControls {
-    resetCamera():void;
-    refreshFacelets():void;
+export interface ICameraControls {
+    resetCamera(): void;
+    refreshFacelets(): void;
 }

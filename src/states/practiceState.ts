@@ -1,17 +1,17 @@
-import { State, StateContext } from "./state";
-import { Turnable } from "../turnable";
+import { ICameraControls } from "../cameraControls";
 import { Hotkeys } from "../hotkeys";
-import { CameraControls } from "../cameraControls";
-import { StandardControlScheme } from "../standardControlScheme";
 import { Scrambler } from "../scrambler";
+import { StandardControlScheme } from "../standardControlScheme";
+import { ITurnable } from "../turnable";
+import { IState } from "./state";
 
-export class PracticeState implements State {
+export class PracticeState implements IState {
 
-    private cube: Turnable;
+    private cube: ITurnable;
     private hotkeys: Hotkeys;
-    private camera: CameraControls;
+    private camera: ICameraControls;
 
-    public constructor(cube: Turnable, hotkeys: Hotkeys, camera: CameraControls) {
+    public constructor(cube: ITurnable, hotkeys: Hotkeys, camera: ICameraControls) {
         this.cube = cube;
         this.hotkeys = hotkeys;
         this.camera = camera;
@@ -27,5 +27,6 @@ export class PracticeState implements State {
     }
 
     public exit(): void {
+        return;
     }
 }

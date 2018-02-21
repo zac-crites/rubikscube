@@ -1,6 +1,7 @@
 define(["require", "exports", "./turnable"], function (require, exports, turnable_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    // tslint:disable:no-bitwise
     var ReplayConverter = /** @class */ (function () {
         function ReplayConverter() {
             this.timeResolution = 150;
@@ -8,9 +9,9 @@ define(["require", "exports", "./turnable"], function (require, exports, turnabl
         ReplayConverter.prototype.replayToString = function (replay) {
             var bytes = [];
             var lastTimestamp = 0;
-            for (var i_1 = 0; i_1 < replay.moves.length; i_1++) {
-                var move = replay.moves[i_1];
-                var id = replay.moves[i_1].turn << 3;
+            for (var _i = 0, _a = replay.moves; _i < _a.length; _i++) {
+                var move = _a[_i];
+                var id = move.turn << 3;
                 if (move.timestamp > lastTimestamp) {
                     var offset = move.timestamp - lastTimestamp;
                     var ticks = Math.floor(offset / this.timeResolution);
@@ -31,8 +32,8 @@ define(["require", "exports", "./turnable"], function (require, exports, turnabl
         ReplayConverter.prototype.stringToReplay = function (replayString) {
             var newMoveList = [];
             var decodedMovesAsStr = atob(replayString);
-            var currentTimestamp = 0;
             var timeRes = this.timeResolution;
+            var currentTimestamp = 0;
             Array.prototype.forEach.call(decodedMovesAsStr, function (char) {
                 var i = char.charCodeAt(0) >> 3;
                 var t = char.charCodeAt(0) % 8;
@@ -43,12 +44,12 @@ define(["require", "exports", "./turnable"], function (require, exports, turnabl
                 else {
                     newMoveList.push({
                         timestamp: currentTimestamp,
-                        turn: i
+                        turn: i,
                     });
                 }
             });
             return {
-                moves: newMoveList
+                moves: newMoveList,
             };
         };
         return ReplayConverter;

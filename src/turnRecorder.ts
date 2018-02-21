@@ -1,17 +1,17 @@
-import { Turnable, Turn, TurnableWrapper } from "./turnable";
-import { Timer } from "./timer";
 import { ReplayConverter } from "./replayConverter";
+import { Timer } from "./timer";
+import { ITurnable, Turn, TurnableWrapper } from "./turnable";
 
-export interface MoveData {
-    timestamp: number;
-    turn: Turn;
+export class MoveData {
+    public timestamp: number = 0;
+    public turn: Turn = Turn.X;
 }
 
-export interface Replay {
-    moves: MoveData[];
+export class Replay {
+    public moves: MoveData[] = [];
 }
 
-export interface Recorder {
+export interface IRecorder {
     reset(): void;
     start(): void;
     stop(): void;
@@ -21,32 +21,34 @@ export interface Recorder {
 export class CurrentReplayProvider {
     private replayConverter = new ReplayConverter();
     public get currentReplay(): Replay | null {
-        let parseIndex = window.location.href.indexOf('?');
-        return parseIndex > 0 ? this.replayConverter.stringToReplay(window.location.href.substring(parseIndex + 1)) : null;
+        const parseIndex = window.location.href.indexOf("?");
+        return parseIndex > 0
+            ? this.replayConverter.stringToReplay(window.location.href.substring(parseIndex + 1))
+            : null;
     }
     public set currentReplay(v: Replay | null) {
         window.history.replaceState("", "", (v != null) ? "?" + new ReplayConverter().replayToString(v) : "");
     }
 }
 
-export class TurnRecorder extends TurnableWrapper implements Recorder {
+export class TurnRecorder extends TurnableWrapper implements IRecorder {
     private timer: Timer;
     private stopTime: number | null;
     private moves: MoveData[];
 
-    public constructor(target: Turnable, moveData?: MoveData[]) {
+    public constructor(target: ITurnable, moveData?: MoveData[]) {
         super(target);
         this.timer = new Timer();
         this.stopTime = null;
         this.moves = moveData || [];
     }
 
-    public apply(turn: Turn): Turnable {
+    public apply(t: Turn): ITurnable {
         this.moves.push({
-            turn: turn,
-            timestamp: this.timer.getTime()
+            timestamp: this.timer.getTime(),
+            turn: t,
         });
-        super.apply(turn);
+        super.apply(t);
         return this;
     }
 
@@ -65,7 +67,7 @@ export class TurnRecorder extends TurnableWrapper implements Recorder {
 
     public getReplay(): Replay {
         return {
-            moves: this.moves
+            moves: this.moves,
         };
     }
 }

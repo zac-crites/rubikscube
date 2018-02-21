@@ -1,15 +1,15 @@
-import { State, StateContext } from "./state";
-import { Turnable, Turn } from "../turnable";
-import { Replay, Recorder, CurrentReplayProvider } from "../turnRecorder";
 import { Timer } from "../timer";
+import { ITurnable, Turn } from "../turnable";
+import { CurrentReplayProvider } from "../turnRecorder";
+import { IState, StateContext } from "./state";
 
-export class ReplayState implements State {
+export class ReplayState implements IState {
     private context: StateContext;
-    private target: Turnable;
+    private target: ITurnable;
     private replay: CurrentReplayProvider;
     private displayTimer: Timer;
 
-    public constructor(context: StateContext, target: Turnable, replay: CurrentReplayProvider, timer: Timer) {
+    public constructor(context: StateContext, target: ITurnable, replay: CurrentReplayProvider, timer: Timer) {
         this.context = context;
         this.target = target;
         this.replay = replay;
@@ -22,17 +22,17 @@ export class ReplayState implements State {
     }
 
     public exit(): void {
+        return;
     }
 
     public start(): void {
         if (this.replay.currentReplay === null) {
-            console.error("Cannot replay null");
             this.context.setState(this.context.idleState);
             return;
         }
 
-        let replay = this.replay.currentReplay;
-        let replayTimer = new Timer();
+        const replay = this.replay.currentReplay;
+        const replayTimer = new Timer();
         let started = false;
 
         let i = 0;
@@ -45,7 +45,7 @@ export class ReplayState implements State {
 
         update = () => {
             while (i < replay.moves.length && replay.moves[i].timestamp < replayTimer.getTime()) {
-                let move = replay.moves[i];
+                const move = replay.moves[i];
                 if (move.turn > Turn.Z2 && !started) {
                     started = true;
                     this.displayTimer.reset();
@@ -57,11 +57,10 @@ export class ReplayState implements State {
             if (i >= replay.moves.length) {
                 this.displayTimer.stop();
                 this.context.setState(this.context.solvedState);
-            }
-            else {
+            } else {
                 setTimeout(update, 100);
             }
-        }
+        };
 
         this.target.waitForMoves().then(() => {
             this.displayTimer.countdown(15000);

@@ -1,6 +1,4 @@
-import { Turnable, Turn } from "./turnable"
-
-declare var Promise: any;
+import { ITurnable, Turn } from "./turnable";
 
 export enum Face {
     U,
@@ -11,14 +9,14 @@ export enum Face {
     D,
 }
 
-export interface CubeState {
+export interface ICubeState {
     isSolved(): boolean;
     getFacelet(face: Face, i?: number): Face;
 }
 
 class FaceData {
-    readonly center: Face;
-    facelets: Face[] = [];
+    public readonly center: Face;
+    public readonly facelets: Face[] = [];
 
     constructor(face: Face) {
         this.center = face;
@@ -28,15 +26,15 @@ class FaceData {
     }
 
     public isSolved(): boolean {
-        return this.facelets.every(f => f === this.center);
+        return this.facelets.every((f) => f === this.center);
     }
 }
 
-export class Cube implements Turnable, CubeState {
+export class Cube implements ITurnable, ICubeState {
+    [key: string]: any;
+    private faces: FaceData[] = [];
 
-    private faces: FaceData[];
-
-    constructor() {
+    public constructor() {
         this.reset();
     }
 
@@ -48,7 +46,7 @@ export class Cube implements Turnable, CubeState {
     }
 
     public isSolved(): boolean {
-        return this.faces.every(f => f.isSolved());
+        return this.faces.every((f) => f.isSolved());
     }
 
     public getFacelet(face: Face, i: number): Face {
@@ -59,7 +57,7 @@ export class Cube implements Turnable, CubeState {
     }
 
     public apply(turn: Turn): Cube {
-        this[turn]();
+        (this[Turn[turn]] as () => void)();
         return this;
     }
 
@@ -67,7 +65,7 @@ export class Cube implements Turnable, CubeState {
         this.rotateFace(this.faces[1], 1);
         this.rotateFace(this.faces[3], 3);
 
-        var tmp = this.faces[0];
+        const tmp = this.faces[0];
         this.faces[0] = this.faces[2];
         this.faces[2] = this.faces[5];
         this.faces[5] = this.faces[4];
@@ -82,7 +80,7 @@ export class Cube implements Turnable, CubeState {
         this.rotateFace(this.faces[0], 3);
         this.rotateFace(this.faces[5], 1);
 
-        var tmp = this.faces[1];
+        const tmp = this.faces[1];
         this.faces[1] = this.faces[2];
         this.faces[2] = this.faces[3];
         this.faces[3] = this.faces[4];
@@ -94,7 +92,7 @@ export class Cube implements Turnable, CubeState {
         this.rotateFace(this.faces[2], 3);
         this.rotateFace(this.faces[4], 1);
 
-        var tmp = this.faces[0];
+        const tmp = this.faces[0];
         this.faces[0] = this.faces[1];
         this.rotateFace(this.faces[0], 3);
         this.faces[1] = this.faces[5];
@@ -223,17 +221,17 @@ export class Cube implements Turnable, CubeState {
     }
 
     public waitForMoves(): Promise<void> {
-        return new Promise((resolve) => resolve());
+        return new Promise((resolve: () => void) => resolve());
     }
 
     private replace(f: FaceData, i: number, value: number) {
-        var tmp = f.facelets[i];
+        const tmp = f.facelets[i];
         f.facelets[i] = value;
         return tmp;
     }
 
     private shift(i: number) {
-        let f = this.faces;
+        const f = this.faces;
         this.replace(f[1], i, this.replace(f[2], i, this.replace(f[3], i, this.replace(f[4], i, f[1].facelets[i]))));
     }
 
