@@ -55,8 +55,10 @@ export class ReplayState implements IState {
                 i++;
             }
             if (i >= replay.moves.length) {
-                this.displayTimer.stop();
-                this.context.setState(this.context.solvedState);
+                this.target.waitForMoves().then(() => {
+                    this.displayTimer.stop();
+                    this.context.setState(this.context.solvedState);
+                });
             } else {
                 setTimeout(update, 100);
             }

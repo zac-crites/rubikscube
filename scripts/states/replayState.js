@@ -42,8 +42,10 @@ define(["require", "exports", "../timer", "../turnable"], function (require, exp
                     i++;
                 }
                 if (i >= replay.moves.length) {
-                    _this.displayTimer.stop();
-                    _this.context.setState(_this.context.solvedState);
+                    _this.target.waitForMoves().then(function () {
+                        _this.displayTimer.stop();
+                        _this.context.setState(_this.context.solvedState);
+                    });
                 }
                 else {
                     setTimeout(update, 100);
