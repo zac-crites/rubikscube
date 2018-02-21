@@ -10,20 +10,6 @@ define(["require", "exports", "./turnable"], function (require, exports, turnabl
         Face[Face["B"] = 4] = "B";
         Face[Face["D"] = 5] = "D";
     })(Face = exports.Face || (exports.Face = {}));
-    var FaceData = /** @class */ (function () {
-        function FaceData(face) {
-            this.facelets = [];
-            this.center = face;
-            while (this.facelets.length < 8) {
-                this.facelets.push(face);
-            }
-        }
-        FaceData.prototype.isSolved = function () {
-            var _this = this;
-            return this.facelets.every(function (f) { return f === _this.center; });
-        };
-        return FaceData;
-    }());
     var Cube = /** @class */ (function () {
         function Cube() {
             this.faces = [];
@@ -32,7 +18,7 @@ define(["require", "exports", "./turnable"], function (require, exports, turnabl
         Cube.prototype.reset = function () {
             this.faces = [];
             for (var i = 0; i < 6; i++) {
-                this.faces.push(new FaceData(i));
+                this.faces.push(this.makeFaceData(i));
             }
         };
         Cube.prototype.isSolved = function () {
@@ -174,6 +160,23 @@ define(["require", "exports", "./turnable"], function (require, exports, turnabl
         };
         Cube.prototype.waitForMoves = function () {
             return new Promise(function (resolve) { return resolve(); });
+        };
+        Cube.prototype.makeFaceData = function (face) {
+            var facelets = [];
+            for (var i = 0; i < 8; i++) {
+                facelets.push(face);
+            }
+            return {
+                get center() {
+                    return face;
+                },
+                get facelets() {
+                    return facelets;
+                },
+                isSolved: function () {
+                    return facelets.every(function (f) { return f === face; });
+                },
+            };
         };
         Cube.prototype.replace = function (f, i, value) {
             var tmp = f.facelets[i];

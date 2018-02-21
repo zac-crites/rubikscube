@@ -14,25 +14,15 @@ export interface ICubeState {
     getFacelet(face: Face, i?: number): Face;
 }
 
-class FaceData {
-    public readonly center: Face;
-    public readonly facelets: Face[] = [];
-
-    constructor(face: Face) {
-        this.center = face;
-        while (this.facelets.length < 8) {
-            this.facelets.push(face);
-        }
-    }
-
-    public isSolved(): boolean {
-        return this.facelets.every((f) => f === this.center);
-    }
+interface IFaceData {
+    readonly center: Face;
+    readonly facelets: Face[];
+    isSolved(): boolean;
 }
 
 export class Cube implements ITurnable, ICubeState {
     [key: string]: any;
-    private faces: FaceData[] = [];
+    private faces: IFaceData[] = [];
 
     public constructor() {
         this.reset();
@@ -41,7 +31,7 @@ export class Cube implements ITurnable, ICubeState {
     public reset(): void {
         this.faces = [];
         for (let i = 0; i < 6; i++) {
-            this.faces.push(new FaceData(i));
+            this.faces.push(this.makeFaceData(i));
         }
     }
 
@@ -224,7 +214,25 @@ export class Cube implements ITurnable, ICubeState {
         return new Promise((resolve: () => void) => resolve());
     }
 
-    private replace(f: FaceData, i: number, value: number) {
+    private makeFaceData(face: Face): IFaceData {
+        const facelets: Face[] = [];
+        for (let i = 0; i < 8; i++) {
+            facelets.push(face);
+        }
+        return {
+            get center(): Face {
+                return face;
+            },
+            get facelets(): Face[] {
+                return facelets;
+            },
+            isSolved: () => {
+                return facelets.every((f) => f === face);
+            },
+        };
+    }
+
+    private replace(f: IFaceData, i: number, value: number) {
         const tmp = f.facelets[i];
         f.facelets[i] = value;
         return tmp;
@@ -235,7 +243,7 @@ export class Cube implements ITurnable, ICubeState {
         this.replace(f[1], i, this.replace(f[2], i, this.replace(f[3], i, this.replace(f[4], i, f[1].facelets[i]))));
     }
 
-    private rotateFace(face: FaceData, times: number) {
+    private rotateFace(face: IFaceData, times: number) {
         for (let i = 0; i < times * 2; i++) {
             face.facelets.push(face.facelets.splice(0, 1)[0]);
         }
