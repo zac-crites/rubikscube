@@ -26,6 +26,7 @@ export class Startup {
         const recordingWrapper = new TurnRecorder(renderer3d);
         const replay = new CurrentReplayProvider();
 
+        this.implementEnums(cube);
         this.implementApply(renderer3d);
 
         stateContext.idleState = new IdleState(stateContext, controls);
@@ -40,6 +41,16 @@ export class Startup {
         stateContext.setState(replay.currentReplay !== null ? stateContext.solvedState : stateContext.idleState);
 
         return 0;
+    }
+
+    private implementEnums(t: any) {
+        for (let i = Turn.X; i <= Turn.ri; i++) {
+            const idx = i;
+            const turn = Turn[idx];
+            if (t[turn] === undefined) {
+                t[turn] = () => t.apply(idx);
+            }
+        }
     }
 
     private implementApply(t: any) {

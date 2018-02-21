@@ -17,11 +17,9 @@ export interface ICubeState {
 interface IFaceData {
     readonly center: Face;
     readonly facelets: Face[];
-    isSolved(): boolean;
 }
 
 export class Cube implements ITurnable, ICubeState {
-    [key: string]: any;
     private faces: IFaceData[] = [];
 
     public constructor() {
@@ -31,12 +29,12 @@ export class Cube implements ITurnable, ICubeState {
     public reset(): void {
         this.faces = [];
         for (let i = 0; i < 6; i++) {
-            this.faces.push(this.makeFaceData(i));
+            this.faces.push(this.faceData(i));
         }
     }
 
     public isSolved(): boolean {
-        return this.faces.every((f) => f.isSolved());
+        return this.faces.every((face) => face.facelets.every((facelet) => facelet === face.center));
     }
 
     public getFacelet(face: Face, i: number): Face {
@@ -46,12 +44,88 @@ export class Cube implements ITurnable, ICubeState {
         return this.faces[face].facelets[i];
     }
 
-    public apply(turn: Turn): Cube {
-        (this[Turn[turn]] as () => void)();
+    public waitForMoves(): Promise<void> {
+        return new Promise((resolve: () => void) => resolve());
+    }
+
+    public apply(turn: Turn | Turn[]): Cube {
+        const turnList = turn as Turn[];
+        if (typeof turn !== "number") {
+            for (const t of turnList) {
+                this.apply(t);
+            }
+            return this;
+        }
+
+        switch (turn) {
+            case Turn.X:
+                return this.X();
+            case Turn.Y:
+                return this.Y();
+            case Turn.Z:
+                return this.Z();
+            case Turn.U:
+                return this.U();
+            case Turn.Xi:
+                return this.apply([Turn.X, Turn.X, Turn.X]);
+            case Turn.Yi:
+                return this.apply([Turn.Y, Turn.Y, Turn.Y]);
+            case Turn.Zi:
+                return this.apply([Turn.Z, Turn.Z, Turn.Z]);
+            case Turn.X2:
+                return this.apply([Turn.X, Turn.X]);
+            case Turn.Y2:
+                return this.apply([Turn.Y, Turn.Y]);
+            case Turn.Z2:
+                return this.apply([Turn.Z, Turn.Z]);
+            case Turn.D:
+                return this.apply([Turn.X, Turn.F, Turn.Xi]);
+            case Turn.L:
+                return this.apply([Turn.Z, Turn.U, Turn.Zi]);
+            case Turn.R:
+                return this.apply([Turn.Zi, Turn.U, Turn.Z]);
+            case Turn.F:
+                return this.apply([Turn.X, Turn.U, Turn.Xi]);
+            case Turn.B:
+                return this.apply([Turn.Xi, Turn.U, Turn.X]);
+            case Turn.Ui:
+                return this.apply([Turn.U, Turn.U, Turn.U]);
+            case Turn.Di:
+                return this.apply([Turn.D2, Turn.D]);
+            case Turn.Li:
+                return this.apply([Turn.L2, Turn.L]);
+            case Turn.Ri:
+                return this.apply([Turn.R2, Turn.R]);
+            case Turn.Fi:
+                return this.apply([Turn.F2, Turn.F]);
+            case Turn.Bi:
+                return this.apply([Turn.B2, Turn.B]);
+            case Turn.U2:
+                return this.apply([Turn.U, Turn.U]);
+            case Turn.D2:
+                return this.apply([Turn.D, Turn.D]);
+            case Turn.L2:
+                return this.apply([Turn.L, Turn.L]);
+            case Turn.R2:
+                return this.apply([Turn.R, Turn.R]);
+            case Turn.F2:
+                return this.apply([Turn.F, Turn.F]);
+            case Turn.B2:
+                return this.apply([Turn.B, Turn.B]);
+            case Turn.I:
+                return this.apply([Turn.R, Turn.X]);
+            case Turn.Ii:
+                return this.apply([Turn.Ri, Turn.Xi]);
+            case Turn.r:
+                return this.apply([Turn.Li, Turn.Xi]);
+            case Turn.ri:
+                return this.apply([Turn.Li, Turn.Xi]);
+        }
+
         return this;
     }
 
-    public X(): Cube {
+    private X(): Cube {
         this.rotateFace(this.faces[1], 1);
         this.rotateFace(this.faces[3], 3);
 
@@ -66,7 +140,7 @@ export class Cube implements ITurnable, ICubeState {
         return this;
     }
 
-    public Y(): Cube {
+    private Y(): Cube {
         this.rotateFace(this.faces[0], 3);
         this.rotateFace(this.faces[5], 1);
 
@@ -78,7 +152,7 @@ export class Cube implements ITurnable, ICubeState {
         return this;
     }
 
-    public Z(): Cube {
+    private Z(): Cube {
         this.rotateFace(this.faces[2], 3);
         this.rotateFace(this.faces[4], 1);
 
@@ -94,7 +168,7 @@ export class Cube implements ITurnable, ICubeState {
         return this;
     }
 
-    public U(): Cube {
+    private U(): Cube {
         this.rotateFace(this.faces[0], 3);
         this.shift(0);
         this.shift(1);
@@ -102,133 +176,14 @@ export class Cube implements ITurnable, ICubeState {
         return this;
     }
 
-    public Xi(): Cube {
-        return this.X().X().X();
-    }
-
-    public Yi(): Cube {
-        return this.Y().Y().Y();
-    }
-
-    public Zi(): Cube {
-        return this.Z().Z().Z();
-    }
-
-    public X2(): Cube {
-        return this.X().X();
-    }
-
-    public Y2(): Cube {
-        return this.Y().Y();
-    }
-
-    public Z2(): Cube {
-        return this.Z().Z();
-    }
-
-    public D(): Cube {
-        return this.X().F().Xi();
-    }
-
-    public L(): Cube {
-        return this.Z().U().Zi();
-    }
-
-    public R(): Cube {
-        return this.Zi().U().Z();
-    }
-
-    public F(): Cube {
-        return this.X().U().Xi();
-    }
-
-    public B(): Cube {
-        return this.Xi().U().X();
-    }
-
-    public Ui(): Cube {
-        return this.U().U().U();
-    }
-
-    public Di(): Cube {
-        return this.D2().D();
-    }
-
-    public Li(): Cube {
-        return this.L2().L();
-    }
-
-    public Ri(): Cube {
-        return this.R2().R();
-    }
-
-    public Fi(): Cube {
-        return this.F2().F();
-    }
-
-    public Bi(): Cube {
-        return this.B2().B();
-    }
-
-    public U2(): Cube {
-        return this.U().U();
-    }
-
-    public D2(): Cube {
-        return this.D().D();
-    }
-
-    public L2(): Cube {
-        return this.L().L();
-    }
-
-    public R2(): Cube {
-        return this.R().R();
-    }
-
-    public F2(): Cube {
-        return this.F().F();
-    }
-
-    public B2(): Cube {
-        return this.B().B();
-    }
-
-    public I(): Cube {
-        return this.R().X();
-    }
-
-    public Ii(): Cube {
-        return this.Ri().Xi();
-    }
-
-    public r(): Cube {
-        return this.Li().Xi();
-    }
-
-    public ri(): Cube {
-        return this.Li().Xi();
-    }
-
-    public waitForMoves(): Promise<void> {
-        return new Promise((resolve: () => void) => resolve());
-    }
-
-    private makeFaceData(face: Face): IFaceData {
+    private faceData(face: Face): IFaceData {
         const facelets: Face[] = [];
         for (let i = 0; i < 8; i++) {
             facelets.push(face);
         }
         return {
-            get center(): Face {
-                return face;
-            },
-            get facelets(): Face[] {
-                return facelets;
-            },
-            isSolved: () => {
-                return facelets.every((f) => f === face);
-            },
+            get center(): Face { return face; },
+            get facelets(): Face[] { return facelets; },
         };
     }
 

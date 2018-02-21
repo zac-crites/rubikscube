@@ -12,6 +12,7 @@ define(["require", "exports", "./cube", "./hotkeys", "./states/countdownState", 
             var stateContext = new state_1.StateContext();
             var recordingWrapper = new turnRecorder_1.TurnRecorder(renderer3d);
             var replay = new turnRecorder_1.CurrentReplayProvider();
+            this.implementEnums(cube);
             this.implementApply(renderer3d);
             stateContext.idleState = new idlestate_1.IdleState(stateContext, controls);
             stateContext.scramblerState = new scramblingState_1.ScramblingState(stateContext, recordingWrapper, recordingWrapper, timer);
@@ -22,6 +23,18 @@ define(["require", "exports", "./cube", "./hotkeys", "./states/countdownState", 
             stateContext.solveState = new timedSolveState_1.TimedSolveState(stateContext, recordingWrapper, controls, renderer3d, timer, cube, recordingWrapper, replay);
             stateContext.setState(replay.currentReplay !== null ? stateContext.solvedState : stateContext.idleState);
             return 0;
+        };
+        Startup.prototype.implementEnums = function (t) {
+            var _loop_1 = function (i) {
+                var idx = i;
+                var turn = turnable_1.Turn[idx];
+                if (t[turn] === undefined) {
+                    t[turn] = function () { return t.apply(idx); };
+                }
+            };
+            for (var i = turnable_1.Turn.X; i <= turnable_1.Turn.ri; i++) {
+                _loop_1(i);
+            }
         };
         Startup.prototype.implementApply = function (t) {
             t.apply = function (turn) {

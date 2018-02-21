@@ -18,11 +18,11 @@ define(["require", "exports", "./turnable"], function (require, exports, turnabl
         Cube.prototype.reset = function () {
             this.faces = [];
             for (var i = 0; i < 6; i++) {
-                this.faces.push(this.makeFaceData(i));
+                this.faces.push(this.faceData(i));
             }
         };
         Cube.prototype.isSolved = function () {
-            return this.faces.every(function (f) { return f.isSolved(); });
+            return this.faces.every(function (face) { return face.facelets.every(function (facelet) { return facelet === face.center; }); });
         };
         Cube.prototype.getFacelet = function (face, i) {
             if (i === undefined) {
@@ -30,8 +30,82 @@ define(["require", "exports", "./turnable"], function (require, exports, turnabl
             }
             return this.faces[face].facelets[i];
         };
+        Cube.prototype.waitForMoves = function () {
+            return new Promise(function (resolve) { return resolve(); });
+        };
         Cube.prototype.apply = function (turn) {
-            this[turnable_1.Turn[turn]]();
+            var turnList = turn;
+            if (typeof turn !== "number") {
+                for (var _i = 0, turnList_1 = turnList; _i < turnList_1.length; _i++) {
+                    var t = turnList_1[_i];
+                    this.apply(t);
+                }
+                return this;
+            }
+            switch (turn) {
+                case turnable_1.Turn.X:
+                    return this.X();
+                case turnable_1.Turn.Y:
+                    return this.Y();
+                case turnable_1.Turn.Z:
+                    return this.Z();
+                case turnable_1.Turn.U:
+                    return this.U();
+                case turnable_1.Turn.Xi:
+                    return this.apply([turnable_1.Turn.X, turnable_1.Turn.X, turnable_1.Turn.X]);
+                case turnable_1.Turn.Yi:
+                    return this.apply([turnable_1.Turn.Y, turnable_1.Turn.Y, turnable_1.Turn.Y]);
+                case turnable_1.Turn.Zi:
+                    return this.apply([turnable_1.Turn.Z, turnable_1.Turn.Z, turnable_1.Turn.Z]);
+                case turnable_1.Turn.X2:
+                    return this.apply([turnable_1.Turn.X, turnable_1.Turn.X]);
+                case turnable_1.Turn.Y2:
+                    return this.apply([turnable_1.Turn.Y, turnable_1.Turn.Y]);
+                case turnable_1.Turn.Z2:
+                    return this.apply([turnable_1.Turn.Z, turnable_1.Turn.Z]);
+                case turnable_1.Turn.D:
+                    return this.apply([turnable_1.Turn.X, turnable_1.Turn.F, turnable_1.Turn.Xi]);
+                case turnable_1.Turn.L:
+                    return this.apply([turnable_1.Turn.Z, turnable_1.Turn.U, turnable_1.Turn.Zi]);
+                case turnable_1.Turn.R:
+                    return this.apply([turnable_1.Turn.Zi, turnable_1.Turn.U, turnable_1.Turn.Z]);
+                case turnable_1.Turn.F:
+                    return this.apply([turnable_1.Turn.X, turnable_1.Turn.U, turnable_1.Turn.Xi]);
+                case turnable_1.Turn.B:
+                    return this.apply([turnable_1.Turn.Xi, turnable_1.Turn.U, turnable_1.Turn.X]);
+                case turnable_1.Turn.Ui:
+                    return this.apply([turnable_1.Turn.U, turnable_1.Turn.U, turnable_1.Turn.U]);
+                case turnable_1.Turn.Di:
+                    return this.apply([turnable_1.Turn.D2, turnable_1.Turn.D]);
+                case turnable_1.Turn.Li:
+                    return this.apply([turnable_1.Turn.L2, turnable_1.Turn.L]);
+                case turnable_1.Turn.Ri:
+                    return this.apply([turnable_1.Turn.R2, turnable_1.Turn.R]);
+                case turnable_1.Turn.Fi:
+                    return this.apply([turnable_1.Turn.F2, turnable_1.Turn.F]);
+                case turnable_1.Turn.Bi:
+                    return this.apply([turnable_1.Turn.B2, turnable_1.Turn.B]);
+                case turnable_1.Turn.U2:
+                    return this.apply([turnable_1.Turn.U, turnable_1.Turn.U]);
+                case turnable_1.Turn.D2:
+                    return this.apply([turnable_1.Turn.D, turnable_1.Turn.D]);
+                case turnable_1.Turn.L2:
+                    return this.apply([turnable_1.Turn.L, turnable_1.Turn.L]);
+                case turnable_1.Turn.R2:
+                    return this.apply([turnable_1.Turn.R, turnable_1.Turn.R]);
+                case turnable_1.Turn.F2:
+                    return this.apply([turnable_1.Turn.F, turnable_1.Turn.F]);
+                case turnable_1.Turn.B2:
+                    return this.apply([turnable_1.Turn.B, turnable_1.Turn.B]);
+                case turnable_1.Turn.I:
+                    return this.apply([turnable_1.Turn.R, turnable_1.Turn.X]);
+                case turnable_1.Turn.Ii:
+                    return this.apply([turnable_1.Turn.Ri, turnable_1.Turn.Xi]);
+                case turnable_1.Turn.r:
+                    return this.apply([turnable_1.Turn.Li, turnable_1.Turn.Xi]);
+                case turnable_1.Turn.ri:
+                    return this.apply([turnable_1.Turn.Li, turnable_1.Turn.Xi]);
+            }
             return this;
         };
         Cube.prototype.X = function () {
@@ -77,105 +151,14 @@ define(["require", "exports", "./turnable"], function (require, exports, turnabl
             this.shift(2);
             return this;
         };
-        Cube.prototype.Xi = function () {
-            return this.X().X().X();
-        };
-        Cube.prototype.Yi = function () {
-            return this.Y().Y().Y();
-        };
-        Cube.prototype.Zi = function () {
-            return this.Z().Z().Z();
-        };
-        Cube.prototype.X2 = function () {
-            return this.X().X();
-        };
-        Cube.prototype.Y2 = function () {
-            return this.Y().Y();
-        };
-        Cube.prototype.Z2 = function () {
-            return this.Z().Z();
-        };
-        Cube.prototype.D = function () {
-            return this.X().F().Xi();
-        };
-        Cube.prototype.L = function () {
-            return this.Z().U().Zi();
-        };
-        Cube.prototype.R = function () {
-            return this.Zi().U().Z();
-        };
-        Cube.prototype.F = function () {
-            return this.X().U().Xi();
-        };
-        Cube.prototype.B = function () {
-            return this.Xi().U().X();
-        };
-        Cube.prototype.Ui = function () {
-            return this.U().U().U();
-        };
-        Cube.prototype.Di = function () {
-            return this.D2().D();
-        };
-        Cube.prototype.Li = function () {
-            return this.L2().L();
-        };
-        Cube.prototype.Ri = function () {
-            return this.R2().R();
-        };
-        Cube.prototype.Fi = function () {
-            return this.F2().F();
-        };
-        Cube.prototype.Bi = function () {
-            return this.B2().B();
-        };
-        Cube.prototype.U2 = function () {
-            return this.U().U();
-        };
-        Cube.prototype.D2 = function () {
-            return this.D().D();
-        };
-        Cube.prototype.L2 = function () {
-            return this.L().L();
-        };
-        Cube.prototype.R2 = function () {
-            return this.R().R();
-        };
-        Cube.prototype.F2 = function () {
-            return this.F().F();
-        };
-        Cube.prototype.B2 = function () {
-            return this.B().B();
-        };
-        Cube.prototype.I = function () {
-            return this.R().X();
-        };
-        Cube.prototype.Ii = function () {
-            return this.Ri().Xi();
-        };
-        Cube.prototype.r = function () {
-            return this.Li().Xi();
-        };
-        Cube.prototype.ri = function () {
-            return this.Li().Xi();
-        };
-        Cube.prototype.waitForMoves = function () {
-            return new Promise(function (resolve) { return resolve(); });
-        };
-        Cube.prototype.makeFaceData = function (face) {
+        Cube.prototype.faceData = function (face) {
             var facelets = [];
             for (var i = 0; i < 8; i++) {
                 facelets.push(face);
             }
             return {
-                get center() {
-                    return face;
-                },
-                get facelets() {
-                    return facelets;
-                },
-                isSolved: function () {
-                    return facelets.every(function (f) { return f === face; });
-                },
+                get center() { return face; },
+                get facelets() { return facelets; },
             };
         };
         Cube.prototype.replace = function (f, i, value) {

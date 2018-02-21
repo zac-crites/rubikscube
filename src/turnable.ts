@@ -33,7 +33,7 @@ export enum Turn {
 }
 
 export interface ITurnable {
-    apply(turn: Turn): ITurnable;
+    apply(turn: Turn | Turn[]): ITurnable;
     waitForMoves(): Promise<void>;
 }
 
@@ -42,7 +42,7 @@ export class TurnableWrapper implements ITurnable {
     public constructor(target: ITurnable) {
         this.target = target;
     }
-    public apply(turn: Turn): ITurnable {
+    public apply(turn: Turn | Turn[]): ITurnable {
         this.target.apply(turn);
         return this;
     }
