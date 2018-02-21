@@ -37,6 +37,7 @@ export class TurnRecorder extends TurnableWrapper implements Recorder {
     public constructor(target: Turnable, moveData?: MoveData[]) {
         super(target);
         this.timer = new Timer();
+        this.stopTime = null;
         this.moves = moveData || [];
     }
 

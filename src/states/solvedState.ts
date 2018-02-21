@@ -6,7 +6,6 @@ import { ReplayConverter } from "../replayConverter";
 export class SolvedState implements State {
     private context: StateContext;
     private hotkeys: Hotkeys;
-    private currentReplayProvider: CurrentReplayProvider;
 
     public constructor(context: StateContext, hotkeys: Hotkeys) {
         this.context = context;

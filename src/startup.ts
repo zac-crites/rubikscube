@@ -13,13 +13,14 @@ import { TurnRecorder, CurrentReplayProvider } from "./turnRecorder";
 import { SolvedState } from "./states/solvedState";
 import { ReplayState } from "./states/replayState";
 import { ReplayConverter } from "./replayConverter";
+import { CameraControls } from "./cameraControls";
 
-declare var CubeRenderer;
+declare var CubeRenderer: any;
 
 export class Startup {
     public run(): number {
         let cube = new Cube();
-        let renderer3d = new CubeRenderer(cube);
+        let renderer3d = <Turnable & CameraControls>new CubeRenderer(cube);
         let controls = new Hotkeys(<HTMLDivElement>(document.getElementById("buttons")));
         let timer = new Timer(<HTMLDivElement>(document.getElementById("timerDisplay")));
         let stateContext = new StateContext();

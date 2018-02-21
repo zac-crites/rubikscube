@@ -6,6 +6,9 @@
         "outDir": "scripts",
         "rootDir": "src",
         "strictNullChecks": true,
+        "allowUnreachableCode": false,
+        "allowUnusedLabels": false,
+        "strict": true,
         "lib": [
             "dom",
             "es2015"

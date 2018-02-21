@@ -19,6 +19,7 @@ export class ScramblingState implements State {
         this.recorder = recorder;
         this.timer = timer;
         this.scrambler = new Scrambler();
+        this.nextState = null;
     }
 
     public enter(): void {

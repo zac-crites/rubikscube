@@ -33,14 +33,14 @@ export class ReplayConverter {
     }
 
     public stringToReplay(replayString: string): Replay {
-        var newMoveList: MoveData[] = [];
-        var decodedMovesAsStr = atob(replayString);
-        var currentTimestamp = 0;
-        var timeRes = this.timeResolution;
+        let newMoveList: MoveData[] = [];
+        let decodedMovesAsStr = atob(replayString);
+        let currentTimestamp = 0;
+        let timeRes = this.timeResolution;
 
-        Array.prototype.forEach.call(decodedMovesAsStr, function (char) {
-            var i = char.charCodeAt(0) >> 3;
-            var t = char.charCodeAt(0) % 8;
+        Array.prototype.forEach.call(decodedMovesAsStr, function (char:any) {
+            let i = char.charCodeAt(0) >> 3;
+            let t = char.charCodeAt(0) % 8;
 
             currentTimestamp += timeRes * t;
 
