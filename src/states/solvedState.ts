@@ -1,31 +1,24 @@
 import { State, StateContext } from "./state";
-import { Recorder } from "../turnRecorder";
+import { Recorder, CurrentReplayProvider } from "../turnRecorder";
 import { Hotkeys, MenuOption } from "../hotkeys";
 import { ReplayConverter } from "../replayConverter";
 
 export class SolvedState implements State {
     private context: StateContext;
     private hotkeys: Hotkeys;
-    private recorder: Recorder;
+    private currentReplayProvider: CurrentReplayProvider;
 
-    public constructor(context: StateContext, hotkeys: Hotkeys, recorder: Recorder) {
+    public constructor(context: StateContext, hotkeys: Hotkeys) {
         this.context = context;
         this.hotkeys = hotkeys;
-        this.recorder = recorder;
     }
 
     public enter(): void {
-        this.recorder.stop();
-
-        let replay = this.recorder.getReplay();
-        window.history.replaceState("", "", "?" + new ReplayConverter().replayToString(replay));
-
-        this.hotkeys.showMenu("Solved in " + (replay.moves[replay.moves.length-1].timestamp / 1000),[
-            new MenuOption("f","Reset", () => this.context.setState( this.context.scramblerState ) ),
-            new MenuOption("j","Show replay", () =>{
-                console.log( replay );
-                this.context.setState( this.context.replayState );
-            }  )
+        this.hotkeys.showMenu("Solved!", [
+            new MenuOption("f", "Scramble", () => this.context.setState(this.context.scramblerState)),
+            new MenuOption("j", "Replay", () => {
+                this.context.setState(this.context.replayState);
+            })
         ]);
     }
 

@@ -8,6 +8,7 @@ import { Timer } from "../timer";
 import { CubeState } from "../cube";
 import { IdleState } from "./idlestate";
 import { StandardControlScheme } from "../standardControlScheme";
+import { Recorder, CurrentReplayProvider } from "../turnRecorder";
 
 export class TimedSolveState implements State {
     private context: StateContext;
@@ -16,14 +17,18 @@ export class TimedSolveState implements State {
     private camera: CameraControls;
     private timer: Timer;
     private cubeState: CubeState;
+    private recorder: Recorder;
+    private currentReplayProvider: CurrentReplayProvider;
 
-    public constructor(context: StateContext, cube: Turnable, hotkeys: Hotkeys, camera: CameraControls, timer: Timer, cubeState: CubeState) {
+    public constructor(context: StateContext, cube: Turnable, hotkeys: Hotkeys, camera: CameraControls, timer: Timer, cubeState: CubeState, recorder: Recorder, currentReplay: CurrentReplayProvider) {
         this.context = context;
         this.cube = cube;
         this.hotkeys = hotkeys;
         this.camera = camera;
         this.timer = timer;
         this.cubeState = cubeState;
+        this.recorder = recorder;
+        this.currentReplayProvider = currentReplay;
     }
 
     public enter(): void {
@@ -46,6 +51,8 @@ export class TimedSolveState implements State {
     private onTurnCompleted(): void {
         if (this.cubeState.isSolved()) {
             this.timer.stop();
+            this.recorder.stop();
+            this.currentReplayProvider.currentReplay = this.recorder.getReplay();
             this.context.setState(this.context.solvedState);
         }
     }

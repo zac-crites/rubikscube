@@ -1,4 +1,4 @@
-define(["require", "exports", "./turnable", "./cube", "./hotkeys", "./states/state", "./states/timedSolveState", "./states/scramblingState", "./timer", "./states/countdownState", "./states/idlestate", "./states/practiceState", "./turnRecorder", "./states/solvedState", "./states/replayState", "./replayConverter"], function (require, exports, turnable_1, cube_1, hotkeys_1, state_1, timedSolveState_1, scramblingState_1, timer_1, countdownState_1, idlestate_1, practiceState_1, turnRecorder_1, solvedState_1, replayState_1, replayConverter_1) {
+define(["require", "exports", "./turnable", "./cube", "./hotkeys", "./states/state", "./states/timedSolveState", "./states/scramblingState", "./timer", "./states/countdownState", "./states/idlestate", "./states/practiceState", "./turnRecorder", "./states/solvedState", "./states/replayState"], function (require, exports, turnable_1, cube_1, hotkeys_1, state_1, timedSolveState_1, scramblingState_1, timer_1, countdownState_1, idlestate_1, practiceState_1, turnRecorder_1, solvedState_1, replayState_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Startup = /** @class */ (function () {
@@ -11,21 +11,16 @@ define(["require", "exports", "./turnable", "./cube", "./hotkeys", "./states/sta
             var timer = new timer_1.Timer((document.getElementById("timerDisplay")));
             var stateContext = new state_1.StateContext();
             var recordingWrapper = new turnRecorder_1.TurnRecorder(renderer3d);
+            var replay = new turnRecorder_1.CurrentReplayProvider();
             this.implementApply(renderer3d);
-            var parseIndex = window.location.href.indexOf('?');
-            if (parseIndex > 0) {
-                var queryString = window.location.href.substring(parseIndex + 1);
-                var replay = new replayConverter_1.ReplayConverter().stringToReplay(queryString);
-                recordingWrapper = new turnRecorder_1.TurnRecorder(renderer3d, replay.moves);
-            }
             stateContext.idleState = new idlestate_1.IdleState(stateContext, controls, recordingWrapper);
             stateContext.scramblerState = new scramblingState_1.ScramblingState(stateContext, recordingWrapper, recordingWrapper, timer);
             stateContext.countdownState = new countdownState_1.CountdownState(stateContext, timer, controls, recordingWrapper);
-            stateContext.solveState = new timedSolveState_1.TimedSolveState(stateContext, recordingWrapper, controls, renderer3d, timer, cube);
+            stateContext.solveState = new timedSolveState_1.TimedSolveState(stateContext, recordingWrapper, controls, renderer3d, timer, cube, recordingWrapper, replay);
             stateContext.practiceState = new practiceState_1.PracticeState(renderer3d, controls, renderer3d);
-            stateContext.solvedState = new solvedState_1.SolvedState(stateContext, controls, recordingWrapper);
-            stateContext.replayState = new replayState_1.ReplayState(stateContext, renderer3d, recordingWrapper, timer);
-            stateContext.setState((parseIndex > 0) ? stateContext.solvedState : stateContext.idleState);
+            stateContext.solvedState = new solvedState_1.SolvedState(stateContext, controls);
+            stateContext.replayState = new replayState_1.ReplayState(stateContext, renderer3d, replay, timer);
+            stateContext.setState(replay.currentReplay !== null ? stateContext.solvedState : stateContext.idleState);
             return 0;
         };
         Startup.prototype.implementApply = function (t) {

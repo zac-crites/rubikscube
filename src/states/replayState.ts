@@ -1,18 +1,18 @@
 import { State, StateContext } from "./state";
 import { Turnable, Turn } from "../turnable";
-import { Replay, Recorder } from "../turnRecorder";
+import { Replay, Recorder, CurrentReplayProvider } from "../turnRecorder";
 import { Timer } from "../timer";
 
 export class ReplayState implements State {
     private context: StateContext;
     private target: Turnable;
-    private recorder: Recorder;
+    private replay: CurrentReplayProvider;
     private displayTimer: Timer;
 
-    public constructor(context: StateContext, target: Turnable, recorder: Recorder, timer: Timer) {
+    public constructor(context: StateContext, target: Turnable, replay: CurrentReplayProvider, timer: Timer) {
         this.context = context;
         this.target = target;
-        this.recorder = recorder;
+        this.replay = replay;
         this.displayTimer = timer;
     }
 
@@ -25,7 +25,13 @@ export class ReplayState implements State {
     }
 
     public start(): void {
-        let replay = this.recorder.getReplay();
+        if (this.replay.currentReplay === null) {
+            console.error("Cannot replay null");
+            this.context.setState(this.context.idleState);
+            return;
+        }
+
+        let replay = this.replay.currentReplay;
         let replayTimer = new Timer();
         let started = false;
 

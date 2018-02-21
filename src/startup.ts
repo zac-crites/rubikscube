@@ -9,7 +9,7 @@ import { Timer } from "./timer";
 import { CountdownState } from "./states/countdownState";
 import { IdleState } from "./states/idlestate";
 import { PracticeState } from "./states/practiceState";
-import { TurnRecorder } from "./turnRecorder";
+import { TurnRecorder, CurrentReplayProvider } from "./turnRecorder";
 import { SolvedState } from "./states/solvedState";
 import { ReplayState } from "./states/replayState";
 import { ReplayConverter } from "./replayConverter";
@@ -25,25 +25,19 @@ export class Startup {
         let stateContext = new StateContext();
 
         let recordingWrapper = new TurnRecorder(renderer3d);
+        let replay = new CurrentReplayProvider();
 
         this.implementApply(renderer3d);
-
-        var parseIndex = window.location.href.indexOf('?');
-        if (parseIndex > 0) {
-            var queryString = window.location.href.substring(parseIndex + 1);
-            let replay = new ReplayConverter().stringToReplay(queryString);
-            recordingWrapper = new TurnRecorder(renderer3d, replay.moves);
-        }
 
         stateContext.idleState = new IdleState(stateContext, controls, recordingWrapper);
         stateContext.scramblerState = new ScramblingState(stateContext, recordingWrapper, recordingWrapper, timer);
         stateContext.countdownState = new CountdownState(stateContext, timer, controls, recordingWrapper);
-        stateContext.solveState = new TimedSolveState(stateContext, recordingWrapper, controls, renderer3d, timer, cube);
+        stateContext.solveState = new TimedSolveState(stateContext, recordingWrapper, controls, renderer3d, timer, cube, recordingWrapper, replay);
         stateContext.practiceState = new PracticeState(renderer3d, controls, renderer3d);
-        stateContext.solvedState = new SolvedState(stateContext, controls, recordingWrapper);
-        stateContext.replayState = new ReplayState(stateContext, renderer3d, recordingWrapper, timer);
+        stateContext.solvedState = new SolvedState(stateContext, controls);
+        stateContext.replayState = new ReplayState(stateContext, renderer3d, replay, timer);
 
-        stateContext.setState((parseIndex > 0) ? stateContext.solvedState : stateContext.idleState);
+        stateContext.setState(replay.currentReplay !== null ? stateContext.solvedState : stateContext.idleState);
 
         return 0;
     }

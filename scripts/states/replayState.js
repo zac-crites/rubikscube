@@ -2,10 +2,10 @@ define(["require", "exports", "../turnable", "../timer"], function (require, exp
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var ReplayState = /** @class */ (function () {
-        function ReplayState(context, target, recorder, timer) {
+        function ReplayState(context, target, replay, timer) {
             this.context = context;
             this.target = target;
-            this.recorder = recorder;
+            this.replay = replay;
             this.displayTimer = timer;
         }
         ReplayState.prototype.enter = function () {
@@ -16,7 +16,12 @@ define(["require", "exports", "../turnable", "../timer"], function (require, exp
         };
         ReplayState.prototype.start = function () {
             var _this = this;
-            var replay = this.recorder.getReplay();
+            if (this.replay.currentReplay === null) {
+                console.error("Cannot replay null");
+                this.context.setState(this.context.idleState);
+                return;
+            }
+            var replay = this.replay.currentReplay;
             var replayTimer = new timer_1.Timer();
             var started = false;
             var i = 0;

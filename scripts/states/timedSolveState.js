@@ -12,13 +12,15 @@ define(["require", "exports", "../turnable", "../standardControlScheme"], functi
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TimedSolveState = /** @class */ (function () {
-        function TimedSolveState(context, cube, hotkeys, camera, timer, cubeState) {
+        function TimedSolveState(context, cube, hotkeys, camera, timer, cubeState, recorder, currentReplay) {
             this.context = context;
             this.cube = cube;
             this.hotkeys = hotkeys;
             this.camera = camera;
             this.timer = timer;
             this.cubeState = cubeState;
+            this.recorder = recorder;
+            this.currentReplayProvider = currentReplay;
         }
         TimedSolveState.prototype.enter = function () {
             var _this = this;
@@ -38,6 +40,8 @@ define(["require", "exports", "../turnable", "../standardControlScheme"], functi
         TimedSolveState.prototype.onTurnCompleted = function () {
             if (this.cubeState.isSolved()) {
                 this.timer.stop();
+                this.recorder.stop();
+                this.currentReplayProvider.currentReplay = this.recorder.getReplay();
                 this.context.setState(this.context.solvedState);
             }
         };
