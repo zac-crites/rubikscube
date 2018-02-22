@@ -49,8 +49,8 @@ export class Cube implements ITurnable, ICubeState {
     }
 
     public apply(turn: Turn | Turn[]): Cube {
-        const turnList = turn as Turn[];
         if (typeof turn !== "number") {
+            const turnList = turn as Turn[];
             for (const t of turnList) {
                 this.apply(t);
             }
@@ -121,7 +121,6 @@ export class Cube implements ITurnable, ICubeState {
             case Turn.ri:
                 return this.apply([Turn.Li, Turn.Xi]);
         }
-
         return this;
     }
 

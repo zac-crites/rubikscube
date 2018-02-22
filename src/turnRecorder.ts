@@ -1,42 +1,28 @@
-import { ReplayConverter } from "./replayConverter";
 import { Timer } from "./timer";
 import { ITurnable, Turn, TurnableWrapper } from "./turnable";
 
-export class MoveData {
-    public timestamp: number = 0;
-    public turn: Turn = Turn.X;
+export interface IMoveData {
+    timestamp: number;
+    turn: Turn;
 }
 
-export class Replay {
-    public moves: MoveData[] = [];
+export interface IReplay {
+    moves: IMoveData[];
 }
 
 export interface IRecorder {
     reset(): void;
     start(): void;
     stop(): void;
-    getReplay(): Replay;
-}
-
-export class CurrentReplayProvider {
-    private replayConverter = new ReplayConverter();
-    public get currentReplay(): Replay | null {
-        const parseIndex = window.location.href.indexOf("?");
-        return parseIndex > 0
-            ? this.replayConverter.stringToReplay(window.location.href.substring(parseIndex + 1))
-            : null;
-    }
-    public set currentReplay(v: Replay | null) {
-        window.history.replaceState("", "", (v != null) ? "?" + new ReplayConverter().replayToString(v) : "");
-    }
+    getReplay(): IReplay;
 }
 
 export class TurnRecorder extends TurnableWrapper implements IRecorder {
     private timer: Timer;
     private stopTime: number | null;
-    private moves: MoveData[];
+    private moves: IMoveData[];
 
-    public constructor(target: ITurnable, moveData?: MoveData[]) {
+    public constructor(target: ITurnable, moveData?: IMoveData[]) {
         super(target);
         this.timer = new Timer();
         this.stopTime = null;
@@ -65,7 +51,7 @@ export class TurnRecorder extends TurnableWrapper implements IRecorder {
         this.stopTime = this.stopTime || this.timer.getTime();
     }
 
-    public getReplay(): Replay {
+    public getReplay(): IReplay {
         return {
             moves: this.moves,
         };

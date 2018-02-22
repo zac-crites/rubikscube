@@ -8,44 +8,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-define(["require", "exports", "./replayConverter", "./timer", "./turnable"], function (require, exports, replayConverter_1, timer_1, turnable_1) {
+define(["require", "exports", "./timer", "./turnable"], function (require, exports, timer_1, turnable_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var MoveData = /** @class */ (function () {
-        function MoveData() {
-            this.timestamp = 0;
-            this.turn = turnable_1.Turn.X;
-        }
-        return MoveData;
-    }());
-    exports.MoveData = MoveData;
-    var Replay = /** @class */ (function () {
-        function Replay() {
-            this.moves = [];
-        }
-        return Replay;
-    }());
-    exports.Replay = Replay;
-    var CurrentReplayProvider = /** @class */ (function () {
-        function CurrentReplayProvider() {
-            this.replayConverter = new replayConverter_1.ReplayConverter();
-        }
-        Object.defineProperty(CurrentReplayProvider.prototype, "currentReplay", {
-            get: function () {
-                var parseIndex = window.location.href.indexOf("?");
-                return parseIndex > 0
-                    ? this.replayConverter.stringToReplay(window.location.href.substring(parseIndex + 1))
-                    : null;
-            },
-            set: function (v) {
-                window.history.replaceState("", "", (v != null) ? "?" + new replayConverter_1.ReplayConverter().replayToString(v) : "");
-            },
-            enumerable: true,
-            configurable: true
-        });
-        return CurrentReplayProvider;
-    }());
-    exports.CurrentReplayProvider = CurrentReplayProvider;
     var TurnRecorder = /** @class */ (function (_super) {
         __extends(TurnRecorder, _super);
         function TurnRecorder(target, moveData) {

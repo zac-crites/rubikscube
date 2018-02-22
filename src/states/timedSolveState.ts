@@ -1,10 +1,11 @@
 import { ICameraControls } from "../CameraControls";
 import { ICubeState } from "../cube";
+import { CurrentReplayProvider } from "../currentReplayProvider";
 import { Hotkeys } from "../hotkeys";
 import { StandardControlScheme } from "../standardControlScheme";
 import { Timer } from "../timer";
 import { ITurnable, Turn, TurnableWrapper } from "../turnable";
-import { CurrentReplayProvider, IRecorder } from "../turnRecorder";
+import { IRecorder } from "../turnRecorder";
 import { IState, StateContext } from "./state";
 
 export class TimedSolveState implements IState {

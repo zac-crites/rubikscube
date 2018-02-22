@@ -1,5 +1,6 @@
 import { ICameraControls } from "./cameraControls";
 import { Cube } from "./cube";
+import { CurrentReplayProvider } from "./currentReplayProvider";
 import { Hotkeys } from "./hotkeys";
 import { CountdownState } from "./states/countdownState";
 import { IdleState } from "./states/idlestate";
@@ -11,7 +12,7 @@ import { StateContext } from "./states/state";
 import { TimedSolveState } from "./states/timedSolveState";
 import { Timer } from "./timer";
 import { ITurnable, Turn } from "./turnable";
-import { CurrentReplayProvider, TurnRecorder } from "./turnRecorder";
+import { TurnRecorder } from "./turnRecorder";
 
 declare var CubeRenderer: any;
 

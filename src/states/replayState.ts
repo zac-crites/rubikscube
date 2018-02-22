@@ -1,6 +1,6 @@
+import { CurrentReplayProvider } from "../currentReplayProvider";
 import { Timer } from "../timer";
 import { ITurnable, Turn } from "../turnable";
-import { CurrentReplayProvider } from "../turnRecorder";
 import { IState, StateContext } from "./state";
 
 export class ReplayState implements IState {

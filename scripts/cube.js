@@ -34,8 +34,8 @@ define(["require", "exports", "./turnable"], function (require, exports, turnabl
             return new Promise(function (resolve) { return resolve(); });
         };
         Cube.prototype.apply = function (turn) {
-            var turnList = turn;
             if (typeof turn !== "number") {
+                var turnList = turn;
                 for (var _i = 0, turnList_1 = turnList; _i < turnList_1.length; _i++) {
                     var t = turnList_1[_i];
                     this.apply(t);

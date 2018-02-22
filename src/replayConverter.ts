@@ -1,13 +1,13 @@
 
 import { Turn } from "./turnable";
-import { MoveData, Replay } from "./turnRecorder";
+import { IMoveData, IReplay } from "./turnRecorder";
 
 // tslint:disable:no-bitwise
 
 export class ReplayConverter {
     private timeResolution: number = 150;
 
-    public replayToString(replay: Replay): string {
+    public replayToString(replay: IReplay): string {
         const bytes: number[] = [];
         let lastTimestamp = 0;
 
@@ -34,8 +34,8 @@ export class ReplayConverter {
         return btoa(String.fromCharCode.apply(null, arr));
     }
 
-    public stringToReplay(replayString: string): Replay {
-        const newMoveList: MoveData[] = [];
+    public stringToReplay(replayString: string): IReplay {
+        const newMoveList: IMoveData[] = [];
         const decodedMovesAsStr = atob(replayString);
         const timeRes = this.timeResolution;
         let currentTimestamp = 0;
