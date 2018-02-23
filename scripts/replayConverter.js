@@ -1,4 +1,4 @@
-define(["require", "exports", "./turnable"], function (require, exports, turnable_1) {
+define(["require", "exports", "./replay", "./turnable"], function (require, exports, replay_1, turnable_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     // tslint:disable:no-bitwise
@@ -48,9 +48,7 @@ define(["require", "exports", "./turnable"], function (require, exports, turnabl
                     });
                 }
             });
-            return {
-                moves: newMoveList,
-            };
+            return new replay_1.Replay(newMoveList);
         };
         return ReplayConverter;
     }());

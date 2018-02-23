@@ -8,7 +8,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-define(["require", "exports", "./timer", "./turnable"], function (require, exports, timer_1, turnable_1) {
+define(["require", "exports", "./replay", "./timer", "./turnable"], function (require, exports, replay_1, timer_1, turnable_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TurnRecorder = /** @class */ (function (_super) {
@@ -39,9 +39,7 @@ define(["require", "exports", "./timer", "./turnable"], function (require, expor
             this.stopTime = this.stopTime || this.timer.getTime();
         };
         TurnRecorder.prototype.getReplay = function () {
-            return {
-                moves: this.moves,
-            };
+            return new replay_1.Replay(this.moves);
         };
         return TurnRecorder;
     }(turnable_1.TurnableWrapper));

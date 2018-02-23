@@ -1,14 +1,6 @@
+import { IMoveData, IReplay, Replay } from "./replay";
 import { Timer } from "./timer";
 import { ITurnable, Turn, TurnableWrapper } from "./turnable";
-
-export interface IMoveData {
-    timestamp: number;
-    turn: Turn;
-}
-
-export interface IReplay {
-    moves: IMoveData[];
-}
 
 export interface IRecorder {
     reset(): void;
@@ -52,8 +44,6 @@ export class TurnRecorder extends TurnableWrapper implements IRecorder {
     }
 
     public getReplay(): IReplay {
-        return {
-            moves: this.moves,
-        };
+        return new Replay( this.moves );
     }
 }

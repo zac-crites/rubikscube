@@ -1,6 +1,6 @@
 
+import { IMoveData, IReplay, Replay } from "./replay";
 import { Turn } from "./turnable";
-import { IMoveData, IReplay } from "./turnRecorder";
 
 // tslint:disable:no-bitwise
 
@@ -56,8 +56,6 @@ export class ReplayConverter {
             }
         });
 
-        return {
-            moves: newMoveList,
-        };
+        return new Replay(newMoveList);
     }
 }

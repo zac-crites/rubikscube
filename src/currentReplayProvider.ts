@@ -1,5 +1,5 @@
+import { IReplay } from "./replay";
 import { ReplayConverter } from "./replayConverter";
-import { IReplay } from "./turnRecorder";
 
 export interface IReplayData {
     replay: IReplay;
