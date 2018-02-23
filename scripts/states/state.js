@@ -14,6 +14,7 @@ define(["require", "exports"], function (require, exports) {
             this.practiceState = state;
             this.solvedState = state;
             this.replayState = state;
+            this.logBrowserState = state;
             this.currentState = startState || state;
             this.currentState.enter();
         }

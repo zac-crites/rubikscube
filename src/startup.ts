@@ -4,6 +4,7 @@ import { CurrentReplayProvider } from "./currentReplayProvider";
 import { Hotkeys } from "./hotkeys";
 import { CountdownState } from "./states/countdownState";
 import { IdleState } from "./states/idlestate";
+import { LogBrowserState } from "./states/logBrowserState";
 import { PracticeState } from "./states/practiceState";
 import { ReplayState } from "./states/replayState";
 import { ScramblingState } from "./states/scramblingState";
@@ -34,8 +35,9 @@ export class Startup {
         stateContext.scramblerState = new ScramblingState(stateContext, recordingWrapper, recordingWrapper, timer);
         stateContext.countdownState = new CountdownState(stateContext, timer, controls, recordingWrapper);
         stateContext.practiceState = new PracticeState(renderer3d, controls, renderer3d);
-        stateContext.solvedState = new SolvedState(stateContext, controls);
+        stateContext.solvedState = new SolvedState(stateContext, controls, replay);
         stateContext.replayState = new ReplayState(stateContext, renderer3d, replay, timer);
+        stateContext.logBrowserState = new LogBrowserState(stateContext, controls, replay);
         stateContext.solveState = new TimedSolveState(
             stateContext, recordingWrapper, controls, renderer3d, timer, cube, recordingWrapper, replay);
 

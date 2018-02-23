@@ -1,4 +1,4 @@
-define(["require", "exports", "./cube", "./currentReplayProvider", "./hotkeys", "./states/countdownState", "./states/idlestate", "./states/practiceState", "./states/replayState", "./states/scramblingState", "./states/solvedState", "./states/state", "./states/timedSolveState", "./timer", "./turnable", "./turnRecorder"], function (require, exports, cube_1, currentReplayProvider_1, hotkeys_1, countdownState_1, idlestate_1, practiceState_1, replayState_1, scramblingState_1, solvedState_1, state_1, timedSolveState_1, timer_1, turnable_1, turnRecorder_1) {
+define(["require", "exports", "./cube", "./currentReplayProvider", "./hotkeys", "./states/countdownState", "./states/idlestate", "./states/logBrowserState", "./states/practiceState", "./states/replayState", "./states/scramblingState", "./states/solvedState", "./states/state", "./states/timedSolveState", "./timer", "./turnable", "./turnRecorder"], function (require, exports, cube_1, currentReplayProvider_1, hotkeys_1, countdownState_1, idlestate_1, logBrowserState_1, practiceState_1, replayState_1, scramblingState_1, solvedState_1, state_1, timedSolveState_1, timer_1, turnable_1, turnRecorder_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Startup = /** @class */ (function () {
@@ -18,8 +18,9 @@ define(["require", "exports", "./cube", "./currentReplayProvider", "./hotkeys", 
             stateContext.scramblerState = new scramblingState_1.ScramblingState(stateContext, recordingWrapper, recordingWrapper, timer);
             stateContext.countdownState = new countdownState_1.CountdownState(stateContext, timer, controls, recordingWrapper);
             stateContext.practiceState = new practiceState_1.PracticeState(renderer3d, controls, renderer3d);
-            stateContext.solvedState = new solvedState_1.SolvedState(stateContext, controls);
+            stateContext.solvedState = new solvedState_1.SolvedState(stateContext, controls, replay);
             stateContext.replayState = new replayState_1.ReplayState(stateContext, renderer3d, replay, timer);
+            stateContext.logBrowserState = new logBrowserState_1.LogBrowserState(stateContext, controls, replay);
             stateContext.solveState = new timedSolveState_1.TimedSolveState(stateContext, recordingWrapper, controls, renderer3d, timer, cube, recordingWrapper, replay);
             stateContext.setState(replay.currentReplay !== null ? stateContext.solvedState : stateContext.idleState);
             return 0;

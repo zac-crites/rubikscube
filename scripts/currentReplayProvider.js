@@ -18,7 +18,7 @@ define(["require", "exports", "./replayConverter"], function (require, exports, 
             set: function (v) {
                 this.replay = v;
                 window.history.replaceState("", "", (v != null) ? "?" + new replayConverter_1.ReplayConverter().replayToString(v) : "");
-                if (v) {
+                if (v && this.replayLog.indexOf(v) < 0) {
                     this.replayLog.push(v);
                 }
             },

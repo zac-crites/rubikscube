@@ -16,6 +16,7 @@ export class StateContext {
     public practiceState: IState = state;
     public solvedState: IState = state;
     public replayState: IState = state;
+    public logBrowserState: IState = state;
 
     private currentState: IState;
 
