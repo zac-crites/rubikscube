@@ -14,7 +14,11 @@
     <div id="timerDisplay">
         &nbsp;
     </div>
-    <div id="buttons" class="table" style="margin:auto;">
+    <div class="buttoncontainer">
+        <div id="buttons" class="table" style="margin:auto;">
+            <div id="menu">
+            </div>
+        </div>
     </div>
 
     <div style="text-align: center;margin-top:2em;">
@@ -22,14 +26,12 @@
             <a href="https://github.com/zac-crites/rubikscube">github</a> | <a href="https://solvethecube.com/notation">cube notation</a>
         </div>
     </div>
+    
     <script src="https://ajax.googleapis.com/ajax/libs/threejs/r84/three.min.js"></script>
     <script src="3d/OrbitControls.js"></script>
-    <script src="KeyboardControls.js"></script>
-    <script src="Cube.js"></script>
     <script src="CubeRenderer.js"></script>
-    <script src="Stopwatch.js"></script>
-    <script src="ReplayEncoder.js"></script>
-    <script src="index.js"></script>
+
+    <script data-main="main" src="require.js"></script>
 </body>
 
 </html>
