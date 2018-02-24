@@ -46,7 +46,7 @@ export class Cube implements ITurnable, ICubeState {
     }
 
     public waitForMoves(): Promise<void> {
-        return new Promise((resolve: () => void) => resolve());
+        return Promise.resolve();
     }
 
     public apply(turn: Turn | Turn[]): Cube {

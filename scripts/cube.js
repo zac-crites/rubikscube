@@ -31,7 +31,7 @@ define(["require", "exports", "./turnable"], function (require, exports, turnabl
             return this.faces[face].facelets[i];
         };
         Cube.prototype.waitForMoves = function () {
-            return new Promise(function (resolve) { return resolve(); });
+            return Promise.resolve();
         };
         Cube.prototype.apply = function (turn) {
             if (typeof turn !== "number") {
