@@ -21,6 +21,7 @@ define(["require", "exports", "../standardControlScheme", "../turnable"], functi
             this.cubeState = cubeState;
             this.recorder = recorder;
             this.currentReplayProvider = currentReplay;
+            this.active = false;
         }
         TimedSolveState.prototype.enter = function () {
             var _this = this;
@@ -30,16 +31,17 @@ define(["require", "exports", "../standardControlScheme", "../turnable"], functi
             new standardControlScheme_1.StandardControlScheme().register(this.hotkeys, wrapper, camera);
             this.hotkeys.setupButton("/", "🎲", function () {
                 _this.timer.reset();
-                _this.cubeState.reset();
                 _this.context.setState(_this.context.scramblerState);
             });
             this.timer.start();
+            this.active = true;
         };
         TimedSolveState.prototype.exit = function () {
+            this.active = false;
             this.hotkeys.reset();
         };
         TimedSolveState.prototype.onTurnCompleted = function () {
-            if (this.cubeState.isSolved()) {
+            if (this.active && this.cubeState.isSolved()) {
                 this.timer.stop();
                 this.recorder.stop();
                 this.currentReplayProvider.currentReplay = this.recorder.getReplay();

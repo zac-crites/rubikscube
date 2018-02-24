@@ -17,6 +17,7 @@ export class TimedSolveState implements IState {
     private cubeState: ICubeState;
     private recorder: IRecorder;
     private currentReplayProvider: CurrentReplayProvider;
+    private active: boolean;
 
     public constructor(
         context: StateContext,
@@ -36,6 +37,7 @@ export class TimedSolveState implements IState {
         this.cubeState = cubeState;
         this.recorder = recorder;
         this.currentReplayProvider = currentReplay;
+        this.active = false;
     }
 
     public enter(): void {
@@ -46,18 +48,19 @@ export class TimedSolveState implements IState {
         new StandardControlScheme().register(this.hotkeys, wrapper, camera);
         this.hotkeys.setupButton("/", "🎲", () => {
             this.timer.reset();
-            this.cubeState.reset();
             this.context.setState(this.context.scramblerState);
         });
         this.timer.start();
+        this.active = true;
     }
 
     public exit(): void {
+        this.active = false;
         this.hotkeys.reset();
     }
 
     private onTurnCompleted(): void {
-        if (this.cubeState.isSolved()) {
+        if (this.active && this.cubeState.isSolved()) {
             this.timer.stop();
             this.recorder.stop();
             this.currentReplayProvider.currentReplay = this.recorder.getReplay();

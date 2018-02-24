@@ -1,3 +1,4 @@
+import { ICubeState } from "../cube";
 import { Scrambler } from "../scrambler";
 import { Timer } from "../timer";
 import { ITurnable } from "../turnable";
@@ -11,17 +12,23 @@ export class ScramblingState implements IState {
     private cube: ITurnable;
     private recorder: IRecorder;
     private timer: Timer;
+    private state: ICubeState;
 
-    public constructor(context: StateContext, cube: ITurnable, recorder: IRecorder, timer: Timer) {
+    public constructor(context: StateContext, cube: ITurnable, recorder: IRecorder, timer: Timer, state: ICubeState) {
         this.context = context;
         this.cube = cube;
         this.recorder = recorder;
         this.timer = timer;
         this.scrambler = new Scrambler();
         this.nextState = null;
+        this.state = state;
     }
 
     public enter(): void {
+        if (!this.state.isSolved()) {
+            this.state.reset();
+        }
+
         this.timer.reset();
         this.recorder.reset();
         this.scrambler.scramble(this.cube, 30);

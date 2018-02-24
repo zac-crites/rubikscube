@@ -32,7 +32,8 @@ export class Startup {
         this.implementApply(renderer3d);
 
         stateContext.idleState = new IdleState(stateContext, controls);
-        stateContext.scramblerState = new ScramblingState(stateContext, recordingWrapper, recordingWrapper, timer);
+        stateContext.scramblerState = new ScramblingState(
+            stateContext, recordingWrapper, recordingWrapper, timer, cube);
         stateContext.countdownState = new CountdownState(stateContext, timer, controls, recordingWrapper);
         stateContext.practiceState = new PracticeState(renderer3d, controls, renderer3d);
         stateContext.solvedState = new SolvedState(stateContext, controls, replay);

@@ -15,7 +15,7 @@ define(["require", "exports", "./cube", "./currentReplayProvider", "./hotkeys", 
             this.implementEnums(cube);
             this.implementApply(renderer3d);
             stateContext.idleState = new idlestate_1.IdleState(stateContext, controls);
-            stateContext.scramblerState = new scramblingState_1.ScramblingState(stateContext, recordingWrapper, recordingWrapper, timer);
+            stateContext.scramblerState = new scramblingState_1.ScramblingState(stateContext, recordingWrapper, recordingWrapper, timer, cube);
             stateContext.countdownState = new countdownState_1.CountdownState(stateContext, timer, controls, recordingWrapper);
             stateContext.practiceState = new practiceState_1.PracticeState(renderer3d, controls, renderer3d);
             stateContext.solvedState = new solvedState_1.SolvedState(stateContext, controls, replay);
