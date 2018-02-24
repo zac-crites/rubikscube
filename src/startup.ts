@@ -41,7 +41,10 @@ export class Startup {
         stateContext.solveState = new TimedSolveState(
             stateContext, recordingWrapper, controls, renderer3d, timer, cube, recordingWrapper, replay);
 
-        stateContext.setState(replay.currentReplay !== null ? stateContext.solvedState : stateContext.idleState);
+        stateContext.setState(
+            replay.currentReplay || replay.getLog().length !== 0
+                ? stateContext.solvedState
+                : stateContext.idleState);
 
         return 0;
     }

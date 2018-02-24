@@ -1,6 +1,5 @@
 import { CurrentReplayProvider } from "../currentReplayProvider";
 import { Hotkeys, MenuOption } from "../hotkeys";
-import { Turn } from "../turnable";
 import { IState, StateContext } from "./state";
 
 export class LogBrowserState implements IState {
@@ -33,10 +32,7 @@ export class LogBrowserState implements IState {
     private showMenu(i: number) {
         this.lastMenu = i;
         const solves = this.replay.getLog();
-
-        const firstMove = solves[i].moves.find((m) => m.turn > Turn.Z2 && m.timestamp > 0);
-        const start = (firstMove) ? firstMove.timestamp : 0;
-        const duration = solves[i].moves[solves[i].moves.length - 1].timestamp - start;
+        const duration = solves[i].duration;
 
         this.hotkeys.showMenu("" + (i + 1) + "/" + solves.length + " - Solve ( " + (duration / 1000) + " )", [
             new MenuOption("d", "Back", () => this.showMenu((i - 1 + solves.length) % solves.length)),

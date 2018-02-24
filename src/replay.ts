@@ -18,7 +18,10 @@ export class Replay implements IReplay {
     }
 
     public get duration() {
-        const s = 15;
-        return this.moves.reduce((acc, m) => Math.max(acc + s, m.timestamp + s), 0);
+        const s = 133;
+        const lastMoveFinishTime = this.moves.reduce((acc, m) => Math.max(acc + s, m.timestamp + s), 0);
+        const startMove = this.moves.find( (move) => move.timestamp > 0 && move.turn > Turn.Z2 );
+        const startMoveTime =  startMove ? startMove.timestamp : 0;
+        return lastMoveFinishTime - startMoveTime;
     }
 }

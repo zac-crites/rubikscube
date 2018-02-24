@@ -1,4 +1,4 @@
-define(["require", "exports", "../hotkeys", "../turnable"], function (require, exports, hotkeys_1, turnable_1) {
+define(["require", "exports", "../hotkeys"], function (require, exports, hotkeys_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var LogBrowserState = /** @class */ (function () {
@@ -23,9 +23,7 @@ define(["require", "exports", "../hotkeys", "../turnable"], function (require, e
             var _this = this;
             this.lastMenu = i;
             var solves = this.replay.getLog();
-            var firstMove = solves[i].moves.find(function (m) { return m.turn > turnable_1.Turn.Z2 && m.timestamp > 0; });
-            var start = (firstMove) ? firstMove.timestamp : 0;
-            var duration = solves[i].moves[solves[i].moves.length - 1].timestamp - start;
+            var duration = solves[i].duration;
             this.hotkeys.showMenu("" + (i + 1) + "/" + solves.length + " - Solve ( " + (duration / 1000) + " )", [
                 new hotkeys_1.MenuOption("d", "Back", function () { return _this.showMenu((i - 1 + solves.length) % solves.length); }),
                 new hotkeys_1.MenuOption("f", "Next", function () { return _this.showMenu((i + 1) % solves.length); }),

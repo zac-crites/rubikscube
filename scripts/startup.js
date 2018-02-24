@@ -22,7 +22,9 @@ define(["require", "exports", "./cube", "./currentReplayProvider", "./hotkeys", 
             stateContext.replayState = new replayState_1.ReplayState(stateContext, renderer3d, replay, timer);
             stateContext.logBrowserState = new logBrowserState_1.LogBrowserState(stateContext, controls, replay);
             stateContext.solveState = new timedSolveState_1.TimedSolveState(stateContext, recordingWrapper, controls, renderer3d, timer, cube, recordingWrapper, replay);
-            stateContext.setState(replay.currentReplay !== null ? stateContext.solvedState : stateContext.idleState);
+            stateContext.setState(replay.currentReplay || replay.getLog().length !== 0
+                ? stateContext.solvedState
+                : stateContext.idleState);
             return 0;
         };
         Startup.prototype.implementEnums = function (t) {
