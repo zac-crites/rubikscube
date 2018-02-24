@@ -14,6 +14,6 @@
             "dom",
             "es2015"
         ],
-        "outFile": "./lib/startup.js"
+        "outFile": "./lib/app.js"
     },
 }

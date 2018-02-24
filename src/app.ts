@@ -17,7 +17,7 @@ import { TurnRecorder } from "./turnRecorder";
 
 declare var CubeRenderer: any;
 
-export class Startup {
+export class App {
     public run(): number {
         const cube = new Cube();
         const renderer3d = new CubeRenderer(cube) as ITurnable & ICameraControls;
@@ -68,4 +68,4 @@ export class Startup {
     }
 }
 
-new Startup().run();
+new App().run();
