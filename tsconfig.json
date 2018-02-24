@@ -13,6 +13,7 @@
         "lib": [
             "dom",
             "es2015"
-        ]
+        ],
+        "outFile": "./lib/startup.js"
     },
 }

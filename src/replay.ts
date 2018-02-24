@@ -1,8 +1,8 @@
 import { Turn } from "./turnable";
 
 export interface IMoveData {
-    timestamp: number;
-    turn: Turn;
+    readonly timestamp: number;
+    readonly turn: Turn;
 }
 
 export interface IReplay {

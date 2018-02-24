@@ -67,3 +67,5 @@ export class Startup {
         };
     }
 }
+
+new Startup().run();
