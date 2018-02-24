@@ -8,7 +8,7 @@ export interface IReplayData {
 
 export class CurrentReplayProvider {
 
-    public replayLog: IReplay[] = [];
+    private replayLog: IReplay[] = [];
     private replayConverter = new ReplayConverter();
     private replay: IReplay | null = null;
 
@@ -29,5 +29,9 @@ export class CurrentReplayProvider {
         if (v && this.replayLog.indexOf(v) < 0 ) {
             this.replayLog.push(v);
         }
+    }
+
+    public getLog(): IReplay[] {
+        return this.replayLog;
     }
 }

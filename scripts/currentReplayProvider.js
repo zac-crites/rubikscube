@@ -25,6 +25,9 @@ define(["require", "exports", "./replayConverter"], function (require, exports, 
             enumerable: true,
             configurable: true
         });
+        CurrentReplayProvider.prototype.getLog = function () {
+            return this.replayLog;
+        };
         return CurrentReplayProvider;
     }());
     exports.CurrentReplayProvider = CurrentReplayProvider;

@@ -30,6 +30,7 @@ define(["require", "exports", "../standardControlScheme", "../turnable"], functi
             new standardControlScheme_1.StandardControlScheme().register(this.hotkeys, wrapper, camera);
             this.hotkeys.setupButton("/", "🎲", function () {
                 _this.timer.reset();
+                _this.cubeState.reset();
                 _this.context.setState(_this.context.scramblerState);
             });
             this.timer.start();

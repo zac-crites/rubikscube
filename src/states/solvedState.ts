@@ -22,7 +22,7 @@ export class SolvedState implements IState {
             }),
         ];
 
-        if (this.replay.replayLog.length > 1) {
+        if (this.replay.getLog().length > 1) {
             options.push(new MenuOption("k", "Log", () => this.context.setState(this.context.logBrowserState)));
         }
 

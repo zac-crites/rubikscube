@@ -46,6 +46,7 @@ export class TimedSolveState implements IState {
         new StandardControlScheme().register(this.hotkeys, wrapper, camera);
         this.hotkeys.setupButton("/", "🎲", () => {
             this.timer.reset();
+            this.cubeState.reset();
             this.context.setState(this.context.scramblerState);
         });
         this.timer.start();

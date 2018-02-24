@@ -9,11 +9,11 @@ define(["require", "exports", "../hotkeys", "../turnable"], function (require, e
             this.lastMenu = 0;
         }
         LogBrowserState.prototype.enter = function () {
-            if (this.replay.replayLog.length === 0) {
+            if (this.replay.getLog().length === 0) {
                 this.context.setState(this.context.idleState);
                 return;
             }
-            this.showMenu(Math.min(this.lastMenu, this.replay.replayLog.length - 1));
+            this.showMenu(Math.min(this.lastMenu, this.replay.getLog().length - 1));
             return;
         };
         LogBrowserState.prototype.exit = function () {
@@ -22,7 +22,7 @@ define(["require", "exports", "../hotkeys", "../turnable"], function (require, e
         LogBrowserState.prototype.showMenu = function (i) {
             var _this = this;
             this.lastMenu = i;
-            var solves = this.replay.replayLog;
+            var solves = this.replay.getLog();
             var firstMove = solves[i].moves.find(function (m) { return m.turn > turnable_1.Turn.Z2 && m.timestamp > 0; });
             var start = (firstMove) ? firstMove.timestamp : 0;
             var duration = solves[i].moves[solves[i].moves.length - 1].timestamp - start;
@@ -34,7 +34,7 @@ define(["require", "exports", "../hotkeys", "../turnable"], function (require, e
             ]);
         };
         LogBrowserState.prototype.startReplay = function (i) {
-            this.replay.currentReplay = this.replay.replayLog[i];
+            this.replay.currentReplay = this.replay.getLog()[i];
             this.context.setState(this.context.replayState);
         };
         return LogBrowserState;

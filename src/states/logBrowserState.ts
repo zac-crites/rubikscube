@@ -18,11 +18,11 @@ export class LogBrowserState implements IState {
 
     public enter(): void {
 
-        if (this.replay.replayLog.length === 0) {
+        if (this.replay.getLog().length === 0) {
             this.context.setState(this.context.idleState);
             return;
         }
-        this.showMenu(Math.min(this.lastMenu, this.replay.replayLog.length - 1));
+        this.showMenu(Math.min(this.lastMenu, this.replay.getLog().length - 1));
         return;
     }
 
@@ -32,7 +32,7 @@ export class LogBrowserState implements IState {
 
     private showMenu(i: number) {
         this.lastMenu = i;
-        const solves = this.replay.replayLog;
+        const solves = this.replay.getLog();
 
         const firstMove = solves[i].moves.find((m) => m.turn > Turn.Z2 && m.timestamp > 0);
         const start = (firstMove) ? firstMove.timestamp : 0;
@@ -47,7 +47,7 @@ export class LogBrowserState implements IState {
     }
 
     private startReplay(i: number) {
-        this.replay.currentReplay = this.replay.replayLog[i];
+        this.replay.currentReplay = this.replay.getLog()[i];
         this.context.setState(this.context.replayState);
     }
 }

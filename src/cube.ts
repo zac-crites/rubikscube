@@ -12,6 +12,7 @@ export enum Face {
 export interface ICubeState {
     isSolved(): boolean;
     getFacelet(face: Face, i?: number): Face;
+    reset(): void;
 }
 
 interface IFaceData {

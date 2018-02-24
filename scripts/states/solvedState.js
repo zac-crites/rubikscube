@@ -15,7 +15,7 @@ define(["require", "exports", "../hotkeys"], function (require, exports, hotkeys
                     _this.context.setState(_this.context.replayState);
                 }),
             ];
-            if (this.replay.replayLog.length > 1) {
+            if (this.replay.getLog().length > 1) {
                 options.push(new hotkeys_1.MenuOption("k", "Log", function () { return _this.context.setState(_this.context.logBrowserState); }));
             }
             this.hotkeys.showMenu("Solved!", options);
