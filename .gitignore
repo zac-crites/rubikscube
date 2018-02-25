@@ -1,2 +1,3 @@
 /.vscode
 *.js.map
+/lib/app.js
