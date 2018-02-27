@@ -1,13 +1,13 @@
-import { CurrentReplayProvider } from "../currentReplayProvider";
+import { IReplayLog } from "../currentReplayProvider";
 import { Hotkeys, MenuOption } from "../hotkeys";
 import { IState, StateContext } from "./state";
 
 export class SolvedState implements IState {
     private context: StateContext;
     private hotkeys: Hotkeys;
-    private replay: CurrentReplayProvider;
+    private replay: IReplayLog;
 
-    public constructor(context: StateContext, hotkeys: Hotkeys, replay: CurrentReplayProvider) {
+    public constructor(context: StateContext, hotkeys: Hotkeys, replay: IReplayLog) {
         this.context = context;
         this.hotkeys = hotkeys;
         this.replay = replay;

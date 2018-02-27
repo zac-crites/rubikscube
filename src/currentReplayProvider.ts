@@ -6,11 +6,17 @@ export interface IReplayData {
     time: number;
 }
 
-export class CurrentReplayProvider {
+export interface IReplayLog {
+    currentReplay: IReplay | null;
+    getLog(): IReplay[];
+    pushReplay(replay: IReplay): number;
+}
 
+export class CurrentReplayProvider implements IReplayLog {
+
+    public  currentReplay: IReplay | null = null;
     private replayLog: IReplay[] = [];
     private replayConverter = new ReplayConverter();
-    private replay: IReplay | null = null;
 
     public constructor() {
         if (localStorage.replayLog !== null) {
@@ -19,21 +25,21 @@ export class CurrentReplayProvider {
         }
 
         const parseIndex = window.location.href.indexOf("?");
-        this.replay = parseIndex > 0
+        this.currentReplay = parseIndex > 0
             ? this.replayConverter.stringToReplay(window.location.href.substring(parseIndex + 1))
-            : this.replayLog.length > 0 ? this.replayLog[this.replayLog.length - 1] : null;
+            : null;
     }
 
-    public get currentReplay(): IReplay | null {
-        return this.replay;
-    }
-
-    public set currentReplay(v: IReplay | null) {
-        this.replay = v;
-        window.history.replaceState("", "", (v != null) ? "?" + new ReplayConverter().replayToString(v) : "");
-        if (v && this.replayLog.indexOf(v) < 0) {
-            this.replayLog.push(v);
+    public pushReplay(replay: IReplay): number {
+        this.currentReplay = replay;
+        window.history.replaceState("", "", (replay != null) ? "?" + new ReplayConverter().replayToString(replay) : "");
+        const index = this.replayLog.indexOf(replay);
+        if (replay && index < 0) {
+            this.replayLog.push(replay);
             localStorage.replayLog = JSON.stringify(this.replayLog.map((log) => log.moves));
+            return this.replayLog.length - 1;
+        } else {
+            return index;
         }
     }
 

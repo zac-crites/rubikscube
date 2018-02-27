@@ -1,6 +1,6 @@
 import { ICameraControls } from "../CameraControls";
 import { ICubeState } from "../cube";
-import { CurrentReplayProvider } from "../currentReplayProvider";
+import { IReplayLog } from "../currentReplayProvider";
 import { Hotkeys } from "../hotkeys";
 import { StandardControlScheme } from "../standardControlScheme";
 import { Timer } from "../timer";
@@ -16,7 +16,7 @@ export class TimedSolveState implements IState {
     private timer: Timer;
     private cubeState: ICubeState;
     private recorder: IRecorder;
-    private currentReplayProvider: CurrentReplayProvider;
+    private replayLog: IReplayLog;
     private active: boolean;
 
     public constructor(
@@ -27,7 +27,7 @@ export class TimedSolveState implements IState {
         timer: Timer,
         cubeState: ICubeState,
         recorder: IRecorder,
-        currentReplay: CurrentReplayProvider) {
+        replayLog: IReplayLog) {
 
         this.context = context;
         this.cube = cube;
@@ -36,7 +36,7 @@ export class TimedSolveState implements IState {
         this.timer = timer;
         this.cubeState = cubeState;
         this.recorder = recorder;
-        this.currentReplayProvider = currentReplay;
+        this.replayLog = replayLog;
         this.active = false;
     }
 
@@ -63,7 +63,7 @@ export class TimedSolveState implements IState {
         if (this.active && this.cubeState.isSolved()) {
             this.timer.stop();
             this.recorder.stop();
-            this.currentReplayProvider.currentReplay = this.recorder.getReplay();
+            this.replayLog.pushReplay(this.recorder.getReplay());
             this.context.setState(this.context.solvedState);
         }
     }

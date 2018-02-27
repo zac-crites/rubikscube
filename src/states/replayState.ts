@@ -1,4 +1,4 @@
-import { CurrentReplayProvider } from "../currentReplayProvider";
+import { IReplayLog } from "../currentReplayProvider";
 import { Timer } from "../timer";
 import { ITurnable, Turn } from "../turnable";
 import { IState, StateContext } from "./state";
@@ -6,10 +6,10 @@ import { IState, StateContext } from "./state";
 export class ReplayState implements IState {
     private context: StateContext;
     private target: ITurnable;
-    private replay: CurrentReplayProvider;
+    private replay: IReplayLog;
     private displayTimer: Timer;
 
-    public constructor(context: StateContext, target: ITurnable, replay: CurrentReplayProvider, timer: Timer) {
+    public constructor(context: StateContext, target: ITurnable, replay: IReplayLog, timer: Timer) {
         this.context = context;
         this.target = target;
         this.replay = replay;

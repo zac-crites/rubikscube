@@ -1,14 +1,14 @@
-import { CurrentReplayProvider } from "../currentReplayProvider";
+import { IReplayLog } from "../currentReplayProvider";
 import { Hotkeys, MenuOption } from "../hotkeys";
 import { IState, StateContext } from "./state";
 
 export class LogBrowserState implements IState {
     private context: StateContext;
-    private replay: CurrentReplayProvider;
+    private replay: IReplayLog;
     private hotkeys: Hotkeys;
     private lastMenu: number;
 
-    public constructor(context: StateContext, keys: Hotkeys, replay: CurrentReplayProvider) {
+    public constructor(context: StateContext, keys: Hotkeys, replay: IReplayLog) {
         this.context = context;
         this.replay = replay;
         this.hotkeys = keys;

@@ -31,7 +31,7 @@ export class App {
         this.implementEnums(cube);
         this.implementApply(renderer3d);
 
-        stateContext.idleState = new IdleState(stateContext, controls);
+        stateContext.idleState = new IdleState(stateContext, controls, replay);
         stateContext.scramblerState = new ScramblingState(
             stateContext, recordingWrapper, recordingWrapper, timer, cube);
         stateContext.countdownState = new CountdownState(stateContext, timer, controls, recordingWrapper);
@@ -42,10 +42,11 @@ export class App {
         stateContext.solveState = new TimedSolveState(
             stateContext, recordingWrapper, controls, renderer3d, timer, cube, recordingWrapper, replay);
 
-        stateContext.setState(
-            replay.currentReplay || replay.getLog().length !== 0
-                ? stateContext.solvedState
-                : stateContext.idleState);
+        if (replay.currentReplay) {
+            stateContext.setState(stateContext.solvedState);
+        } else {
+            stateContext.setState(stateContext.idleState);
+        }
 
         return 0;
     }
