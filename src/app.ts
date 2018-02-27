@@ -6,6 +6,7 @@ import { CountdownState } from "./states/countdownState";
 import { IdleState } from "./states/idlestate";
 import { LogBrowserState } from "./states/logBrowserState";
 import { PracticeState } from "./states/practiceState";
+import { ReplayStartState } from "./states/replayStartState";
 import { ReplayState } from "./states/replayState";
 import { ScramblingState } from "./states/scramblingState";
 import { SolvedState } from "./states/solvedState";
@@ -43,7 +44,7 @@ export class App {
             stateContext, recordingWrapper, controls, renderer3d, timer, cube, recordingWrapper, replay);
 
         if (replay.currentReplay) {
-            stateContext.setState(stateContext.solvedState);
+            stateContext.setState(new ReplayStartState(stateContext, replay, controls));
         } else {
             stateContext.setState(stateContext.idleState);
         }
