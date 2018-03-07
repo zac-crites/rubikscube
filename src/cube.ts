@@ -50,7 +50,7 @@ export class Cube implements ITurnable, ICubeState {
     }
 
     public apply(turn: Turn | Turn[]): Cube {
-        if (typeof turn !== "number") {
+        if (Array.isArray(turn)) {
             const turnList = turn as Turn[];
             for (const t of turnList) {
                 this.apply(t);
