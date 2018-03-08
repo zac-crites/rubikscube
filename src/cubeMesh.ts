@@ -4,13 +4,14 @@ import { Face, ICubeState } from "./cube";
 const Vector3 = THREE.Vector3;
 
 export class CubeMesh {
+    public readonly meshes: THREE.Mesh[] = [];
+    public readonly topLayer: THREE.Mesh[] = [];
+    public readonly notTopLayer: THREE.Mesh[] = [];
+
     private cube: ICubeState;
     private materials: THREE.MeshBasicMaterial[] = [];
     private geometryFaces = [new THREE.Face3(0, 1, 2), new THREE.Face3(0, 2, 3)];
     private outlineMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.BackSide });
-    private meshes: THREE.Mesh[] = [];
-    private topLayer: THREE.Mesh[] = [];
-    private notTopLayer: THREE.Mesh[] = [];
     private materialUpdaterList: Array<() => THREE.MeshBasicMaterial> = [];
 
     constructor(cube: ICubeState) {
@@ -36,7 +37,7 @@ export class CubeMesh {
 
         element.appendChild(renderer.domElement);
 
-        this.AddToScene( scene );
+        this.AddToScene(scene);
 
         (function Animate(): void {
             requestAnimationFrame(Animate);
@@ -50,8 +51,11 @@ export class CubeMesh {
         this.meshes.forEach((mesh) => scene.add(mesh));
     }
 
+    public Update() {
+        this.materialUpdaterList.forEach((update) => update());
+    }
+
     private BuildMesh(): void {
-        const self = this;
         const margin = .08;
         const outline = .02;
 
@@ -105,26 +109,26 @@ export class CubeMesh {
                 stickerGeometry.vertices.push(topright);
                 stickerGeometry.vertices.push(bottomright);
                 stickerGeometry.vertices.push(bottomleft);
-                stickerGeometry.faces = self.geometryFaces;
+                stickerGeometry.faces = this.geometryFaces;
 
                 const outlineGeometry = new THREE.Geometry();
                 outlineGeometry.vertices.push(topleft.clone().sub(outlineDown).sub(outlineRight).add(back));
                 outlineGeometry.vertices.push(topright.clone().sub(outlineDown).add(outlineRight).add(back));
                 outlineGeometry.vertices.push(bottomright.clone().add(outlineDown).add(outlineRight).add(back));
                 outlineGeometry.vertices.push(bottomleft.clone().add(outlineDown).sub(outlineRight).add(back));
-                outlineGeometry.faces = self.geometryFaces;
+                outlineGeometry.faces = this.geometryFaces;
 
                 const stickerMesh = new THREE.Mesh(stickerGeometry, getMaterial());
-                const outlineMesh = new THREE.Mesh(outlineGeometry, self.outlineMaterial);
+                const outlineMesh = new THREE.Mesh(outlineGeometry, this.outlineMaterial);
 
-                self.meshes.push(stickerMesh);
-                self.meshes.push(outlineMesh);
+                this.meshes.push(stickerMesh);
+                this.meshes.push(outlineMesh);
 
-                const group = (face === 0 || (face !== 5 && y === 0)) ? self.topLayer : self.notTopLayer;
+                const group = (face === 0 || (face !== 5 && y === 0)) ? this.topLayer : this.notTopLayer;
                 group.push(stickerMesh);
                 group.push(outlineMesh);
 
-                self.materialUpdaterList.push(() => stickerMesh.material = getMaterial());
+                this.materialUpdaterList.push(() => stickerMesh.material = getMaterial());
             });
         });
     }

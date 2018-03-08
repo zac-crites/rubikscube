@@ -3,6 +3,8 @@ import { Cube } from "./cube";
 import { CubeMesh } from "./cubeMesh";
 import { CurrentReplayProvider } from "./currentReplayProvider";
 import { Hotkeys } from "./hotkeys";
+import { MeshAnimator } from "./meshAnimator";
+import { StandardControlScheme } from "./standardControlScheme";
 import { CountdownState } from "./states/countdownState";
 import { IdleState } from "./states/idlestate";
 import { LogBrowserState } from "./states/logBrowserState";
@@ -44,14 +46,13 @@ export class App {
         stateContext.solveState = new TimedSolveState(
             stateContext, recordingWrapper, controls, renderer3d, timer, cube, recordingWrapper, replay);
 
-        if (replay.currentReplay) {
-            stateContext.setState(new ReplayStartState(stateContext, replay, controls));
-        } else {
-            stateContext.setState(stateContext.idleState);
-        }
-
         const testMesh = new CubeMesh(cube);
         testMesh.CreateScene(document.getElementById("cube4d") as HTMLDivElement);
+        // stateContext.setState(replay.currentReplay
+        //     ? new ReplayStartState(stateContext, replay, controls)
+        //     : stateContext.idleState);
+
+        new StandardControlScheme().register( controls, new MeshAnimator( testMesh, cube ) );
 
         return 0;
     }
