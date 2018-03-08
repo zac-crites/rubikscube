@@ -35,6 +35,15 @@ export class MeshAnimator implements ITurnable {
             return this;
         }
 
+        switch (turn) {
+            case Turn.U2: return this.apply([Turn.U, Turn.U]);
+            case Turn.D2: return this.apply([Turn.D, Turn.D]);
+            case Turn.L2: return this.apply([Turn.L, Turn.L]);
+            case Turn.R2: return this.apply([Turn.R, Turn.R]);
+            case Turn.F2: return this.apply([Turn.F, Turn.F]);
+            case Turn.B2: return this.apply([Turn.B, Turn.B]);
+        }
+
         const data = this.animationData[turn] || [new Matrix4(), null, null, [turn], []];
         const animation = this.CreateAnimation(
             data[0],
@@ -50,11 +59,11 @@ export class MeshAnimator implements ITurnable {
     public waitForMoves(): Promise<void> {
         return new Promise((resolve) => {
             this.animationQueue.push({
-                animate: ( time ) => {
+                animate: (time) => {
                     resolve();
                     this.animationQueue.shift();
                     if (this.animationQueue.length > 0) {
-                        this.animationQueue[0].animate( time );
+                        this.animationQueue[0].animate(time);
                     }
                 },
             });
