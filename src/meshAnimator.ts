@@ -48,7 +48,17 @@ export class MeshAnimator implements ITurnable {
     }
 
     public waitForMoves(): Promise<void> {
-        throw new Error("Method not implemented.");
+        return new Promise((resolve) => {
+            this.animationQueue.push({
+                animate: ( time ) => {
+                    resolve();
+                    this.animationQueue.shift();
+                    if (this.animationQueue.length > 0) {
+                        this.animationQueue[0].animate( time );
+                    }
+                },
+            });
+        });
     }
 
     private Start(): void {
