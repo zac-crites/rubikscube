@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { ICameraControls } from "./cameraControls";
 import { Face, ICubeState } from "./cube";
 
 const Vector3 = THREE.Vector3;
@@ -19,7 +20,7 @@ export class CubeMesh {
         this.BuildMesh();
     }
 
-    public CreateScene(element: HTMLDivElement): THREE.Scene {
+    public CreateScene(element: HTMLDivElement): ICameraControls {
         const rendererWidth = 400;
         const rendererHeight = 400;
         const renderer = new THREE.WebGLRenderer();
@@ -44,7 +45,9 @@ export class CubeMesh {
             renderer.render(scene, camera);
         })();
 
-        return scene;
+        return {
+            resetCamera: () => controls.reset(),
+        };
     }
 
     public AddToScene(scene: THREE.Scene): void {

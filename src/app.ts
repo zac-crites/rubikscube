@@ -1,4 +1,3 @@
-import { ICameraControls } from "./cameraControls";
 import { Cube } from "./cube";
 import { CubeMesh } from "./cubeMesh";
 import { CurrentReplayProvider } from "./currentReplayProvider";
@@ -15,22 +14,18 @@ import { SolvedState } from "./states/solvedState";
 import { StateContext } from "./states/state";
 import { TimedSolveState } from "./states/timedSolveState";
 import { Timer } from "./timer";
-import { ITurnable } from "./turnable";
 import { TurnRecorder } from "./turnRecorder";
-
-declare var CubeRenderer: any;
 
 export class App {
     public run(): number {
         const cube = new Cube();
-        const renderer3d = new CubeRenderer(cube) as ITurnable & ICameraControls;
         const controls = new Hotkeys(document.getElementById("buttons") as HTMLDivElement);
         const timer = new Timer(document.getElementById("timerDisplay") as HTMLDivElement);
         const stateContext = new StateContext();
 
-        const testMesh = new CubeMesh(cube);
-        testMesh.CreateScene(document.getElementById("cube4d") as HTMLDivElement);
-        const animator = new MeshAnimator( testMesh, cube );
+        const cubeMesh = new CubeMesh(cube);
+        const camera = cubeMesh.CreateScene(document.getElementById("cube3d") as HTMLDivElement);
+        const animator = new MeshAnimator( cubeMesh, cube );
 
         const recordingWrapper = new TurnRecorder(animator);
         const replay = new CurrentReplayProvider();
@@ -39,12 +34,12 @@ export class App {
         stateContext.scramblerState = new ScramblingState(
             stateContext, recordingWrapper, recordingWrapper, timer, cube);
         stateContext.countdownState = new CountdownState(stateContext, timer, controls, recordingWrapper);
-        stateContext.practiceState = new PracticeState(animator, controls, renderer3d);
+        stateContext.practiceState = new PracticeState(animator, controls, camera);
         stateContext.solvedState = new SolvedState(stateContext, controls, replay);
         stateContext.replayState = new ReplayState(stateContext, animator, replay, timer);
         stateContext.logBrowserState = new LogBrowserState(stateContext, controls, replay);
         stateContext.solveState = new TimedSolveState(
-            stateContext, recordingWrapper, controls, renderer3d, timer, cube, recordingWrapper, replay);
+            stateContext, recordingWrapper, controls, camera, timer, cube, recordingWrapper, replay);
 
         stateContext.setState(replay.currentReplay
             ? new ReplayStartState(stateContext, replay, controls)
