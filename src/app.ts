@@ -1,5 +1,6 @@
 import { ICameraControls } from "./cameraControls";
 import { Cube } from "./cube";
+import { CubeMesh } from "./cubeMesh";
 import { CurrentReplayProvider } from "./currentReplayProvider";
 import { Hotkeys } from "./hotkeys";
 import { CountdownState } from "./states/countdownState";
@@ -48,6 +49,9 @@ export class App {
         } else {
             stateContext.setState(stateContext.idleState);
         }
+
+        const testMesh = new CubeMesh(cube);
+        testMesh.CreateScene(document.getElementById("cube4d") as HTMLDivElement);
 
         return 0;
     }
