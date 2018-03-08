@@ -21,6 +21,9 @@
         </div>
     </div>
 
+    <div id="cube4d" style="margin:auto;width:400px;height:400px;">
+    </div>
+
     <div style="text-align: center;margin-top:2em;">
         <div style="display: inline-block;" class="footer">
             <a href="https://github.com/zac-crites/rubikscube">github</a> | <a href="https://solvethecube.com/notation">cube notation</a>
@@ -32,7 +35,10 @@
     <script src="CubeRenderer.js"></script>
     <script src="lib/require.js"></script>
     <script src="lib/app.min.js"></script>
-    <script>require(['app'], function(){});</script>
+    <script>
+    define("three", () => THREE);
+    require(['app'], function(){});
+    </script>
 </body>
 
 </html>
